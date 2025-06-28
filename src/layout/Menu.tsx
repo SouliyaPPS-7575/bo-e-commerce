@@ -58,6 +58,24 @@ const Menu = ({ dense = false }: MenuProps) => {
         dense={dense}
       />
       <MenuItemLink
+        to='/products'
+        state={{ _scrollToTop: true }}
+        primaryText={translate(`resources.products.name`, {
+          smart_count: 2,
+        })}
+        leftIcon={<products.icon />}
+        dense={dense}
+      />
+      <MenuItemLink
+        to='/categories'
+        state={{ _scrollToTop: true }}
+        primaryText={translate(`resources.categories.name`, {
+          smart_count: 2,
+        })}
+        leftIcon={<categories.icon />}
+        dense={dense}
+      />
+      <MenuItemLink
         to='/blogs'
         state={{ _scrollToTop: true }}
         primaryText={translate(`resources.blogs.name`, {
@@ -101,24 +119,6 @@ const Menu = ({ dense = false }: MenuProps) => {
             </svg>
           </Box>
         }
-        dense={dense}
-      />
-      <MenuItemLink
-        to='/products'
-        state={{ _scrollToTop: true }}
-        primaryText={translate(`resources.products.name`, {
-          smart_count: 2,
-        })}
-        leftIcon={<products.icon />}
-        dense={dense}
-      />
-      <MenuItemLink
-        to='/categories'
-        state={{ _scrollToTop: true }}
-        primaryText={translate(`resources.categories.name`, {
-          smart_count: 2,
-        })}
-        leftIcon={<categories.icon />}
         dense={dense}
       />
     </Box>
