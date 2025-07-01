@@ -105,7 +105,7 @@ const UserCreate = () => {
                         helperText="Must match the password above"
                     />
                     
-                    <BooleanInput
+                    {/* <BooleanInput
                         source="verified"
                         label="Mark as verified"
                         defaultValue={false}
@@ -116,7 +116,7 @@ const UserCreate = () => {
                         label="Email visibility"
                         defaultValue={true}
                         helperText="Allow email to be visible to other users"
-                    />
+                    /> */}
                 </Box>
             </SimpleForm>
         </Create>

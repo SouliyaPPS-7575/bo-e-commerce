@@ -63,7 +63,7 @@ const UserShow = () => {
                             </CardContent>
                         </Card>
                         
-                        <Card sx={{ mt: 2 }}>
+                        {/* <Card sx={{ mt: 2 }}>
                             <CardContent>
                                 <Typography variant="h6" gutterBottom>
                                     Account Status
@@ -81,7 +81,7 @@ const UserShow = () => {
                                     />
                                 </Box>
                             </CardContent>
-                        </Card>
+                        </Card> */}
                     </Grid>
                     
                     <Grid size={{ xs: 12, md: 4 }}>

@@ -46,41 +46,39 @@ const CustomerTitle = () => {
 };
 
 const CustomerCreate = () => (
-    <Create title={<CustomerTitle />}>
-        <SimpleForm
-            sx={{ maxWidth: 600 }}
-            defaultValues={{
-                verified: false,
-                emailVisibility: true,
-            }}
-            validate={validateForm}
-        >
-            <SectionTitle label="Customer Information" />
-            <Box
-                sx={{
-                    display: { xs: 'block', sm: 'flex', width: '100%' },
-                    gap: 2,
-                }}
-            >
-                <Box sx={{ flex: 1 }}>
-                    <TextInput source="name" isRequired fullWidth />
-                </Box>
-                <Box sx={{ flex: 1 }}>
-                    <TextInput source="username" isRequired fullWidth />
-                </Box>
-            </Box>
-            
-            <TextInput type="email" source="email" isRequired fullWidth />
-            <TextInput source="phone_number" fullWidth />
-            
-            <Separator />
-            
-            <SectionTitle label="Profile Settings" />
-            <ImageInput source="avatar" accept={{}} maxSize={5000000}>
-                <ImageField source="src" title="title" />
-            </ImageInput>
-            
-            <Box
+  <Create title={<CustomerTitle />}>
+    <SimpleForm
+      sx={{ maxWidth: 600 }}
+      defaultValues={{
+        verified: false,
+        emailVisibility: true,
+      }}
+      validate={validateForm}
+    >
+      <SectionTitle label='Customer Information' />
+      <Box
+        sx={{
+          display: { xs: 'block', sm: 'flex', width: '100%' },
+          gap: 2,
+        }}
+      >
+        <Box sx={{ flex: 1 }}>
+          <TextInput source='name' isRequired fullWidth />
+        </Box>
+        <Box sx={{ flex: 1 }}>
+          <TextInput source='username' isRequired fullWidth />
+        </Box>
+      </Box>
+
+      <TextInput type='email' source='email' isRequired fullWidth />
+      <TextInput source='phone_number' fullWidth />
+
+      <Separator />
+
+      <SectionTitle label='Profile Settings' />
+      <TextInput source='avatar' fullWidth label='Avatar URL' />
+
+      {/* <Box
                 sx={{
                     display: { xs: 'block', sm: 'flex' },
                     gap: 2,
@@ -88,14 +86,17 @@ const CustomerCreate = () => (
             >
                 <BooleanInput source="verified" />
                 <BooleanInput source="emailVisibility" />
-            </Box>
-            
-            <Separator />
-            
-            <SectionTitle label="Address" />
-            <TextInput source="address_id" fullWidth helperText="Link to address record" />
-        </SimpleForm>
-    </Create>
+            </Box> */}
+
+
+      <SectionTitle label='Address' />
+      <TextInput
+        source='address_id'
+        fullWidth
+        helperText='Link to address record'
+      />
+    </SimpleForm>
+  </Create>
 );
 
 const SectionTitle = ({ label }: { label: string }) => {

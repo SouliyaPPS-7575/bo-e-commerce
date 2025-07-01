@@ -106,12 +106,12 @@ const UserEdit = () => {
                   />
                 </Box>
 
-                <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>
+                {/* <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>
                   Account Settings
                 </Typography>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   <BooleanInput source='verified' label='Verified' />
-                </Box>
+                </Box> */}
               </CardContent>
             </Card>
           </Grid>

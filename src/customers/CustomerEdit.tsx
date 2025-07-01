@@ -50,7 +50,7 @@ const CustomerEdit = () => {
             </Typography>
             <TextInput source='avatar' fullWidth label='Avatar URL' />
 
-            <Box
+            {/* <Box
               sx={{
                 display: { xs: 'block', sm: 'flex' },
                 gap: 2,
@@ -58,9 +58,9 @@ const CustomerEdit = () => {
             >
               <BooleanInput source='verified' />
               <BooleanInput source='emailVisibility' />
-            </Box>
+            </Box> */}
 
-            <Box sx={{ mt: 2 }} />
+            <Box sx={{ mt: 0.5 }} />
 
             <Typography variant='h6' gutterBottom>
               Address
