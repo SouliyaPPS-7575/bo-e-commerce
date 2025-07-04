@@ -90,13 +90,32 @@ const Dashboard = () => {
       </Box>
     );
   }
+
+  interface RevenueSum {
+    totalLAK: number;
+    totalTHB: number;
+    totalUSD: number;
+  }
+
+  const sumSellRevenue = (data: SellRevenue[]): RevenueSum => {
+    return data.reduce(
+      (acc, item) => {
+        acc.totalLAK += parseFloat(item.amountLAK);
+        acc.totalTHB += parseFloat(item.amountTHB);
+        acc.totalUSD += parseFloat(item.amountUSD);
+        return acc;
+      },
+      { totalLAK: 0, totalTHB: 0, totalUSD: 0 }
+    );
+  };
+  
   return isXSmall ? (
     <Box sx={{ p: 2 }}>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         {/* Status Section */}
         {statusCount && (
           <StatusCountCards
-            sellRevenue={sellRevenue?.[0] as SellRevenue}
+            sellRevenue={sumSellRevenue as any}
             orderStatusCount={statusCount.orderStatusCount}
             customerCount={statusCount.customerCount}
             sellAmount={statusCount.sellAmount}
@@ -120,7 +139,7 @@ const Dashboard = () => {
       {statusCount && (
         <div style={styles.singleCol}>
           <StatusCountCards
-            sellRevenue={sellRevenue?.[0] as SellRevenue}
+            sellRevenue={sumSellRevenue as any}
             orderStatusCount={statusCount.orderStatusCount}
             customerCount={statusCount.customerCount}
             sellAmount={statusCount.sellAmount}

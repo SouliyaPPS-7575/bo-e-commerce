@@ -1,48 +1,48 @@
 import * as React from 'react';
 import {
-    Create,
-    SimpleForm,
-    TextInput,
-    BooleanInput,
-    useTranslate,
-    email,
-    useDefaultTitle,
-    useCreateContext,
-    ImageInput,
-    ImageField,
+  Create,
+  SimpleForm,
+  TextInput,
+  BooleanInput,
+  useTranslate,
+  email,
+  useDefaultTitle,
+  useCreateContext,
+  ImageInput,
+  ImageField,
 } from 'react-admin';
 import { Box, Typography } from '@mui/material';
 
 export const validateForm = (
-    values: Record<string, any>
+  values: Record<string, any>
 ): Record<string, any> => {
-    const errors = {} as any;
-    if (!values.name) {
-        errors.name = 'ra.validation.required';
+  const errors = {} as any;
+  if (!values.name) {
+    errors.name = 'ra.validation.required';
+  }
+  if (!values.username) {
+    errors.username = 'ra.validation.required';
+  }
+  if (!values.email) {
+    errors.email = 'ra.validation.required';
+  } else {
+    const error = email()(values.email);
+    if (error) {
+      errors.email = error;
     }
-    if (!values.username) {
-        errors.username = 'ra.validation.required';
-    }
-    if (!values.email) {
-        errors.email = 'ra.validation.required';
-    } else {
-        const error = email()(values.email);
-        if (error) {
-            errors.email = error;
-        }
-    }
-    return errors;
+  }
+  return errors;
 };
 
 const CustomerTitle = () => {
-    const appTitle = useDefaultTitle();
-    const { defaultTitle } = useCreateContext();
-    return (
-        <>
-            <title>{`${appTitle} - ${defaultTitle}`}</title>
-            <span>{defaultTitle}</span>
-        </>
-    );
+  const appTitle = useDefaultTitle();
+  const { defaultTitle } = useCreateContext();
+  return (
+    <>
+      <title>{`${appTitle} - ${defaultTitle}`}</title>
+      <span>{defaultTitle}</span>
+    </>
+  );
 };
 
 const CustomerCreate = () => (
@@ -88,7 +88,6 @@ const CustomerCreate = () => (
                 <BooleanInput source="emailVisibility" />
             </Box> */}
 
-
       <SectionTitle label='Address' />
       <TextInput
         source='address_id'
@@ -100,19 +99,19 @@ const CustomerCreate = () => (
 );
 
 const SectionTitle = ({ label }: { label: string }) => {
-    return (
-        <Typography variant="h6" gutterBottom>
-            {label}
-        </Typography>
-    );
+  return (
+    <Typography variant='h6' gutterBottom>
+      {label}
+    </Typography>
+  );
 };
 
 const Separator = () => (
-    <Box
-        sx={{
-            pt: '1em',
-        }}
-    />
+  <Box
+    sx={{
+      pt: '1em',
+    }}
+  />
 );
 
 export default CustomerCreate;

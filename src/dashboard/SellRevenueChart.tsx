@@ -7,7 +7,7 @@ import {
   Grid,
   Typography,
 } from '@mui/material';
-import React, { useState } from 'react';
+import React from 'react';
 import {
   CartesianGrid,
   Line,
@@ -16,11 +16,11 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
+import { useCurrencyContext } from '../components/CurrencySelector/CurrencyProvider';
 import RevenueFilter from './RevenueFilter';
 
 interface SellRevenueData {
-  year: number;
-  month: number;
+  period: string;
   amountLAK: string;
   amountUSD: string;
   amountTHB: string;
@@ -40,76 +40,60 @@ interface Props {
   loading?: boolean;
 }
 
-const SellRevenueChart: React.FC<Props> = ({ data, onFilterChange, loading }) => {
+const SellRevenueChart: React.FC<Props> = ({
+  data,
+  onFilterChange,
+  loading,
+}) => {
+  const { currency, displayCurrency } = useCurrencyContext();
 
-  const defaultData: SellRevenueData[] = [
-    {
-      year: 2025,
-      month: 6,
-      amountLAK: '15000000',
-      amountUSD: '1000',
-      amountTHB: '35000',
-    },
-  ];
+  const chartData = React.useMemo(() => {
+    if (!data || data.length === 0) {
+      return [];
+    }
 
-  const finalData = data && data.length > 0 ? data : defaultData;
+    return data.map((item) => {
+      const date = new Date(item.period);
+      const day = date.toLocaleDateString('en-US', { day: '2-digit' });
+      const month = date.toLocaleDateString('en-US', { month: 'short' });
 
-  const fillMissingMonths = (data: SellRevenueData[]): SellRevenueData[] => {
-    const year = data[0]?.year ?? new Date().getFullYear();
-    const monthMap = new Map(data.map((item) => [item.month, item]));
-
-    const fullData: SellRevenueData[] = [];
-    for (let m = 1; m <= 12; m++) {
-      if (monthMap.has(m)) {
-        fullData.push(monthMap.get(m)!);
-      } else {
-        fullData.push({
-          year,
-          month: m,
-          amountLAK: '0',
-          amountUSD: '0',
-          amountTHB: '0',
-        });
+      let amount = 0;
+      switch (currency) {
+        case 'USD':
+          amount = Number.parseFloat(item.amountUSD);
+          break;
+        case 'THB':
+          amount = Number.parseFloat(item.amountTHB);
+          break;
+        case 'LAK':
+          amount = Number.parseFloat(item.amountLAK);
+          break;
+        default:
+          break;
       }
-    }
 
-    return fullData;
-  };
+      return {
+        date: `${day} ${month}`,
+        amount,
+      };
+    });
+  }, [data, currency]);
 
-  const filledData = fillMissingMonths(finalData);
-
-  // Transform data for the chart
-  const chartData = filledData.map((item, index) => ({
-    date: `${String(item.month).padStart(2, '0')}/${String(item.year).slice(
-      -2
-    )}`,
-    usd: Number.parseFloat(item.amountUSD),
-    thb: Number.parseFloat(item.amountTHB),
-    lak: Number.parseInt(item.amountLAK) / 1000, // Convert to thousands for better visualization
-    day: index + 1,
-  }));
-
-  // Generate sample 30-day data if we don't have enough data points
-  const generateSampleData = () => {
-    const sampleData = [];
-    const baseUSD = Number.parseFloat(finalData[0]?.amountUSD || '800');
-
-    for (let i = 1; i <= 30; i++) {
-      const variation = Math.sin(i * 0.2) * 300 + Math.random() * 200 - 100;
-      const usdValue = Math.max(400, baseUSD + variation);
-
-      sampleData.push({
-        date: `${String(finalData[0]?.month).padStart(2, '0')}/${String(
-          finalData[0]?.year
-        ).slice(-2)}`,
-        usd: Math.round(usdValue),
-        day: i,
-      });
-    }
-    return sampleData;
-  };
-
-  const displayData = chartData.length >= 10 ? chartData : generateSampleData();
+  const totalLAK = React.useMemo(
+    () =>
+      data.reduce((sum, item) => sum + Number.parseFloat(item.amountLAK), 0),
+    [data]
+  );
+  const totalUSD = React.useMemo(
+    () =>
+      data.reduce((sum, item) => sum + Number.parseFloat(item.amountUSD), 0),
+    [data]
+  );
+  const totalTHB = React.useMemo(
+    () =>
+      data.reduce((sum, item) => sum + Number.parseFloat(item.amountTHB), 0),
+    [data]
+  );
 
   return (
     <Card className='w-full'>
@@ -148,7 +132,7 @@ const SellRevenueChart: React.FC<Props> = ({ data, onFilterChange, loading }) =>
           )}
           <ResponsiveContainer width='100%' height='100%'>
             <LineChart
-              data={displayData}
+              data={chartData}
               margin={{
                 top: 0,
                 right: 0,
@@ -173,13 +157,11 @@ const SellRevenueChart: React.FC<Props> = ({ data, onFilterChange, loading }) =>
                 axisLine={false}
                 tickLine={false}
                 tick={{ fontSize: 12, fill: '#666' }}
-                tickFormatter={(value) => `$${value}`}
-                domain={[0, 2000]}
-                ticks={[0, 500, 1000, 1500, 2000]}
+                tickFormatter={(value) => `${displayCurrency}${value}`}
               />
               <Line
                 type='monotone'
-                dataKey='usd'
+                dataKey='amount'
                 stroke='#D4A574'
                 strokeWidth={3}
                 dot={false}
@@ -194,9 +176,8 @@ const SellRevenueChart: React.FC<Props> = ({ data, onFilterChange, loading }) =>
           <Grid
             size={{
               xs: 12,
-              md: 4,
-            }}
-          >
+              md: 4
+            }}>
             <Box
               sx={{
                 textAlign: 'center',
@@ -209,19 +190,15 @@ const SellRevenueChart: React.FC<Props> = ({ data, onFilterChange, loading }) =>
                 LAK
               </Typography>
               <Typography variant='h6' color='#a67c00'>
-                {Number.parseInt(
-                  finalData[0]?.amountLAK || '0'
-                ).toLocaleString()}{' '}
-                ₭
+                {totalLAK.toLocaleString()} ₭
               </Typography>
             </Box>
           </Grid>
           <Grid
             size={{
               xs: 12,
-              md: 4,
-            }}
-          >
+              md: 4
+            }}>
             <Box
               sx={{
                 textAlign: 'center',
@@ -234,16 +211,15 @@ const SellRevenueChart: React.FC<Props> = ({ data, onFilterChange, loading }) =>
                 USD
               </Typography>
               <Typography variant='h6' color='#a67c00'>
-                ${Number.parseFloat(finalData[0]?.amountUSD || '0').toFixed(2)}
+                ${totalUSD.toFixed(2)}
               </Typography>
             </Box>
           </Grid>
           <Grid
             size={{
               xs: 12,
-              md: 4,
-            }}
-          >
+              md: 4
+            }}>
             <Box
               sx={{
                 textAlign: 'center',
@@ -256,7 +232,7 @@ const SellRevenueChart: React.FC<Props> = ({ data, onFilterChange, loading }) =>
                 THB
               </Typography>
               <Typography variant='h6' color='#a67c00'>
-                ฿{Number.parseFloat(finalData[0]?.amountTHB || '0').toFixed(2)}
+                ฿{totalTHB.toFixed(2)}
               </Typography>
             </Box>
           </Grid>

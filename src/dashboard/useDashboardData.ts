@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import pb from '../api/pocketbase';
 
 interface SellRevenueData {
-  year: number;
-  month: number;
+  period: string;
   amountLAK: string;
   amountTHB: string;
   amountUSD: string;
@@ -152,7 +151,9 @@ export const useRevenueData = (filterParams?: FilterParams) => {
           sellRevenueParams.append('endDate', filterParams.endDate);
         }
 
-        const sellRevenueUrl = `/dashboard/sell-revenue${sellRevenueParams.toString() ? `?${sellRevenueParams.toString()}` : ''}`;
+        const sellRevenueUrl = `/dashboard/sell-revenue${
+          sellRevenueParams.toString() ? `?${sellRevenueParams.toString()}` : ''
+        }`;
 
         const sellRevenueResponse = await pb.send(sellRevenueUrl, {
           method: 'GET',
