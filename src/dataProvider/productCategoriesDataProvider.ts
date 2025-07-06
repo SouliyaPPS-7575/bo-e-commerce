@@ -1,11 +1,9 @@
 import { DataProvider } from 'react-admin';
-import pb, {
-  fetchAllPocketbaseDocuments,
-  fetchPocketbaseDocument,
-  createPocketbaseDocument,
-  updatePocketbaseDocument,
-  deletePocketbaseDocument,
-} from '../api/pocketbase';
+import pb, { fetchPocketbaseDocument } from '../api/pocketbase';
+import {
+  CLOUDINARY_UPLOAD_PRESET,
+  CLOUDINARY_URL,
+} from '../utils/cloudinaryKey';
 
 export interface ProductCategory {
   id: string;
@@ -20,44 +18,40 @@ export interface ProductCategory {
 
 const COLLECTION_NAME = 'product_categories';
 
-export const productCategoriesDataProvider: any = {
-  getList: async (resource: string, params: any) => {
-    const { page = 1, perPage = 25 } = params.pagination || {};
-    const { field = 'created', order = 'DESC' } = params.sort || {};
+export const productCategoriesDataProvider: Partial<DataProvider> = {
+  getList: async (resource, params) => {
+    const { page, perPage } = params.pagination || { page: 1, perPage: 10 };
+    const { field, order } = params.sort || { field: 'id', order: 'ASC' };
     const filter = params.filter || {};
 
-    try {
-      let query = pb
-        .collection(COLLECTION_NAME)
-        .getList<ProductCategory>(page, perPage, {
-          sort: `${order === 'ASC' ? '+' : '-'}${field}`,
-          filter: Object.keys(filter || {})
-            .map((key) => `${key} ~ "${filter[key]}"`)
-            .join(' && '),
-        });
+    const result = pb
+      .collection(COLLECTION_NAME)
+      .getList<ProductCategory>(page, perPage, {
+        sort: `${order === 'ASC' ? '+' : '-'}${field}`,
+        filter: Object.keys(filter || {})
+          .map((key) => `${key} ~ "${filter[key]}"`)
+          .join(' && '),
+      });
+    const records = await result;
 
-      const result = await query;
-      return {
-        data: result.items,
-        total: result.totalItems,
-      };
-    } catch (error) {
-      console.error('Error fetching product categories:', error);
-      throw error;
-    }
+    return {
+      data: records.items.map((item) => ({
+        ...item,
+        id: item.id.toString(),
+        name: item.name,
+      })) as any[],
+      total: records.totalItems,
+    };
   },
 
-  getOne: async (resource: string, params: any) => {
-    try {
-      const data = await fetchPocketbaseDocument<ProductCategory>(
-        COLLECTION_NAME,
-        String(params.id)
-      );
-      return { data };
-    } catch (error) {
-      console.error('Error fetching product category:', error);
-      throw error;
-    }
+  getOne: async (resource, params) => {
+    const record = await fetchPocketbaseDocument<ProductCategory>(
+      COLLECTION_NAME,
+      params.id.toString()
+    );
+    return {
+      data: { ...record, id: record.id.toString(), name: record.name } as any,
+    };
   },
 
   getMany: async (resource: string, params: any) => {
@@ -73,60 +67,63 @@ export const productCategoriesDataProvider: any = {
       throw error;
     }
   },
+  create: async (resource, params) => {
+    const { image, ...rest } = params.data;
 
-  create: async (resource: string, params: any) => {
-    try {
-      const id = await createPocketbaseDocument(COLLECTION_NAME, params.data);
-      const data = await fetchPocketbaseDocument<ProductCategory>(
-        COLLECTION_NAME,
-        id
-      );
-      return { data };
-    } catch (error) {
-      console.error('Error creating product category:', error);
-      throw error;
+    if (image && image.rawFile) {
+      const formData = new FormData();
+      formData.append('file', image.rawFile);
+      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET!);
+
+      const response = await fetch(CLOUDINARY_URL, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const cloudinaryData = await response.json();
+
+      const record = await pb.collection(COLLECTION_NAME).create({
+        ...rest,
+        image_url: cloudinaryData.secure_url,
+      });
+
+      return { data: record as any };
+    } else {
+      const record = await pb.collection(COLLECTION_NAME).create(rest);
+      return { data: record as any };
     }
   },
 
-  update: async (resource: string, params: any) => {
-    try {
-      await updatePocketbaseDocument(
-        COLLECTION_NAME,
-        String(params.id),
-        params.data
-      );
-      const data = await fetchPocketbaseDocument<ProductCategory>(
-        COLLECTION_NAME,
-        String(params.id)
-      );
-      return { data };
-    } catch (error) {
-      console.error('Error updating product category:', error);
-      throw error;
+  update: async (resource, params) => {
+    const { id, data } = params;
+    const { image, ...rest } = data;
+
+    if (image && image.rawFile) {
+      const formData = new FormData();
+      formData.append('file', image.rawFile);
+      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET!);
+
+      const response = await fetch(CLOUDINARY_URL, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const cloudinaryData = await response.json();
+
+      const record = await pb.collection(COLLECTION_NAME).update(id, {
+        ...rest,
+        image_url: cloudinaryData.secure_url,
+      });
+
+      return { data: record as any };
+    } else {
+      const record = await pb.collection(COLLECTION_NAME).update(id, rest);
+      return { data: record as any };
     }
   },
 
-  delete: async (resource: string, params: any) => {
-    try {
-      await deletePocketbaseDocument(COLLECTION_NAME, String(params.id));
-      return { data: params.previousData };
-    } catch (error) {
-      console.error('Error deleting product category:', error);
-      throw error;
-    }
-  },
-
-  deleteMany: async (resource: string, params: any) => {
-    try {
-      await Promise.all(
-        params.ids.map((id: any) =>
-          deletePocketbaseDocument(COLLECTION_NAME, String(id))
-        )
-      );
-      return { data: params.ids };
-    } catch (error) {
-      console.error('Error deleting multiple product categories:', error);
-      throw error;
-    }
+  delete: async (resource, params) => {
+    await pb.collection(COLLECTION_NAME).delete(params.id.toString());
+    return { data: { id: params.id } } as any;
   },
 };

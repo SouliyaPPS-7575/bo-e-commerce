@@ -19,7 +19,7 @@ const LinkToRelatedProducts = () => {
             to={{
                 pathname: '/products',
                 search: queryString.stringify({
-                    filter: { category_id: record.id },
+                    filter: JSON.stringify({ category_id: record.id }),
                 }),
             }}
             sx={{ display: 'inline-flex', alignItems: 'center' }}

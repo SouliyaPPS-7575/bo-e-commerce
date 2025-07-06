@@ -1,17 +1,12 @@
-import * as React from 'react';
+import { Box, Typography } from '@mui/material';
 import {
   Create,
+  email,
   SimpleForm,
   TextInput,
-  BooleanInput,
-  useTranslate,
-  email,
-  useDefaultTitle,
   useCreateContext,
-  ImageInput,
-  ImageField,
+  useDefaultTitle
 } from 'react-admin';
-import { Box, Typography } from '@mui/material';
 
 export const validateForm = (
   values: Record<string, any>

@@ -29,12 +29,10 @@ const UserCreate = () => {
         }
         if (!values.password) {
             errors.password = 'Password is required';
-        } else if (values.password.length < 6) {
-            errors.password = 'Password must be at least 6 characters long';
+        } else if (values.password.length < 8) {
+            errors.password = 'Password must be at least 8 characters long';
         }
-        if (!values.passwordConfirm) {
-            errors.passwordConfirm = 'Password confirmation is required';
-        } else if (values.password !== values.passwordConfirm) {
+        if (values.password !== values.passwordConfirm) {
             errors.passwordConfirm = 'Passwords do not match';
         }
         return errors;
@@ -86,6 +84,12 @@ const UserCreate = () => {
                         label="Phone Number"
                     />
 
+                    <TextInput
+                        source="avatar"
+                        fullWidth
+                        label="Avatar URL"
+                    />
+
                     <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
                         Account Settings
                     </Typography>
@@ -94,7 +98,7 @@ const UserCreate = () => {
                         source="password"
                         validate={[required()]}
                         fullWidth
-                        helperText="Password must be at least 6 characters long"
+                        helperText="Password must be at least 8 characters long"
                     />
                     
                     <PasswordInput
@@ -104,19 +108,6 @@ const UserCreate = () => {
                         label="Confirm Password"
                         helperText="Must match the password above"
                     />
-                    
-                    {/* <BooleanInput
-                        source="verified"
-                        label="Mark as verified"
-                        defaultValue={false}
-                    />
-                    
-                    <BooleanInput
-                        source="emailVisibility"
-                        label="Email visibility"
-                        defaultValue={true}
-                        helperText="Allow email to be visible to other users"
-                    /> */}
                 </Box>
             </SimpleForm>
         </Create>

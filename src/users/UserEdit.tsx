@@ -1,7 +1,5 @@
 import { Box, Card, CardContent, Grid, Typography } from '@mui/material';
-import { useRecordContext } from 'react-admin';
 import {
-  BooleanInput,
   DateField,
   Edit,
   email,
@@ -11,6 +9,7 @@ import {
   TextField,
   TextInput,
   useNotify,
+  useRecordContext,
 } from 'react-admin';
 
 const UserEdit = () => {
@@ -27,10 +26,13 @@ const UserEdit = () => {
     if (!values.full_name) {
       errors.full_name = 'Full name is required';
     }
-    if (values.password && values.password.length < 6) {
-      errors.password = 'Password must be at least 6 characters long';
+    if (values.password && values.password.length < 8) {
+      errors.password = 'Password must be at least 8 characters long';
     }
-    if (values.passwordConfirm && values.password !== values.passwordConfirm) {
+    if (values.password && !values.oldPassword) {
+      errors.oldPassword = 'Old password is required to change the password';
+    }
+    if (values.password !== values.passwordConfirm) {
       errors.passwordConfirm = 'Passwords do not match';
     }
     return errors;
@@ -50,7 +52,12 @@ const UserEdit = () => {
     >
       <SimpleForm validate={validateForm}>
         <Grid container spacing={3}>
-          <Grid size={{ xs: 12, md: 8 }}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 8,
+            }}
+          >
             <Card>
               <CardContent>
                 <Typography variant='h6' gutterBottom>
@@ -93,9 +100,15 @@ const UserEdit = () => {
                 </Typography>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   <PasswordInput
+                    source='oldPassword'
+                    fullWidth
+                    label='Old Password'
+                    helperText='Required to change the password'
+                  />
+                  <PasswordInput
                     source='password'
                     fullWidth
-                    helperText='Leave empty to keep current password. Must be at least 6 characters long.'
+                    helperText='Leave empty to keep current password. Must be at least 8 characters long.'
                   />
 
                   <PasswordInput
@@ -105,18 +118,16 @@ const UserEdit = () => {
                     helperText='Must match the password above'
                   />
                 </Box>
-
-                {/* <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>
-                  Account Settings
-                </Typography>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                  <BooleanInput source='verified' label='Verified' />
-                </Box> */}
               </CardContent>
             </Card>
           </Grid>
 
-          <Grid size={{ xs: 12, md: 4 }}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 4,
+            }}
+          >
             <Card>
               <CardContent>
                 <Typography variant='h6' gutterBottom>

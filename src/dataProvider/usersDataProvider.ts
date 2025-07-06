@@ -75,7 +75,15 @@ export const usersDataProvider: Partial<DataProvider> = {
 
   create: async (resource, params) => {
     try {
-      const record = await pb.collection('users').create(params.data);
+      const { password, passwordConfirm, ...rest } = params.data;
+      const data = {
+        ...rest,
+        emailVisibility: true,
+        password,
+        passwordConfirm,
+      };
+      const record = await pb.collection('users').create(data);
+      await pb.collection('users').requestVerification(rest.email);
       return { data: record as any };
     } catch (error) {
       console.error('Error creating user:', error);
@@ -85,8 +93,22 @@ export const usersDataProvider: Partial<DataProvider> = {
 
   update: async (resource, params) => {
     try {
-      const record = await pb.collection('users').update(params.id, params.data);
-      return { data: record as any };
+      const { id, data } = params;
+      const { password, oldPassword, passwordConfirm, ...rest } = data;
+
+      const payload: any = { ...rest, emailVisibility: true };
+
+      if (password) {
+        if (!oldPassword) {
+          throw new Error('Old password is required to change the password.');
+        }
+        payload.password = password;
+        payload.passwordConfirm = passwordConfirm;
+        payload.oldPassword = oldPassword;
+      }
+
+      const record = await pb.collection('users').update(id, payload);
+      return { data: { ...record, id } as any };
     } catch (error) {
       console.error('Error updating user:', error);
       throw error;

@@ -1,7 +1,5 @@
-import green from '@mui/material/colors/green';
+import { green, orange, red } from '@mui/material/colors';
 import type { SxProps } from '@mui/material';
-import orange from '@mui/material/colors/orange';
-import red from '@mui/material/colors/red';
 import { Identifier } from 'react-admin';
 
 import { Review } from './../types';
