@@ -1,40 +1,20 @@
 import { DataProvider } from 'react-admin';
 import { blogService } from '../api/blogsService';
-
-const CLOUDINARY_UPLOAD_PRESET = 'images';
-const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/db84fdke0/upload';
-
-const uploadImageToCloudinary = async (file: File): Promise<string> => {
-  const formData = new FormData();
-  formData.append('file', file);
-  formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-
-  const response = await fetch(CLOUDINARY_URL, {
-    method: 'POST',
-    body: formData,
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to upload image to Cloudinary');
-  }
-
-  const data = await response.json();
-  return data.secure_url;
-};
+import { uploadImageToCloudinary } from '../utils/cloudinaryUpload';
 
 export const blogsDataProvider: Partial<DataProvider> = {
   getList: async (resource, params) => {
     if (resource !== 'blogs') return { data: [], total: 0 };
-    
+
     const { page, perPage } = params.pagination || { page: 1, perPage: 25 };
     const { field, order } = params.sort || {};
     const { filter } = params;
-    
+
     let sort = '';
     if (field && order) {
       sort = order === 'ASC' ? field : `-${field}`;
     }
-    
+
     let filterString = '';
     if (filter) {
       const filters = [];
@@ -49,7 +29,7 @@ export const blogsDataProvider: Partial<DataProvider> = {
       }
       filterString = filters.join(' && ');
     }
-    
+
     const result = await blogService.getList(page, perPage, sort, filterString);
     return {
       data: result.data as any,
@@ -59,33 +39,28 @@ export const blogsDataProvider: Partial<DataProvider> = {
 
   getOne: async (resource, params) => {
     if (resource !== 'blogs') return { data: {} as any };
-    
+
     const data = await blogService.getOne(String(params.id));
     return { data: data as any };
   },
 
   create: async (resource, params) => {
     if (resource !== 'blogs') return { data: {} as any };
-    
+
     const { image, ...rest } = params.data;
-    let imageUrl = '';
-
-    if (image && image.rawFile) {
-      imageUrl = await uploadImageToCloudinary(image.rawFile);
-    }
-
-    const dataToCreate = {
+    const data = await blogService.create({
       ...rest,
-      image_url: imageUrl,
-    };
-
-    const data = await blogService.create(dataToCreate);
+      image_url:
+        image && image.rawFile
+          ? await uploadImageToCloudinary(image.rawFile)
+          : '',
+    });
     return { data: data as any };
   },
 
   update: async (resource, params) => {
     if (resource !== 'blogs') return { data: {} as any };
-    
+
     const { image, ...rest } = params.data;
     let imageUrl = rest.image_url; // Keep existing URL by default
 
@@ -106,14 +81,14 @@ export const blogsDataProvider: Partial<DataProvider> = {
 
   delete: async (resource, params) => {
     if (resource !== 'blogs') return { data: {} as any };
-    
+
     await blogService.delete(String(params.id));
     return { data: { id: params.id } };
   },
 
   deleteMany: async (resource, params) => {
     if (resource !== 'blogs') return { data: [] };
-    
+
     const result = await blogService.deleteMany(params.ids.map(String));
     return { data: result.ids };
   },
