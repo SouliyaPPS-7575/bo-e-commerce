@@ -16,6 +16,27 @@ export interface User {
   updated: string;
 }
 
+const CLOUDINARY_UPLOAD_PRESET = 'images';
+const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/db84fdke0/upload';
+
+const uploadImageToCloudinary = async (file: File): Promise<string> => {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+  const response = await fetch(CLOUDINARY_URL, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to upload image to Cloudinary');
+  }
+
+  const data = await response.json();
+  return data.secure_url;
+};
+
 export const usersDataProvider: Partial<DataProvider> = {
   getList: async (resource, params) => {
     const { page, perPage } = params.pagination || { page: 1, perPage: 10 };
@@ -76,21 +97,21 @@ export const usersDataProvider: Partial<DataProvider> = {
   create: async (resource, params) => {
     try {
       const { password, passwordConfirm, avatar, ...rest } = params.data;
-      const formData = new FormData();
-
-      formData.append('username', rest.username);
-      formData.append('full_name', rest.full_name);
-      formData.append('email', rest.email);
-      formData.append('phone_number', rest.phone_number || '');
-      formData.append('emailVisibility', 'true');
-      formData.append('password', password);
-      formData.append('passwordConfirm', passwordConfirm);
+      let avatarUrl = '';
 
       if (avatar && avatar.rawFile) {
-        formData.append('avatar', avatar.rawFile);
+        avatarUrl = await uploadImageToCloudinary(avatar.rawFile);
       }
 
-      const record = await pb.collection('users').create(formData);
+      const dataToCreate = {
+        ...rest,
+        emailVisibility: true,
+        password,
+        passwordConfirm,
+        avatar: avatarUrl,
+      };
+
+      const record = await pb.collection('users').create(dataToCreate);
       await pb.collection('users').requestVerification(rest.email);
       return { data: record as any };
     } catch (error) {
@@ -102,7 +123,10 @@ export const usersDataProvider: Partial<DataProvider> = {
   update: async (resource, params) => {
     try {
       const { id, data } = params;
-      const { password, oldPassword, passwordConfirm, avatar, ...rest } = data;
+      const { password, oldPassword, passwordConfirm, avatar, email, ...rest } = data;
+
+      // Fetch current user data to compare email
+      const currentUser = await pb.collection('users').getOne(id);
 
       // Handle password change separately
       if (password) {
@@ -114,6 +138,11 @@ export const usersDataProvider: Partial<DataProvider> = {
           passwordConfirm,
           oldPassword,
         });
+      }
+
+      // Handle email change separately if it's different
+      if (email !== currentUser.email) {
+        await pb.collection('users').update(id, { email });
       }
 
       const formData = new FormData();
@@ -128,12 +157,17 @@ export const usersDataProvider: Partial<DataProvider> = {
       // Handle avatar update
       if (avatar && avatar.rawFile) {
         // New avatar selected
-        formData.append('avatar', avatar.rawFile);
+        const avatarUrl = await uploadImageToCloudinary(avatar.rawFile);
+        formData.append('avatar', avatarUrl);
       } else if (avatar === null) {
         // Avatar cleared
         formData.append('avatar', ''); // Send empty string to clear the file in PocketBase
+      } else if (typeof avatar === 'string' && avatar !== currentUser.avatar) {
+        // Existing avatar URL changed (e.g., user typed a new URL)
+        formData.append('avatar', avatar);
       }
-      // If avatar is a string (existing URL) and not changed, no need to append it to formData
+      // If avatar is a string (existing URL) and not changed, do not append it to formData
+      // PocketBase will retain the existing avatar if no new file is provided.
 
       const updatedRecord = await pb.collection('users').update(id, formData);
 

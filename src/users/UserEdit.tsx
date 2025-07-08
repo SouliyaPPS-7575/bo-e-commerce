@@ -1,58 +1,38 @@
 import { Box, Card, CardContent, Grid, Typography } from '@mui/material';
+import { useEffect } from 'react';
 import {
   DateField,
   Edit,
   email,
+  ImageField,
+  ImageInput,
   PasswordInput,
   required,
   SimpleForm,
   TextField,
   TextInput,
-  useNotify,
   useRecordContext,
-  ImageInput,
-  ImageField,
+  useRefresh,
 } from 'react-admin';
+import { useLocation } from 'react-router';
+import { useImageStore } from '../store/imageStore';
 
 const UserEdit = () => {
-  const notify = useNotify();
+  const { selectImage, setSelectImage } = useImageStore(); // Use the store
+  const refresh = useRefresh();
 
-  const validateForm = (values: any) => {
-    const errors: any = {};
-    if (!values.username) {
-      errors.username = 'Username is required';
-    }
-    if (!values.email) {
-      errors.email = 'Email is required';
-    }
-    if (!values.full_name) {
-      errors.full_name = 'Full name is required';
-    }
-    if (values.password && values.password.length < 8) {
-      errors.password = 'Password must be at least 8 characters long';
-    }
-    if (values.password && !values.oldPassword) {
-      errors.oldPassword = 'Old password is required to change the password';
-    }
-    if (values.password !== values.passwordConfirm) {
-      errors.passwordConfirm = 'Passwords do not match';
-    }
-    return errors;
-  };
+  // Clear selectImage when route changes
+  const location = useLocation();
+  useEffect(() => {
+    setSelectImage(null);
+    refresh();
+  }, [location.pathname, setSelectImage]);
+
+  console.log('=> selectImage', selectImage);
 
   return (
-    <Edit
-      title='Edit User'
-      mutationOptions={{
-        onSuccess: () => {
-          notify('User updated successfully', { type: 'success' });
-        },
-        onError: (error: any) => {
-          notify(`Error updating user: ${error.message}`, { type: 'error' });
-        },
-      }}
-    >
-      <SimpleForm validate={validateForm}>
+    <Edit title='Edit User'>
+      <SimpleForm>
         <Grid container spacing={3}>
           <Grid
             size={{
@@ -94,14 +74,22 @@ const UserEdit = () => {
                     label='Phone Number'
                   />
 
-                  <ImageInput source="avatar" label="Avatar">
-                    <ImageField source="src" title="title" />
+                  <ImageInput
+                    source='avatar'
+                    label='Avatar'
+                    onChange={(e) => {
+                      setSelectImage(e);
+                    }}
+                  >
+                    <ImageField source='src' title='title' />
                   </ImageInput>
 
                   <ImageField
-                    source="avatar"
-                    label="Current Avatar"
-                    sx={{ mt: 2 }}
+                    source='avatar'
+                    label='Current Image'
+                    sx={{
+                      display: selectImage !== null ? 'none' : 'block',
+                    }}
                   />
                 </Box>
 
