@@ -1,6 +1,27 @@
 import { DataProvider } from 'react-admin';
 import { blogService } from '../api/blogsService';
 
+const CLOUDINARY_UPLOAD_PRESET = 'images';
+const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/db84fdke0/upload';
+
+const uploadImageToCloudinary = async (file: File): Promise<string> => {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+  const response = await fetch(CLOUDINARY_URL, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to upload image to Cloudinary');
+  }
+
+  const data = await response.json();
+  return data.secure_url;
+};
+
 export const blogsDataProvider: Partial<DataProvider> = {
   getList: async (resource, params) => {
     if (resource !== 'blogs') return { data: [], total: 0 };
@@ -46,26 +67,40 @@ export const blogsDataProvider: Partial<DataProvider> = {
   create: async (resource, params) => {
     if (resource !== 'blogs') return { data: {} as any };
     
-    const data = await blogService.create({
-      title: params.data.title,
-      description: params.data.description,
-      image_url: params.data.image_url || '',
-      video_url: params.data.video_url || '',
-      count: params.data.count || 0,
-    });
+    const { image, ...rest } = params.data;
+    let imageUrl = '';
+
+    if (image && image.rawFile) {
+      imageUrl = await uploadImageToCloudinary(image.rawFile);
+    }
+
+    const dataToCreate = {
+      ...rest,
+      image_url: imageUrl,
+    };
+
+    const data = await blogService.create(dataToCreate);
     return { data: data as any };
   },
 
   update: async (resource, params) => {
     if (resource !== 'blogs') return { data: {} as any };
     
-    const data = await blogService.update(String(params.id), {
-      title: params.data.title,
-      description: params.data.description,
-      image_url: params.data.image_url,
-      video_url: params.data.video_url,
-      count: params.data.count,
-    });
+    const { image, ...rest } = params.data;
+    let imageUrl = rest.image_url; // Keep existing URL by default
+
+    if (image && image.rawFile) {
+      imageUrl = await uploadImageToCloudinary(image.rawFile);
+    } else if (image === null) {
+      imageUrl = ''; // Clear the image
+    }
+
+    const dataToUpdate = {
+      ...rest,
+      image_url: imageUrl,
+    };
+
+    const data = await blogService.update(String(params.id), dataToUpdate);
     return { data: data as any };
   },
 

@@ -11,6 +11,8 @@ import {
   TextField,
   TextInput,
   TopToolbar,
+  ImageInput,
+  ImageField,
 } from 'react-admin';
 
 const RichTextInput = lazy(() =>
@@ -30,7 +32,10 @@ export const BlogEdit = () => (
       {/* <TextField source='id' /> */}
       <TextInput source='title' validate={[required()]} fullWidth />
       <RichTextInput source='description' validate={[required()]} fullWidth />
-      <TextInput source='image_url' fullWidth />
+      <ImageInput source='image' label='Blog Image'>
+        <ImageField source='src' title='title' />
+      </ImageInput>
+      <ImageField source='image_url' label='Current Image' />
       {/* <TextInput source='video_url' fullWidth /> */}
       <NumberInput source='count' />
       {/* <DateField source='created' /> */}

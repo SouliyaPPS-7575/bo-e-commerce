@@ -5,6 +5,8 @@ import {
   required,
   SimpleForm,
   TextInput,
+  ImageInput,
+  ImageField,
 } from 'react-admin';
 
 const RichTextInput = lazy(() =>
@@ -16,7 +18,9 @@ export const BlogCreate = () => (
     <SimpleForm>
       <TextInput source='title' validate={[required()]} fullWidth />
       <RichTextInput source='description' validate={[required()]} fullWidth />
-      <TextInput source='image_url' fullWidth />
+      <ImageInput source='image' label='Blog Image'>
+        <ImageField source='src' title='title' />
+      </ImageInput>
       {/* <TextInput source='video_url' fullWidth /> */}
       {/* <NumberInput source='count' defaultValue={0} /> */}
     </SimpleForm>
