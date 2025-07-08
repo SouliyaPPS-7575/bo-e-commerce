@@ -1,18 +1,10 @@
 import { Download } from '@mui/icons-material';
-import {
-  Avatar,
-  Button,
-  FormControlLabel,
-  Switch,
-  Theme,
-  useMediaQuery,
-} from '@mui/material';
+import { Avatar, Button, FormControlLabel, Switch } from '@mui/material';
 import * as React from 'react';
 import {
   ColumnsButton,
   CreateButton,
   DataTable,
-  DateField,
   EmailField,
   List,
   SearchInput,
@@ -117,8 +109,6 @@ const CustomerListActions = () => {
       >
         Export Excel
       </Button>
-      <CreateButton />
-      <ColumnsButton />
     </TopToolbar>
   );
 };
@@ -144,44 +134,6 @@ const AvatarField = (record: Customer) => {
       src={record.avatar}
       alt={record.name}
       sx={{ width: 32, height: 32 }}
-    />
-  );
-};
-
-const VerifiedField = (record: Customer) => {
-  const [update] = useUpdate();
-  const notify = useNotify();
-  const refresh = useRefresh();
-
-  const handleVerifiedChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    event.stopPropagation();
-    if (!record) return;
-
-    const newVerified = event.target.checked;
-    try {
-      await update('customers', {
-        id: record.id,
-        data: { ...record, verified: newVerified },
-        previousData: record,
-      });
-      notify(
-        `Customer ${newVerified ? 'verified' : 'unverified'} successfully`,
-        { type: 'success' }
-      );
-      refresh();
-    } catch (error) {
-      notify('Error updating verification status', { type: 'error' });
-    }
-  };
-
-  return (
-    <Switch
-      checked={record?.verified || false}
-      onChange={handleVerifiedChange}
-      size='small'
-      color='success'
     />
   );
 };
@@ -230,11 +182,6 @@ const AccountStatusField = ({ record }: { record?: Customer }) => {
 };
 
 const CustomerList = () => {
-  const isXsmall = useMediaQuery<Theme>((theme) =>
-    theme.breakpoints.down('sm')
-  );
-  const isSmall = useMediaQuery<Theme>((theme) => theme.breakpoints.down('md'));
-
   return (
     <List
       filters={customerFilters}
@@ -244,7 +191,7 @@ const CustomerList = () => {
       title={<CustomerTitle />}
     >
       <DataTable
-        rowClick='edit'
+        rowClick='show'
         sx={{
           '& .column-avatar': {
             width: '48px',
@@ -260,9 +207,6 @@ const CustomerList = () => {
         <Column source='username' label='Username' />
         <Column source='email' field={EmailField} />
         <Column source='phone_number' label='Phone' />
-        {/* <Column source='verified' render={VerifiedField} label='Verified' /> */}
-        <Column source='created' field={DateField} label='Created' />
-        <Column source='updated' field={DateField} label='Updated' />
       </DataTable>
     </List>
   );

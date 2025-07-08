@@ -9,6 +9,8 @@ import {
     PasswordInput,
     useNotify,
     useRedirect,
+    ImageInput,
+    ImageField,
 } from 'react-admin';
 import { Box, Typography } from '@mui/material';
 
@@ -84,11 +86,9 @@ const UserCreate = () => {
                         label="Phone Number"
                     />
 
-                    <TextInput
-                        source="avatar"
-                        fullWidth
-                        label="Avatar URL"
-                    />
+                    <ImageInput source="avatar" label="Avatar">
+                        <ImageField source="src" title="title" />
+                    </ImageInput>
 
                     <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
                         Account Settings

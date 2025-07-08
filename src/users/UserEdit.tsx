@@ -10,6 +10,8 @@ import {
   TextInput,
   useNotify,
   useRecordContext,
+  ImageInput,
+  ImageField,
 } from 'react-admin';
 
 const UserEdit = () => {
@@ -92,7 +94,15 @@ const UserEdit = () => {
                     label='Phone Number'
                   />
 
-                  <TextInput source='avatar' fullWidth label='Avatar URL' />
+                  <ImageInput source="avatar" label="Avatar">
+                    <ImageField source="src" title="title" />
+                  </ImageInput>
+
+                  <ImageField
+                    source="avatar"
+                    label="Current Avatar"
+                    sx={{ mt: 2 }}
+                  />
                 </Box>
 
                 <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>

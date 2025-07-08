@@ -1,113 +1,117 @@
-import * as React from 'react';
 import {
-    Show,
-    SimpleShowLayout,
-    TextField,
-    NumberField,
-    DateField,
-    ReferenceField,
-    ImageField,
-    useDefaultTitle,
-    useShowContext,
-    useRecordContext,
-    RichTextField,
-} from 'react-admin';
+  AttachMoney,
+  CalendarToday,
+  Category,
+  Inventory,
+} from '@mui/icons-material';
 import {
-    Box,
-    Card,
-    CardContent,
-    Typography,
-    Chip,
-    Grid,
-    Divider,
-    Paper,
-    CardMedia,
-    ImageList,
-    ImageListItem,
+  Box,
+  Card,
+  CardContent,
+  CardMedia,
+  Chip,
+  Divider,
+  Grid,
+  ImageList,
+  ImageListItem,
+  Paper,
+  Typography,
 } from '@mui/material';
-import { AttachMoney, Category, CalendarToday, Inventory } from '@mui/icons-material';
+import {
+  DateField,
+  NumberField,
+  ReferenceField,
+  RichTextField,
+  Show,
+  TextField,
+  useDefaultTitle,
+  useRecordContext,
+  useShowContext,
+} from 'react-admin';
 
 const ProductTitle = () => {
-    const appTitle = useDefaultTitle();
-    const { defaultTitle } = useShowContext();
-    return (
-        <>
-            <title>{`${appTitle} - ${defaultTitle}`}</title>
-            <span>{defaultTitle}</span>
-        </>
-    );
+  const appTitle = useDefaultTitle();
+  const { defaultTitle } = useShowContext();
+  return (
+    <>
+      <title>{`${appTitle} - ${defaultTitle}`}</title>
+      <span>{defaultTitle}</span>
+    </>
+  );
 };
 
 const ProductImage = () => {
-    const record = useRecordContext();
-    
-    if (!record) return null;
-    
-    const imageUrls = Array.isArray(record.image_url) ? record.image_url : [record.image_url];
-    const validImageUrls = imageUrls.filter(url => url && url.trim() !== '');
-    
-    if (validImageUrls.length === 0) {
-        return (
-            <CardMedia
-                component="img"
-                image="/placeholder-product.svg"
-                alt={record.name || 'Product image'}
-                sx={{ 
-                    width: '100%', 
-                    height: 'auto', 
-                    borderRadius: 2,
-                    maxHeight: 400,
-                    objectFit: 'cover',
-                    bgcolor: 'grey.100'
-                }}
-            />
-        );
-    }
-    
-    if (validImageUrls.length === 1) {
-        return (
-            <CardMedia
-                component="img"
-                image={validImageUrls[0]}
-                alt={record.name || 'Product image'}
-                sx={{ 
-                    width: '100%', 
-                    height: 'auto', 
-                    borderRadius: 2,
-                    maxHeight: 400,
-                    objectFit: 'cover',
-                    bgcolor: 'grey.100'
-                }}
-                onError={(e: any) => {
-                    e.target.src = '/placeholder-product.svg';
-                }}
-            />
-        );
-    }
-    
+  const record = useRecordContext();
+
+  if (!record) return null;
+
+  const imageUrls = Array.isArray(record.image_url)
+    ? record.image_url
+    : [record.image_url];
+  const validImageUrls = imageUrls.filter((url) => url && url.trim() !== '');
+
+  if (validImageUrls.length === 0) {
     return (
-        <ImageList variant="masonry" cols={2} gap={8}>
-            {validImageUrls.map((imageUrl, index) => (
-                <ImageListItem key={index}>
-                    <CardMedia
-                        component="img"
-                        image={imageUrl}
-                        alt={`${record.name || 'Product'} image ${index + 1}`}
-                        sx={{ 
-                            width: '100%', 
-                            height: 'auto', 
-                            borderRadius: 2,
-                            objectFit: 'cover',
-                            bgcolor: 'grey.100'
-                        }}
-                        onError={(e: any) => {
-                            e.target.src = '/placeholder-product.svg';
-                        }}
-                    />
-                </ImageListItem>
-            ))}
-        </ImageList>
+      <CardMedia
+        component='img'
+        image='/placeholder-product.svg'
+        alt={record.name || 'Product image'}
+        sx={{
+          width: '100%',
+          height: 'auto',
+          borderRadius: 2,
+          maxHeight: 400,
+          objectFit: 'cover',
+          bgcolor: 'grey.100',
+        }}
+      />
     );
+  }
+
+  if (validImageUrls.length === 1) {
+    return (
+      <CardMedia
+        component='img'
+        image={validImageUrls[0]}
+        alt={record.name || 'Product image'}
+        sx={{
+          width: '100%',
+          height: 'auto',
+          borderRadius: 2,
+          maxHeight: 400,
+          objectFit: 'cover',
+          bgcolor: 'grey.100',
+        }}
+        onError={(e: any) => {
+          e.target.src = '/placeholder-product.svg';
+        }}
+      />
+    );
+  }
+
+  return (
+    <ImageList variant='masonry' cols={2} gap={8}>
+      {validImageUrls.map((imageUrl, index) => (
+        <ImageListItem key={index}>
+          <CardMedia
+            component='img'
+            image={imageUrl}
+            alt={`${record.name || 'Product'} image ${index + 1}`}
+            sx={{
+              width: '100%',
+              height: 'auto',
+              borderRadius: 2,
+              objectFit: 'cover',
+              bgcolor: 'grey.100',
+            }}
+            onError={(e: any) => {
+              e.target.src = '/placeholder-product.svg';
+            }}
+          />
+        </ImageListItem>
+      ))}
+    </ImageList>
+  );
 };
 
 const ProductShow = () => (
