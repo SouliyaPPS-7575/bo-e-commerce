@@ -3,31 +3,30 @@ import {
   Admin,
   CustomRoutes,
   Resource,
+  StoreContextProvider,
   localStorageStore,
   useStore,
-  StoreContextProvider,
 } from 'react-admin';
 import { Route } from 'react-router';
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import authProvider from './authProvider';
+import blogs from './blogs';
 import categories from './categories';
+import { CurrencyProvider } from './components/CurrencySelector/CurrencyProvider';
+import customers from './customers';
 import { Dashboard } from './dashboard';
 import dataProviderFactory from './dataProvider';
 import englishMessages from './i18n/en';
 import invoices from './invoices';
 import { Layout } from './layout';
+import LoginPage from './layout/Login';
 import orders from './orders';
 import products from './products';
 import reviews from './reviews';
 import Segments from './segments/Segments';
-import visitors from './visitors';
-import customers from './customers';
-import { themes, ThemeName } from './themes/themes';
-import LoginPage from './layout/Login';
 import MuiProvider from './styles/ThemeProvider';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { CurrencyProvider } from './components/CurrencySelector/CurrencyProvider';
-import blogs from './blogs';
+import { ThemeName, themes } from './themes/themes';
 import users from './users';
 
 const i18nProvider = polyglotI18nProvider(
