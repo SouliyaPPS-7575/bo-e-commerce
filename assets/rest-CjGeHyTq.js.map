@@ -1,1 +1,0 @@
-{"version":3,"file":"rest-CjGeHyTq.js","sources":["../../src/dataProvider/rest.ts"],"sourcesContent":["import simpleRestProvider from 'ra-data-simple-rest';\n\nexport default simpleRestProvider('http://localhost:4000');\n"],"names":["rest","simpleRestProvider"],"mappings":"8GAEA,MAAAA,EAAeC,EAAmB,uBAAuB"}
