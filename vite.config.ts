@@ -32,7 +32,6 @@ export default defineConfig(async ({ mode }) => {
       port: 8000,
       open: true,
     },
-    base: './',
     esbuild: {
       keepNames: true,
     },
