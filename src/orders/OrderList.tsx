@@ -43,7 +43,6 @@ import {
 
 export const OrderList = () => {
   const translate = useTranslate();
-  const { currency } = useCurrencyContext(); // Use currency from context
 
   return (
     <Box sx={{ p: 2 }}>
@@ -148,12 +147,14 @@ const OrderDetail: React.FC<{ order: PBOrder }> = ({ order }) => {
   const [customer, setCustomer] = useState<PBCustomer | null>(null);
   const [address, setAddress] = useState<PBAddress | null>(null);
   const [products, setProducts] = useState<{ [key: string]: PBProduct }>({});
+  const [provinceName, setProvinceName] = useState<string | null>(null); // New state
+  const [districtName, setDistrictName] = useState<string | null>(null); // New state
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { currency } = useCurrencyContext();
 
   const fetchOrderDetails = async () => {
-    if (!open || orderItems.length > 0) return;
+    if (orderItems.length > 0) return;
 
     setLoading(true);
     setError(null);
@@ -184,6 +185,30 @@ const OrderDetail: React.FC<{ order: PBOrder }> = ({ order }) => {
             .collection('addresses')
             .getOne(order.address_id);
           setAddress(addressData as unknown as PBAddress);
+
+          // Fetch province name
+          if (addressData.province_id) {
+            try {
+              const provinceData = await pb
+                .collection('provinces')
+                .getOne(addressData.province_id);
+              setProvinceName(provinceData.name);
+            } catch (err) {
+              console.warn('Failed to fetch province:', err);
+            }
+          }
+
+          // Fetch district name
+          if (addressData.district_id) {
+            try {
+              const districtData = await pb
+                .collection('districts')
+                .getOne(addressData.district_id);
+              setDistrictName(districtData.name);
+            } catch (err) {
+              console.warn('Failed to fetch district:', err);
+            }
+          }
         } catch (err) {
           console.warn('Failed to fetch address:', err);
         }
@@ -221,7 +246,7 @@ const OrderDetail: React.FC<{ order: PBOrder }> = ({ order }) => {
 
   useEffect(() => {
     fetchOrderDetails();
-  }, [open, order.id]);
+  }, [order.id]);
 
   const calculateTotals = () => {
     return orderItems.reduce(
@@ -367,6 +392,14 @@ const OrderDetail: React.FC<{ order: PBOrder }> = ({ order }) => {
                             </Typography>
                             <Typography variant='body2' color='text.secondary'>
                               <strong>Village:</strong> {address.village}
+                            </Typography>
+                            <Typography variant='body2' color='text.secondary'>
+                              <strong>District:</strong>{' '}
+                              {districtName || address.district_id}
+                            </Typography>
+                            <Typography variant='body2' color='text.secondary'>
+                              <strong>Province:</strong>{' '}
+                              {provinceName || address.province_id}
                             </Typography>
                           </Box>
                         )}
@@ -549,18 +582,22 @@ const OrdersTable = React.memo(({ status }: { status: string }) => {
   if (loading) return <Loading />;
   if (error) return <Alert severity='error'>{error}</Alert>;
 
-  const formatCurrency = (amount: number, currencyType: string) => {
-    switch (currencyType) {
-      case 'LAK':
-        return `₭${amount.toLocaleString()}`;
-      case 'USD':
-        return `${amount.toFixed(2)}`;
-      case 'THB':
-        return `฿${amount.toFixed(2)}`;
-      default:
-        return amount.toString();
-    }
-  };
+  if (orders.length === 0) {
+    return (
+      <Box sx={{ p: 2 }}>
+        <Typography variant='body1' color='text.secondary'>
+          No orders found for status: {status}
+        </Typography>
+      </Box>
+    );
+  }
+  if (!Array.isArray(orders)) {
+    return (
+      <Box sx={{ p: 2 }}>
+        <Alert severity='error'>Invalid data format for orders</Alert>
+      </Box>
+    );
+  }
 
   return (
     <TableContainer component={Paper}>

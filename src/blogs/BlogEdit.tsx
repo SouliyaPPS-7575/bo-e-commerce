@@ -16,6 +16,7 @@ import {
 import { useImageStore } from '../store/imageStore';
 import { useLocation } from 'react-router';
 import { uploadImageToCloudinary } from '../utils/cloudinaryUpload';
+import { Divider } from '@mui/material';
 
 const RichTextInput = lazy(() =>
   import('ra-input-rich-text').then((m) => ({ default: m.RichTextInput }))
@@ -44,6 +45,28 @@ export const BlogEdit = () => {
       <SimpleForm>
         {/* <TextField source='id' /> */}
         <TextInput source='title' validate={[required()]} fullWidth />
+
+        <Divider sx={{ my: 0.2 }} />
+
+        <ImageInput
+          source='image'
+          label='Blog Image'
+          onChange={(e) => {
+            setSelectImage(e);
+          }}
+        >
+          <ImageField source='src' title='title' />
+        </ImageInput>
+        <ImageField
+          source='image_url'
+          label='Current Image'
+          sx={{
+            display: selectImage !== null ? 'none' : 'block',
+          }}
+        />
+
+        <Divider sx={{ my: 0.2 }} />
+
         <div style={{ alignItems: 'center', gap: 8 }}>
           <div
             style={{
@@ -123,25 +146,8 @@ export const BlogEdit = () => {
           />
         </div>
 
-        <ImageInput
-          source='image'
-          label='Blog Image'
-          onChange={(e) => {
-            setSelectImage(e);
-          }}
-        >
-          <ImageField source='src' title='title' />
-        </ImageInput>
-        <ImageField
-          source='image_url'
-          label='Current Image'
-          sx={{
-            display: selectImage !== null ? 'none' : 'block',
-          }}
-        />
-
-        {/* <TextInput source='video_url' fullWidth /> */}
         <NumberInput source='count' />
+        {/* <TextInput source='video_url' fullWidth /> */}
         {/* <DateField source='created' /> */}
         {/* <DateField source='updated' /> */}
 

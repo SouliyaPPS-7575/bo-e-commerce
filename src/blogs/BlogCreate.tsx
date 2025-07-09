@@ -5,9 +5,10 @@ import {
   ImageInput,
   required,
   SimpleForm,
-  TextInput
+  TextInput,
 } from 'react-admin';
 import { uploadImageToCloudinary } from '../utils/cloudinaryUpload';
+import { Divider } from '@mui/material';
 
 const RichTextInput = lazy(() =>
   import('ra-input-rich-text').then((m) => ({ default: m.RichTextInput }))
@@ -17,6 +18,15 @@ export const BlogCreate = () => (
   <Create>
     <SimpleForm>
       <TextInput source='title' validate={[required()]} fullWidth />
+
+      <Divider sx={{ my: 0.2 }} />
+
+      <ImageInput source='image' label='Blog Image'>
+        <ImageField source='src' title='title' />
+      </ImageInput>
+
+      <Divider sx={{ my: 0.2 }} />
+
       <div style={{ alignItems: 'center', gap: 8 }}>
         <div
           style={{
@@ -36,7 +46,6 @@ export const BlogCreate = () => (
               input.onchange = async () => {
                 if (input.files && input.files[0]) {
                   try {
-                    
                     const url = await uploadImageToCloudinary(input.files[0]);
                     // Copy image URL to clipboard
                     await navigator.clipboard.writeText(url);
@@ -91,9 +100,6 @@ export const BlogCreate = () => (
         <RichTextInput source='description' validate={[required()]} fullWidth />
       </div>
 
-      <ImageInput source='image' label='Blog Image'>
-        <ImageField source='src' title='title' />
-      </ImageInput>
       {/* <TextInput source='video_url' fullWidth /> */}
       {/* <NumberInput source='count' defaultValue={0} /> */}
     </SimpleForm>
