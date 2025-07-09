@@ -1,5 +1,4 @@
-const CLOUDINARY_UPLOAD_PRESET = 'images';
-const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/db84fdke0/upload';
+import { CLOUDINARY_UPLOAD_PRESET, CLOUDINARY_URL } from './cloudinaryKey';
 
 export const uploadImageToCloudinary = async (file: File): Promise<string> => {
   const formData = new FormData();
