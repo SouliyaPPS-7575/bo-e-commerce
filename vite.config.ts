@@ -47,24 +47,6 @@ export default defineConfig(async ({ mode }) => {
     build: {
       sourcemap: true,
       chunkSizeWarningLimit: 2000,
-      rollupOptions: {
-        output: {
-          manualChunks(id) {
-            if (id.includes('node_modules')) {
-              if (id.includes('react') || id.includes('react-dom')) {
-                return 'vendor_react';
-              }
-              if (id.includes('@mui')) {
-                return 'vendor_mui';
-              }
-              if (id.includes('react-admin')) {
-                return 'vendor_react_admin';
-              }
-              return 'vendor';
-            }
-          },
-        },
-      },
     },
     resolve: {
       preserveSymlinks: true,
@@ -76,7 +58,7 @@ export default defineConfig(async ({ mode }) => {
         //     find: 'scheduler/tracing',
         //     replacement: 'scheduler/tracing-profiling',
         // },
-        
+
         // we need to manually follow the symlinks for local packages to allow deep HMR
         ...Object.keys(aliases).map((packageName) => ({
           find: packageName,
