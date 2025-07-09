@@ -76,33 +76,7 @@ export default defineConfig(async ({ mode }) => {
         //     find: 'scheduler/tracing',
         //     replacement: 'scheduler/tracing-profiling',
         // },
-        // The 2 next aliases are needed to avoid having multiple react-router instances
-        {
-          find: 'react-router-dom',
-          replacement: path.resolve(
-            __dirname,
-            `node_modules/react-router/dist/${
-              mode === 'production' ? 'production' : 'development'
-            }/index.mjs`
-          ),
-        },
-        {
-          find: 'react-router',
-          replacement: path.resolve(
-            __dirname,
-            `node_modules/react-router/dist/${
-              mode === 'production' ? 'production' : 'development'
-            }/index.mjs`
-          ),
-        },
-        // The 2 next aliases are needed to avoid having multiple MUI instances
-        {
-          find: /^@mui\/([a-zA-Z0-9-_]+)\/*(.*)$/,
-          replacement: `${path.resolve(
-            __dirname,
-            'node_modules/@mui/$1/esm/$2'
-          )}`,
-        },
+        
         // we need to manually follow the symlinks for local packages to allow deep HMR
         ...Object.keys(aliases).map((packageName) => ({
           find: packageName,
