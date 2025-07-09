@@ -1,33 +1,21 @@
-import { defineConfig } from 'vite';
-import path from 'path';
-import fs from 'fs';
 import react from '@vitejs/plugin-react';
-// import { visualizer } from 'rollup-plugin-visualizer';
-import preserveDirectives from 'rollup-preserve-directives';
+import fs from 'fs';
+import path from 'path';
+import { defineConfig } from 'vite';
 
 // https://vitejs.dev/config/
 export default defineConfig(async ({ mode }) => {
   let aliases: Record<string, string> = {};
   if (fs.existsSync(path.resolve(__dirname, '../../packages'))) {
-    const packages = fs.readdirSync(
-      path.resolve(__dirname, '../../packages')
-    );
+    const packages = fs.readdirSync(path.resolve(__dirname, '../../packages'));
     aliases = {
-      'data-generator-retail': path.resolve(
-        __dirname,
-        '../data-generator/src'
-      ),
+      'data-generator-retail': path.resolve(__dirname, '../data-generator/src'),
     };
     for (const dirName of packages) {
       if (dirName === 'create-react-admin') continue;
       const packageJson = JSON.parse(
         fs.readFileSync(
-          path.resolve(
-            __dirname,
-            '../../packages',
-            dirName,
-            'package.json'
-          ),
+          path.resolve(__dirname, '../../packages', dirName, 'package.json'),
           'utf8'
         )
       );
@@ -39,16 +27,7 @@ export default defineConfig(async ({ mode }) => {
   }
 
   return {
-    plugins: [
-      react(),
-      // visualizer({
-      //   open: process.env.NODE_ENV !== 'CI',
-      //   filename: './dist/stats.html',
-      // }),
-    ],
-    define: {
-      'process.env': process.env,
-    },
+    plugins: [react()],
     server: {
       port: 8000,
       open: true,
@@ -57,10 +36,34 @@ export default defineConfig(async ({ mode }) => {
     esbuild: {
       keepNames: true,
     },
+    define: {
+      'process.env': Object.keys(process.env)
+        .filter((key) => key.startsWith('VITE_'))
+        .reduce((env, key) => {
+          env[`VITE_${key}`] = JSON.stringify(process.env[key]);
+          return env;
+        }, {}),
+    },
     build: {
       sourcemap: true,
+      chunkSizeWarningLimit: 2000,
       rollupOptions: {
-        plugins: [preserveDirectives()],
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              if (id.includes('react') || id.includes('react-dom')) {
+                return 'vendor_react';
+              }
+              if (id.includes('@mui')) {
+                return 'vendor_mui';
+              }
+              if (id.includes('react-admin')) {
+                return 'vendor_react_admin';
+              }
+              return 'vendor';
+            }
+          },
+        },
       },
     },
     resolve: {
@@ -78,14 +81,18 @@ export default defineConfig(async ({ mode }) => {
           find: 'react-router-dom',
           replacement: path.resolve(
             __dirname,
-            `node_modules/react-router/dist/${mode === 'production' ? 'production' : 'development'}/index.mjs`
+            `node_modules/react-router/dist/${
+              mode === 'production' ? 'production' : 'development'
+            }/index.mjs`
           ),
         },
         {
           find: 'react-router',
           replacement: path.resolve(
             __dirname,
-            `node_modules/react-router/dist/${mode === 'production' ? 'production' : 'development'}/index.mjs`
+            `node_modules/react-router/dist/${
+              mode === 'production' ? 'production' : 'development'
+            }/index.mjs`
           ),
         },
         // The 2 next aliases are needed to avoid having multiple MUI instances
@@ -97,7 +104,7 @@ export default defineConfig(async ({ mode }) => {
           )}`,
         },
         // we need to manually follow the symlinks for local packages to allow deep HMR
-        ...Object.keys(aliases).map(packageName => ({
+        ...Object.keys(aliases).map((packageName) => ({
           find: packageName,
           replacement: aliases[packageName],
         })),

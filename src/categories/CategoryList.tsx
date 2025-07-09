@@ -9,17 +9,21 @@ import {
 } from '@mui/material';
 import { humanize } from 'inflection';
 import {
+  CreateButton,
   Edit,
   EditButton,
   List,
   RecordContextProvider,
   SimpleForm,
   TextInput,
+  TopToolbar,
   useDefaultTitle,
   useListContext,
   useRedirect,
+  useRefresh, // Import TopToolbar for common action bar layout
 } from 'react-admin';
 
+import { useImageStore } from '../store/imageStore';
 import LinkToRelatedProducts from './LinkToRelatedProducts';
 
 export interface Category {
@@ -44,13 +48,20 @@ const CategoriesTitle = () => {
   );
 };
 
+// Custom actions component for flexible alignment
+const CategoryListActions = () => (
+  <TopToolbar>
+    <CreateButton />
+  </TopToolbar>
+);
+
 const CategoryList = () => (
   <List
     sort={{ field: 'name', order: 'ASC' }}
     perPage={20}
     pagination={false}
     component='div'
-    actions={false}
+    actions={<CategoryListActions />} // Use the custom actions component
     title={<CategoriesTitle />}
   >
     <CategoryGrid />
@@ -60,6 +71,8 @@ const CategoryList = () => (
 const CategoryGrid = () => {
   const { data, error, isPending } = useListContext<Category>();
   const redirect = useRedirect();
+  const refresh = useRefresh();
+
   if (isPending) {
     return null;
   }
@@ -70,10 +83,24 @@ const CategoryGrid = () => {
     <Grid container spacing={2} sx={{ mt: 0 }}>
       {data.map((record) => (
         <RecordContextProvider key={record.id} value={record}>
-          <Grid key={record.id} size={{ xs: 12, sm: 6, md: 4, lg: 3, xl: 2 }}>
+          <Grid
+            key={record.id}
+            size={{
+              xs: 12,
+              sm: 6,
+              md: 4,
+              lg: 3,
+              xl: 2,
+            }}
+          >
             <Card>
               <CardActionArea
-                onClick={() => redirect(`/categories/${record.id}`)}
+                onClick={() => {
+                  redirect(`/categories/${record.id}`);
+                  // Clear the image state after successful upload
+                  useImageStore.getState().setSelectImage(null);
+                  refresh();
+                }}
               >
                 <CardMedia
                   image={`${record?.image_url}`}

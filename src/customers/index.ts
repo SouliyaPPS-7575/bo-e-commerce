@@ -1,11 +1,9 @@
 import { People } from '@mui/icons-material';
-import CustomerCreate from './CustomerCreate';
-import CustomerEdit from './CustomerEdit';
 import CustomerList from './CustomerList';
+import CustomerShow from './CustomerShow';
 
 export default {
   list: CustomerList,
-  create: CustomerCreate,
-  edit: CustomerEdit,
+  show: CustomerShow,
   icon: People,
 };

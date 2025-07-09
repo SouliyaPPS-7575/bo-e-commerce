@@ -90,7 +90,9 @@ export const customersDataProvider: Partial<DataProvider> = {
     try {
       const record = await pb
         .collection('customers')
-        .getOne(params.id.toString());
+        .getOne(params.id.toString(), {
+          expand: 'address_id,address_id.province_id,address_id.district_id',
+        });
       return { data: transformCustomer(record) as any };
     } catch (error) {
       console.error('Error fetching customer:', error);

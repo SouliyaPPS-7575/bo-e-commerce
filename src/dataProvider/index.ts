@@ -5,6 +5,7 @@ import { customersDataProvider } from './customersDataProvider';
 import { productsDataProvider } from './productsDataProvider';
 import { productCategoriesDataProvider } from './productCategoriesDataProvider';
 import { usersDataProvider } from './usersDataProvider';
+import { addressesDataProvider } from './addressesDataProvider';
 
 export default (type: string) => {
   // The fake servers require to generate data, which can take some time.
@@ -51,6 +52,11 @@ export default (type: string) => {
         // Use custom users data provider for users resource
         if (resource === 'users' && usersDataProvider[name.toString()]) {
           return usersDataProvider[name.toString()](resource, params);
+        }
+
+        // Use custom addresses data provider for addresses resource
+        if (resource === 'addresses' && addressesDataProvider[name.toString()]) {
+          return addressesDataProvider[name.toString()](resource, params);
         }
 
         return dataProviderPromise.then((dataProvider) => {

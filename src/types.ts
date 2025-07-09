@@ -17,7 +17,7 @@ export interface ApiOrder {
     customerName: string;
     phoneNumber: string;
     address: string;
-    status: 'pending' | 'delivered' | 'cancelled';
+    status: 'pending' | 'purchased' | 'cancel';
     quantity: number;
     amountLAK: string;
     amountTHB: string;

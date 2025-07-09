@@ -6,9 +6,7 @@ import {
     SearchInput,
     SelectInput,
 } from 'react-admin';
-import green from '@mui/material/colors/green';
-import orange from '@mui/material/colors/orange';
-import red from '@mui/material/colors/red';
+import { green, orange, red } from '@mui/material/colors';
 import { Box } from '@mui/material';
 
 import { Customer } from '../types';

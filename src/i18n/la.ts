@@ -14,37 +14,38 @@ const customLaoMessages: TranslationMessages = {
     },
     dashboard: {
       monthly_revenue: 'ລາຍຮັບ 30 ມື້',
-      month_history: 'ປະຫວັດລາຍຮັບ 30 ມື້',
-      new_orders: 'ການສັ່ງຊື້ຊື້ໃໝ່',
-      pending_reviews: 'ຄໍາຕິຊົມທີ່ລໍຖ້າການກວດສອບ',
-      all_reviews: 'ເບິ່ງຄໍາຕິຊົມທັງໝົດ',
-      new_customers: 'ລູກຄ້າໃໝ່',
-      all_customers: 'ເບິ່ງລູກຄ້າທັງໝົດ',
-      pending_orders: 'ການສັ່ງຊື້ທີ່ລໍຖ້າຈັດການ',
-      order: {
-        items:
-          'ໂດຍ %{customer_name}, ສິນຄ້າ |||| ໂດຍ %{customer_name}, %{nb_items} ສິນຄ້າ',
-      },
-      welcome: {
-        title: 'ຍິນດີຕ້ອນຮັບສູ່ການສະແດງຕົວຢ່າງ e-commerce ຂອງ react-admin',
-        subtitle:
-          'ນີ້ແມ່ນຫຼັກສູດຂອງຮ້ານຂາຍສິນຄ້າຕົວຢ່າງ. ທ່ານສາມາດສຳຫຼວດແລະແກ້ໄຂຂໍ້ມູນໄດ້. ເດີມສະແດງນີ້ເຮັດວຽກຢູ່ໃນບຣາວເຊີຂອງທ່ານ ແລະ ຈະກັບຄືນເປັນຄ່າຕົ້ນສະຕ໋ຣີທຸກຄັ້ງທີ່ທ່ານດຶງໜ້າເວັບໃໝ່.',
-        ra_button: 'ເວັບໄຊ react-admin',
-        demo_button: 'ໂຄດຕົວຢ່າງນີ້',
-      },
     },
-    menu: {
-      sales: 'ການຂາຍ',
-      catalog: 'ພາບລາຍການ',
-      customers: 'ລູກຄ້າ',
+    orders_management: 'ການຈັດການສັ່ງຊື້',
+    month_history: 'ປະຫວັດລາຍຮັບ 30 ມື້',
+    new_orders: 'ການສັ່ງຊື້ຊື້ໃໝ່',
+    pending_reviews: 'ຄໍາຕິຊົມທີ່ລໍຖ້າການກວດສອບ',
+    all_reviews: 'ເບິ່ງຄໍາຕິຊົມທັງໝົດ',
+    new_customers: 'ລູກຄ້າໃໝ່',
+    all_customers: 'ເບິ່ງລູກຄ້າທັງໝົດ',
+    pending_orders: 'ການສັ່ງຊື້ທີ່ລໍຖ້າຈັດການ',
+    order: {
+      items:
+        'ໂດຍ %{customer_name}, ສິນຄ້າ |||| ໂດຍ %{customer_name}, %{nb_items} ສິນຄ້າ',
     },
-    events: {
-      review: {
-        title: 'ຄໍາຕິຊົມໃນ "%{product}"',
-      },
-      order: {
-        title: 'ການສັ່ງຊື້ 1 ສິນຄ້າ |||| ການສັ່ງຊື້ %{smart_count} ສິນຄ້າ',
-      },
+    welcome: {
+      title: 'ຍິນດີຕ້ອນຮັບສູ່ການສະແດງຕົວຢ່າງ e-commerce ຂອງ react-admin',
+      subtitle:
+        'ນີ້ແມ່ນຫຼັກສູດຂອງຮ້ານຂາຍສິນຄ້າຕົວຢ່າງ. ທ່ານສາມາດສຳຫຼວດແລະແກ້ໄຂຂໍ້ມູນໄດ້. ເດີມສະແດງນີ້ເຮັດວຽກຢູ່ໃນບຣາວເຊີຂອງທ່ານ ແລະ ຈະກັບຄືນເປັນຄ່າຕົ້ນສະຕ໋ຣີທຸກຄັ້ງທີ່ທ່ານດຶງໜ້າເວັບໃໝ່.',
+      ra_button: 'ເວັບໄຊ react-admin',
+      demo_button: 'ໂຄດຕົວຢ່າງນີ້',
+    },
+  },
+  menu: {
+    sales: 'ການຂາຍ',
+    catalog: 'ພາບລາຍການ',
+    customers: 'ລູກຄ້າ',
+  },
+  events: {
+    review: {
+      title: 'ຄໍາຕິຊົມໃນ "%{product}"',
+    },
+    order: {
+      title: 'ການສັ່ງຊື້ 1 ສິນຄ້າ |||| ການສັ່ງຊື້ %{smart_count} ສິນຄ້າ',
     },
   },
   resources: {
@@ -55,7 +56,7 @@ const customLaoMessages: TranslationMessages = {
       name: 'ບົດຄວາມ |||| ບົດຄວາມ',
     },
     users: {
-        name: 'ຜູ້ຈັດການ |||| ຜູ້ຈັດການ',
+      name: 'ຜູ້ຈັດການ |||| ຜູ້ຈັດການ',
     },
     customers: {
       name: 'ລູກຄ້າ |||| ລູກຄ້າ',

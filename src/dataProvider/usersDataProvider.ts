@@ -16,6 +16,27 @@ export interface User {
   updated: string;
 }
 
+const CLOUDINARY_UPLOAD_PRESET = 'images';
+const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/db84fdke0/upload';
+
+const uploadImageToCloudinary = async (file: File): Promise<string> => {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+  const response = await fetch(CLOUDINARY_URL, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to upload image to Cloudinary');
+  }
+
+  const data = await response.json();
+  return data.secure_url;
+};
+
 export const usersDataProvider: Partial<DataProvider> = {
   getList: async (resource, params) => {
     const { page, perPage } = params.pagination || { page: 1, perPage: 10 };
@@ -75,7 +96,23 @@ export const usersDataProvider: Partial<DataProvider> = {
 
   create: async (resource, params) => {
     try {
-      const record = await pb.collection('users').create(params.data);
+      const { password, passwordConfirm, avatar, ...rest } = params.data;
+      let avatarUrl = '';
+
+      if (avatar && avatar.rawFile) {
+        avatarUrl = await uploadImageToCloudinary(avatar.rawFile);
+      }
+
+      const dataToCreate = {
+        ...rest,
+        emailVisibility: true,
+        password,
+        passwordConfirm,
+        avatar: avatarUrl,
+      };
+
+      const record = await pb.collection('users').create(dataToCreate);
+      await pb.collection('users').requestVerification(rest.email);
       return { data: record as any };
     } catch (error) {
       console.error('Error creating user:', error);
@@ -85,8 +122,56 @@ export const usersDataProvider: Partial<DataProvider> = {
 
   update: async (resource, params) => {
     try {
-      const record = await pb.collection('users').update(params.id, params.data);
-      return { data: record as any };
+      const { id, data } = params;
+      const { password, oldPassword, passwordConfirm, avatar, email, ...rest } = data;
+
+      // Fetch current user data to compare email
+      const currentUser = await pb.collection('users').getOne(id);
+
+      // Handle password change separately
+      if (password) {
+        if (!oldPassword) {
+          throw new Error('Old password is required to change the password.');
+        }
+        await pb.collection('users').update(id, {
+          password,
+          passwordConfirm,
+          oldPassword,
+        });
+      }
+
+      // Handle email change separately if it's different
+      if (email !== currentUser.email) {
+        await pb.collection('users').update(id, { email });
+      }
+
+      const formData = new FormData();
+      // Append other fields to formData
+      for (const key in rest) {
+        if (Object.prototype.hasOwnProperty.call(rest, key)) {
+          formData.append(key, rest[key]);
+        }
+      }
+      formData.append('emailVisibility', 'true');
+
+      // Handle avatar update
+      if (avatar && avatar.rawFile) {
+        // New avatar selected
+        const avatarUrl = await uploadImageToCloudinary(avatar.rawFile);
+        formData.append('avatar', avatarUrl);
+      } else if (avatar === null) {
+        // Avatar cleared
+        formData.append('avatar', ''); // Send empty string to clear the file in PocketBase
+      } else if (typeof avatar === 'string' && avatar !== currentUser.avatar) {
+        // Existing avatar URL changed (e.g., user typed a new URL)
+        formData.append('avatar', avatar);
+      }
+      // If avatar is a string (existing URL) and not changed, do not append it to formData
+      // PocketBase will retain the existing avatar if no new file is provided.
+
+      const updatedRecord = await pb.collection('users').update(id, formData);
+
+      return { data: { ...updatedRecord, id } as any };
     } catch (error) {
       console.error('Error updating user:', error);
       throw error;

@@ -1,56 +1,45 @@
 import { Box, Card, CardContent, Grid, Typography } from '@mui/material';
-import { useRecordContext } from 'react-admin';
+import { useEffect } from 'react';
 import {
-  BooleanInput,
   DateField,
   Edit,
   email,
+  ImageField,
+  ImageInput,
   PasswordInput,
   required,
   SimpleForm,
   TextField,
   TextInput,
-  useNotify,
+  useRecordContext,
+  useRefresh,
 } from 'react-admin';
+import { useLocation } from 'react-router';
+import { useImageStore } from '../store/imageStore';
 
 const UserEdit = () => {
-  const notify = useNotify();
+  const { selectImage, setSelectImage } = useImageStore(); // Use the store
+  const refresh = useRefresh();
 
-  const validateForm = (values: any) => {
-    const errors: any = {};
-    if (!values.username) {
-      errors.username = 'Username is required';
-    }
-    if (!values.email) {
-      errors.email = 'Email is required';
-    }
-    if (!values.full_name) {
-      errors.full_name = 'Full name is required';
-    }
-    if (values.password && values.password.length < 6) {
-      errors.password = 'Password must be at least 6 characters long';
-    }
-    if (values.passwordConfirm && values.password !== values.passwordConfirm) {
-      errors.passwordConfirm = 'Passwords do not match';
-    }
-    return errors;
-  };
+  // Clear selectImage when route changes
+  const location = useLocation();
+  useEffect(() => {
+    setSelectImage(null);
+    refresh();
+  }, [location.pathname, setSelectImage]);
+
+  console.log('=> selectImage', selectImage);
 
   return (
-    <Edit
-      title='Edit User'
-      mutationOptions={{
-        onSuccess: () => {
-          notify('User updated successfully', { type: 'success' });
-        },
-        onError: (error: any) => {
-          notify(`Error updating user: ${error.message}`, { type: 'error' });
-        },
-      }}
-    >
-      <SimpleForm validate={validateForm}>
+    <Edit title='Edit User'>
+      <SimpleForm>
         <Grid container spacing={3}>
-          <Grid size={{ xs: 12, md: 8 }}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 8,
+            }}
+          >
             <Card>
               <CardContent>
                 <Typography variant='h6' gutterBottom>
@@ -85,7 +74,23 @@ const UserEdit = () => {
                     label='Phone Number'
                   />
 
-                  <TextInput source='avatar' fullWidth label='Avatar URL' />
+                  <ImageInput
+                    source='avatar'
+                    label='Avatar'
+                    onChange={(e) => {
+                      setSelectImage(e);
+                    }}
+                  >
+                    <ImageField source='src' title='title' />
+                  </ImageInput>
+
+                  <ImageField
+                    source='avatar'
+                    label='Current Image'
+                    sx={{
+                      display: selectImage !== null ? 'none' : 'block',
+                    }}
+                  />
                 </Box>
 
                 <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>
@@ -93,9 +98,15 @@ const UserEdit = () => {
                 </Typography>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   <PasswordInput
+                    source='oldPassword'
+                    fullWidth
+                    label='Old Password'
+                    helperText='Required to change the password'
+                  />
+                  <PasswordInput
                     source='password'
                     fullWidth
-                    helperText='Leave empty to keep current password. Must be at least 6 characters long.'
+                    helperText='Leave empty to keep current password. Must be at least 8 characters long.'
                   />
 
                   <PasswordInput
@@ -105,18 +116,16 @@ const UserEdit = () => {
                     helperText='Must match the password above'
                   />
                 </Box>
-
-                {/* <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>
-                  Account Settings
-                </Typography>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                  <BooleanInput source='verified' label='Verified' />
-                </Box> */}
               </CardContent>
             </Card>
           </Grid>
 
-          <Grid size={{ xs: 12, md: 4 }}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 4,
+            }}
+          >
             <Card>
               <CardContent>
                 <Typography variant='h6' gutterBottom>
