@@ -15,6 +15,7 @@ import {
 } from 'react-admin';
 import { useImageStore } from '../store/imageStore';
 import { useLocation } from 'react-router';
+import { uploadImageToCloudinary } from '../utils/cloudinaryUpload';
 
 const RichTextInput = lazy(() =>
   import('ra-input-rich-text').then((m) => ({ default: m.RichTextInput }))
@@ -62,9 +63,7 @@ export const BlogEdit = () => {
               input.onchange = async () => {
                 if (input.files && input.files[0]) {
                   try {
-                    const { uploadImageToCloudinary } = await import(
-                      '../utils/cloudinaryUpload'
-                    );
+                    
                     const url = await uploadImageToCloudinary(input.files[0]);
                     // Copy image URL to clipboard
                     await navigator.clipboard.writeText(url);
