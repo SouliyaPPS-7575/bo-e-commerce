@@ -16,6 +16,9 @@ export const softDarkTheme = {
     },
     mode: 'dark' as 'dark', // Switching the dark mode on is a single property value change.
   },
+  typography: {
+    fontFamily: '"Noto Sans Lao", "Canela Trial", sans-serif',
+  },
   sidebar: {
     width: 200,
   },
@@ -63,6 +66,9 @@ export const softLightTheme = {
       default: '#fcfcfe',
     },
     mode: 'light' as 'light',
+  },
+  typography: {
+    fontFamily: '"Noto Sans Lao", "Canela Trial", sans-serif',
   },
   shape: {
     borderRadius: 10,

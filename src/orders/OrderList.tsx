@@ -24,23 +24,15 @@ import {
   TableRow,
   Tabs,
   Theme,
-  ToggleButton,
-  ToggleButtonGroup,
   Typography,
   useMediaQuery,
 } from '@mui/material';
 import * as React from 'react';
-import {
-  createContext,
-  Fragment,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
-import { DateField, Loading } from 'react-admin';
+import { Fragment, useCallback, useEffect, useState } from 'react';
+import { DateField, Loading, useTranslate } from 'react-admin';
 
 import pb from '../api/pocketbase';
+import { useCurrencyContext } from '../components/CurrencySelector/CurrencyProvider'; // Import useCurrencyContext
 import {
   PBAddress,
   PBCustomer,
@@ -48,60 +40,34 @@ import {
   PBOrderItem,
   PBProduct,
 } from '../model/OrderList';
-import { Currency } from '../types';
 
-const CurrencyContext = createContext<{
-  currency: Currency;
-  setCurrency: (currency: Currency) => void;
-}>({ currency: 'USD', setCurrency: () => {} });
-
-export const useCurrency = () => useContext(CurrencyContext);
-
-const OrderList = () => {
-  const [currency, setCurrency] = useState<Currency>('USD');
+export const OrderList = () => {
+  const translate = useTranslate();
+  const { currency } = useCurrencyContext(); // Use currency from context
 
   return (
-    <CurrencyContext.Provider value={{ currency, setCurrency }}>
-      <Box sx={{ p: 2 }}>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            mb: 2,
-          }}
-        >
-          <Typography variant='h5' component='h5'>
-            Orders Management
-          </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Typography variant='body2'>Currency:</Typography>
-            <ToggleButtonGroup
-              value={currency}
-              exclusive
-              onChange={(event, newCurrency) => {
-                if (newCurrency !== null) {
-                  setCurrency(newCurrency);
-                }
-              }}
-              size='small'
-            >
-              <ToggleButton value='USD'>USD</ToggleButton>
-              <ToggleButton value='LAK'>LAK</ToggleButton>
-              <ToggleButton value='THB'>THB</ToggleButton>
-            </ToggleButtonGroup>
-          </Box>
-        </Box>
-        <TabbedDatagrid />
+    <Box sx={{ p: 2 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 2,
+        }}
+      >
+        <Typography variant='h5' component='h5'>
+          {translate('pos.orders_management')}
+        </Typography>
       </Box>
-    </CurrencyContext.Provider>
+      <TabbedDatagrid />
+    </Box>
   );
 };
 
 const tabs = [
   { id: 'pending', name: 'pending' },
-  { id: 'delivered', name: 'delivered' },
-  { id: 'cancelled', name: 'cancelled' },
+  { id: 'purchased', name: 'purchased' },
+  { id: 'cancel', name: 'cancel' },
 ];
 
 const TabbedDatagrid = () => {
@@ -184,7 +150,7 @@ const OrderDetail: React.FC<{ order: PBOrder }> = ({ order }) => {
   const [products, setProducts] = useState<{ [key: string]: PBProduct }>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { currency } = useCurrency();
+  const { currency } = useCurrencyContext();
 
   const fetchOrderDetails = async () => {
     if (!open || orderItems.length > 0) return;
@@ -319,7 +285,7 @@ const OrderDetail: React.FC<{ order: PBOrder }> = ({ order }) => {
             color={
               order.status === 'pending'
                 ? 'warning'
-                : order.status === 'delivered'
+                : order.status === 'purchased'
                 ? 'success'
                 : 'error'
             }
@@ -582,6 +548,19 @@ const OrdersTable = React.memo(({ status }: { status: string }) => {
 
   if (loading) return <Loading />;
   if (error) return <Alert severity='error'>{error}</Alert>;
+
+  const formatCurrency = (amount: number, currencyType: string) => {
+    switch (currencyType) {
+      case 'LAK':
+        return `₭${amount.toLocaleString()}`;
+      case 'USD':
+        return `${amount.toFixed(2)}`;
+      case 'THB':
+        return `฿${amount.toFixed(2)}`;
+      default:
+        return amount.toString();
+    }
+  };
 
   return (
     <TableContainer component={Paper}>

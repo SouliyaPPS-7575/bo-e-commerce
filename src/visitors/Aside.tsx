@@ -73,134 +73,121 @@ const EventList = () => {
     const events = mixOrdersAndReviews(orders, reviews);
 
     return (
-        <Box
-            sx={{
-                ml: 2,
-            }}
-        >
-            <Card>
-                <CardContent>
-                    <Typography variant="h6" gutterBottom>
-                        {translate('resources.customers.fieldGroups.history')}
-                    </Typography>
-                    <Grid container rowSpacing={1} columnSpacing={1}>
-                        <Grid
-                            size={{ xs: 6 }}
-                            sx={{
-                                display: 'flex',
-                                gap: 1,
-                            }}
-                        >
-                            <AccessTimeIcon fontSize="small" color="disabled" />
-                            <Box
-                                sx={{
-                                    flexGrow: 1,
-                                }}
-                            >
-                                <Typography variant="body2">
-                                    {translate(
-                                        'resources.customers.fields.first_seen'
-                                    )}
-                                </Typography>
-                                <DateField
-                                    record={record}
-                                    source="first_seen"
-                                />
-                            </Box>
-                        </Grid>
-                        <Grid
-                            size={{ xs: 6 }}
-                            sx={{
-                                display: 'flex',
-                                gap: 1,
-                            }}
-                        >
-                            {totalOrders! > 0 && record && (
-                                <>
-                                    <order.icon
-                                        fontSize="small"
-                                        color="disabled"
-                                    />
-                                    <Link
-                                        variant="body2"
-                                        flexGrow={1}
-                                        to={{
-                                            pathname: '/orders',
-                                            search: queryString.stringify({
-                                                displayedFilters: { customer_id: true },
-                                                filter: {
-                                                    customer_id: record.id,
-                                                    status: 'delivered',
-                                                },
-                                            }),
-                                        }}
-                                    >
-                                        {translate('resources.orders.amount', {
-                                            smart_count: totalOrders,
-                                        })}
-                                    </Link>
-                                </>
-                            )}
-                        </Grid>
-                        <Grid
-                            size={{ xs: 6 }}
-                            sx={{
-                                display: 'flex',
-                                gap: 1,
-                            }}
-                        >
-                            <AccessTimeIcon fontSize="small" color="disabled" />
-                            <Box
-                                sx={{
-                                    flexGrow: 1,
-                                }}
-                            >
-                                <Typography variant="body2">
-                                    {translate(
-                                        'resources.customers.fields.last_seen'
-                                    )}
-                                </Typography>
-                                <DateField record={record} source="last_seen" />
-                            </Box>
-                        </Grid>
-                        <Grid
-                            size={{ xs: 6 }}
-                            sx={{
-                                display: 'flex',
-                                gap: 1,
-                            }}
-                        >
-                            {totalReviews! > 0 && record && (
-                                <>
-                                    <review.icon
-                                        fontSize="small"
-                                        color="disabled"
-                                    />
-                                    <Link
-                                        variant="body2"
-                                        flexGrow={1}
-                                        to={{
-                                            pathname: '/reviews',
-                                            search: queryString.stringify({
-                                                displayedFilters: { customer_id: true },
-                                                filter: {
-                                                    customer_id: record.id,
-                                                },
-                                            }),
-                                        }}
-                                    >
-                                        {translate('resources.reviews.amount', {
-                                            smart_count: totalReviews,
-                                        })}
-                                    </Link>
-                                </>
-                            )}
-                        </Grid>
-                    </Grid>
-                </CardContent>
-            </Card>
-            {events && <Timeline events={events} />}
-        </Box>
+      <Box
+        sx={{
+          ml: 2,
+        }}
+      >
+        <Card>
+          <CardContent>
+            <Typography variant='h6' gutterBottom>
+              {translate('resources.customers.fieldGroups.history')}
+            </Typography>
+            <Grid container rowSpacing={1} columnSpacing={1}>
+              <Grid
+                size={{ xs: 6 }}
+                sx={{
+                  display: 'flex',
+                  gap: 1,
+                }}
+              >
+                <AccessTimeIcon fontSize='small' color='disabled' />
+                <Box
+                  sx={{
+                    flexGrow: 1,
+                  }}
+                >
+                  <Typography variant='body2'>
+                    {translate('resources.customers.fields.first_seen')}
+                  </Typography>
+                  <DateField record={record} source='first_seen' />
+                </Box>
+              </Grid>
+              <Grid
+                size={{ xs: 6 }}
+                sx={{
+                  display: 'flex',
+                  gap: 1,
+                }}
+              >
+                {totalOrders! > 0 && record && (
+                  <>
+                    <order.icon fontSize='small' color='disabled' />
+                    <Link
+                      variant='body2'
+                      flexGrow={1}
+                      to={{
+                        pathname: '/orders',
+                        search: queryString.stringify({
+                          displayedFilters: { customer_id: true },
+                          filter: {
+                            customer_id: record.id,
+                            status: 'purchased',
+                          },
+                        }),
+                      }}
+                    >
+                      {translate('resources.orders.amount', {
+                        smart_count: totalOrders,
+                      })}
+                    </Link>
+                  </>
+                )}
+              </Grid>
+              <Grid
+                size={{ xs: 6 }}
+                sx={{
+                  display: 'flex',
+                  gap: 1,
+                }}
+              >
+                <AccessTimeIcon fontSize='small' color='disabled' />
+                <Box
+                  sx={{
+                    flexGrow: 1,
+                  }}
+                >
+                  <Typography variant='body2'>
+                    {translate('resources.customers.fields.last_seen')}
+                  </Typography>
+                  <DateField record={record} source='last_seen' />
+                </Box>
+              </Grid>
+              <Grid
+                size={{ xs: 6 }}
+                sx={{
+                  display: 'flex',
+                  gap: 1,
+                }}
+              >
+                {totalReviews! > 0 && record && (
+                  <>
+                    <review.icon fontSize='small' color='disabled' />
+                    <Link
+                      variant='body2'
+                      flexGrow={1}
+                      to={{
+                        pathname: '/reviews',
+                        search: queryString.stringify({
+                          displayedFilters: { customer_id: true },
+                          filter: {
+                            customer_id: record.id,
+                          },
+                        }),
+                      }}
+                    >
+                      {translate('resources.reviews.amount', {
+                        smart_count: totalReviews,
+                      })}
+                    </Link>
+                  </>
+                )}
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
+        {events && <Timeline events={events} />}
+      </Box>
     );
 };
 

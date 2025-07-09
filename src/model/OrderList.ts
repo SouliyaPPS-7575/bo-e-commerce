@@ -7,9 +7,12 @@ export interface PBOrder {
      phone_number: string;
      address_id: string;
      address: string;
-     status: 'pending' | 'delivered' | 'cancelled';
+     status: 'pending' | 'purchased' | 'cancel';
      reference_id: string;
      remark: string;
+     total_lak: number;
+     total_usd: number;
+     total_thb: number;
      created: string;
      updated: string;
 }
