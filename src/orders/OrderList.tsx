@@ -8,6 +8,7 @@ import {
 import {
   Alert,
   Box,
+  Button,
   Card,
   CardContent,
   Chip,
@@ -23,6 +24,7 @@ import {
   TableHead,
   TableRow,
   Tabs,
+  TextField,
   Theme,
   Typography,
   useMediaQuery,
@@ -30,6 +32,7 @@ import {
 import * as React from 'react';
 import { Fragment, useCallback, useEffect, useState } from 'react';
 import { DateField, Loading, useTranslate } from 'react-admin';
+import * as XLSX from 'xlsx';
 
 import pb from '../api/pocketbase';
 import { useCurrencyContext } from '../components/CurrencySelector/CurrencyProvider'; // Import useCurrencyContext
@@ -40,6 +43,31 @@ import {
   PBOrderItem,
   PBProduct,
 } from '../model/OrderList';
+
+const OrderListFilter = ({
+  setSearchTerm,
+}: {
+  setSearchTerm: (value: string) => void;
+}) => {
+  const [searchTerm, setSearchTermState] = useState('');
+
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTermState(event.target.value);
+    setSearchTerm(event.target.value);
+  };
+
+  return (
+    <Box sx={{ p: 2, display: 'flex', alignItems: 'center', mb: -1, mt: -2 }}>
+      <TextField
+        label='Search'
+        variant='outlined'
+        onChange={handleSearch}
+        value={searchTerm}
+        fullWidth
+      />
+    </Box>
+  );
+};
 
 export const OrderList = () => {
   const translate = useTranslate();
@@ -69,9 +97,22 @@ const tabs = [
   { id: 'cancel', name: 'cancel' },
 ];
 
+interface OrderDetailsCache {
+    [key: string]: {
+        orderItems: PBOrderItem[];
+        customer: PBCustomer | null;
+        address: PBAddress | null;
+        products: { [key: string]: PBProduct };
+        provinceName: string | null;
+        districtName: string | null;
+    }
+}
+
 const TabbedDatagrid = () => {
   const [activeTab, setActiveTab] = useState<string>('pending');
   const [orderCounts, setOrderCounts] = useState<{ [key: string]: number }>({});
+  const [searchTerm, setSearchTerm] = useState('');
+  const { currency } = useCurrencyContext();
   const isXSmall = useMediaQuery<Theme>((theme) =>
     theme.breakpoints.down('sm')
   );
@@ -112,8 +153,86 @@ const TabbedDatagrid = () => {
     [isXSmall]
   );
 
+  const downloadExcel = async () => {
+    try {
+      let filter = `status = "${activeTab}"`;
+      if (searchTerm) {
+        const searchFilter = `(reference_id ~ "${searchTerm}" || customer_name ~ "${searchTerm}" || phone_number ~ "${searchTerm}" || address ~ "${searchTerm}")`;
+        filter += ` && ${searchFilter}`;
+      }
+
+      const records = await pb.collection('orders').getFullList({
+        filter: filter,
+        sort: '-created',
+      });
+
+      const data = await Promise.all(
+        records.map(async (order: any) => {
+          const itemsResponse = await pb
+            .collection('order_items')
+            .getList(1, 50, {
+              filter: `order_id = "${order.id}"`,
+            });
+          const orderItems = itemsResponse.items as unknown as PBOrderItem[];
+
+          const totals = orderItems.reduce(
+            (totals, item) => {
+              return {
+                lak: totals.lak + item.quantity * item.price_lak,
+                usd: totals.usd + item.quantity * item.price_usd,
+                thb: totals.thb + item.quantity * item.price_thb,
+              };
+            },
+            { lak: 0, usd: 0, thb: 0 }
+          );
+
+          let total = 0;
+          switch (currency) {
+            case 'LAK':
+              total = totals.lak;
+              break;
+            case 'USD':
+              total = totals.usd;
+              break;
+            case 'THB':
+              total = totals.thb;
+              break;
+          }
+
+          return {
+            Date: new Date(order.created).toLocaleString(),
+            Reference: order.reference_id,
+            Customer: order.customer_name,
+            Phone: order.phone_number,
+            Address: order.address,
+            Status: order.status,
+            Total: total,
+            Currency: currency,
+          };
+        })
+      );
+
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Orders');
+      XLSX.writeFile(wb, `orders_${activeTab}.xlsx`);
+    } catch (error) {
+      console.error('Error downloading Excel:', error);
+    }
+  };
+
   return (
     <Fragment>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <OrderListFilter setSearchTerm={setSearchTerm} />
+        <Button
+          variant='contained'
+          onClick={downloadExcel}
+          sx={{ m: 2, ml: 'auto', height: '50px' }}
+        >
+          Export
+        </Button>
+      </Box>
       <Tabs
         variant='scrollable'
         scrollButtons='auto'
@@ -135,122 +254,19 @@ const TabbedDatagrid = () => {
       </Tabs>
       <Divider />
       <br />
-      <OrdersTable status={activeTab} />
+      <OrdersTable status={activeTab} searchTerm={searchTerm} />
     </Fragment>
   );
 };
 
 // Order Detail Component
-const OrderDetail: React.FC<{ order: PBOrder }> = ({ order }) => {
-  const [open, setOpen] = useState(false);
-  const [orderItems, setOrderItems] = useState<PBOrderItem[]>([]);
-  const [customer, setCustomer] = useState<PBCustomer | null>(null);
-  const [address, setAddress] = useState<PBAddress | null>(null);
-  const [products, setProducts] = useState<{ [key: string]: PBProduct }>({});
-  const [provinceName, setProvinceName] = useState<string | null>(null); // New state
-  const [districtName, setDistrictName] = useState<string | null>(null); // New state
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+const OrderDetail: React.FC<{ order: PBOrder, details: any, onToggle: () => void, open: boolean }> = ({ order, details, onToggle, open }) => {
   const { currency } = useCurrencyContext();
 
-  const fetchOrderDetails = async () => {
-    if (orderItems.length > 0) return;
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      // Fetch order items
-      const itemsResponse = await pb.collection('order_items').getList(1, 50, {
-        filter: `order_id = "${order.id}"`,
-      });
-      setOrderItems(itemsResponse.items as unknown as PBOrderItem[]);
-
-      // Fetch customer details
-      if (order.customer_id) {
-        try {
-          const customerData = await pb
-            .collection('customers')
-            .getOne(order.customer_id);
-          setCustomer(customerData as unknown as PBCustomer);
-        } catch (err) {
-          console.warn('Failed to fetch customer:', err);
-        }
-      }
-
-      // Fetch address details
-      if (order.address_id) {
-        try {
-          const addressData = await pb
-            .collection('addresses')
-            .getOne(order.address_id);
-          setAddress(addressData as unknown as PBAddress);
-
-          // Fetch province name
-          if (addressData.province_id) {
-            try {
-              const provinceData = await pb
-                .collection('provinces')
-                .getOne(addressData.province_id);
-              setProvinceName(provinceData.name);
-            } catch (err) {
-              console.warn('Failed to fetch province:', err);
-            }
-          }
-
-          // Fetch district name
-          if (addressData.district_id) {
-            try {
-              const districtData = await pb
-                .collection('districts')
-                .getOne(addressData.district_id);
-              setDistrictName(districtData.name);
-            } catch (err) {
-              console.warn('Failed to fetch district:', err);
-            }
-          }
-        } catch (err) {
-          console.warn('Failed to fetch address:', err);
-        }
-      }
-
-      // Fetch product details for each order item
-      const productIds = itemsResponse.items.map((item) => item.product_id);
-      const uniqueProductIds = Array.from(new Set(productIds));
-
-      const productPromises = uniqueProductIds.map(async (productId) => {
-        try {
-          const productData = await pb.collection('products').getOne(productId);
-          return { id: productId, data: productData as unknown as PBProduct };
-        } catch (err) {
-          console.warn(`Failed to fetch product ${productId}:`, err);
-          return null;
-        }
-      });
-
-      const productResults = await Promise.all(productPromises);
-      const productsMap: { [key: string]: PBProduct } = {};
-      productResults.forEach((result) => {
-        if (result) {
-          productsMap[result.id] = result.data;
-        }
-      });
-      setProducts(productsMap);
-    } catch (err) {
-      console.error('Error fetching order details:', err);
-      setError('Failed to load order details');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchOrderDetails();
-  }, [order.id]);
-
   const calculateTotals = () => {
-    return orderItems.reduce(
-      (totals, item) => {
+    if (!details || !details.orderItems) return { lak: 0, usd: 0, thb: 0 };
+    return details.orderItems.reduce(
+      (totals:any, item:any) => {
         return {
           lak: totals.lak + item.quantity * item.price_lak,
           usd: totals.usd + item.quantity * item.price_usd,
@@ -294,7 +310,7 @@ const OrderDetail: React.FC<{ order: PBOrder }> = ({ order }) => {
       <TableRow>
         <TableCell>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <IconButton onClick={() => setOpen(!open)} size='small'>
+            <IconButton onClick={onToggle} size='small'>
               {open ? <ExpandLess /> : <ExpandMore />}
             </IconButton>
             <DateField source='created' record={order} showTime />
@@ -323,9 +339,7 @@ const OrderDetail: React.FC<{ order: PBOrder }> = ({ order }) => {
         <TableCell colSpan={7} sx={{ paddingBottom: 0, paddingTop: 0 }}>
           <Collapse in={open} timeout='auto' unmountOnExit>
             <Box sx={{ margin: 2 }}>
-              {loading && <Loading />}
-              {error && <Alert severity='error'>{error}</Alert>}
-              {!loading && !error && (
+              {!details || !details.customer ? <Loading /> : (
                 <Box
                   sx={{
                     display: 'flex',
@@ -357,7 +371,7 @@ const OrderDetail: React.FC<{ order: PBOrder }> = ({ order }) => {
                             <strong>Remark:</strong> {order.remark}
                           </Typography>
                         )}
-                        {customer && (
+                        {details.customer && (
                           <Box sx={{ mt: 2 }}>
                             <Typography variant='subtitle2' gutterBottom>
                               <Person sx={{ mr: 1, verticalAlign: 'middle' }} />
@@ -365,21 +379,21 @@ const OrderDetail: React.FC<{ order: PBOrder }> = ({ order }) => {
                             </Typography>
                             <Typography variant='body2' color='text.secondary'>
                               <strong>Name:</strong>{' '}
-                              {customer.name || customer.username}
+                              {details.customer.name || details.customer.username}
                             </Typography>
                             <Typography variant='body2' color='text.secondary'>
-                              <strong>Email:</strong> {customer.email}
+                              <strong>Email:</strong> {details.customer.email}
                             </Typography>
                             <Typography variant='body2' color='text.secondary'>
-                              <strong>Phone:</strong> {customer.phone_number}
+                              <strong>Phone:</strong> {details.customer.phone_number}
                             </Typography>
                             <Typography variant='body2' color='text.secondary'>
                               <strong>Verified:</strong>{' '}
-                              {customer.verified ? 'Yes' : 'No'}
+                              {details.customer.verified ? 'Yes' : 'No'}
                             </Typography>
                           </Box>
                         )}
-                        {address && (
+                        {details.address && (
                           <Box sx={{ mt: 2 }}>
                             <Typography variant='subtitle2' gutterBottom>
                               <LocationOn
@@ -388,18 +402,18 @@ const OrderDetail: React.FC<{ order: PBOrder }> = ({ order }) => {
                               Shipping Address
                             </Typography>
                             <Typography variant='body2' color='text.secondary'>
-                              <strong>Name:</strong> {address.shipping_name}
+                              <strong>Name:</strong> {details.address.shipping_name}
                             </Typography>
                             <Typography variant='body2' color='text.secondary'>
-                              <strong>Village:</strong> {address.village}
+                              <strong>Village:</strong> {details.address.village}
                             </Typography>
                             <Typography variant='body2' color='text.secondary'>
                               <strong>District:</strong>{' '}
-                              {districtName || address.district_id}
+                              {details.districtName || details.address.district_id}
                             </Typography>
                             <Typography variant='body2' color='text.secondary'>
                               <strong>Province:</strong>{' '}
-                              {provinceName || address.province_id}
+                              {details.provinceName || details.address.province_id}
                             </Typography>
                           </Box>
                         )}
@@ -414,7 +428,7 @@ const OrderDetail: React.FC<{ order: PBOrder }> = ({ order }) => {
                         <Typography variant='h6' gutterBottom>
                           Order Items
                         </Typography>
-                        {orderItems.length > 0 ? (
+                        {details.orderItems.length > 0 ? (
                           <TableContainer>
                             <Table size='small'>
                               <TableHead>
@@ -426,8 +440,8 @@ const OrderDetail: React.FC<{ order: PBOrder }> = ({ order }) => {
                                 </TableRow>
                               </TableHead>
                               <TableBody>
-                                {orderItems.map((item) => {
-                                  const product = products[item.product_id];
+                                {details.orderItems.map((item:any) => {
+                                  const product = details.products[item.product_id];
                                   const getPrice = () => {
                                     switch (currency) {
                                       case 'LAK':
@@ -552,75 +566,171 @@ const OrderDetail: React.FC<{ order: PBOrder }> = ({ order }) => {
 };
 
 // Custom Orders Table with PocketBase integration
-const OrdersTable = React.memo(({ status }: { status: string }) => {
-  const [orders, setOrders] = useState<PBOrder[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+const OrdersTable = React.memo(
+  ({ status, searchTerm }: { status: string; searchTerm: string }) => {
+    const [orders, setOrders] = useState<PBOrder[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [openOrderId, setOpenOrderId] = useState<string | null>(null);
+    const [detailsCache, setDetailsCache] = useState<OrderDetailsCache>({});
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      setLoading(true);
-      setError(null);
+    const fetchOrderDetails = async (orderId: string) => {
+        if (detailsCache[orderId] && detailsCache[orderId].customer) return;
 
-      try {
-        const response = await pb.collection('orders').getList(1, 50, {
-          filter: `status = "${status}"`,
-          sort: '-created',
-        });
-        setOrders(response.items as unknown as PBOrder[]);
-      } catch (err) {
-        console.error('Error fetching orders:', err);
-        setError('Failed to load orders');
-      } finally {
-        setLoading(false);
-      }
+        try {
+            const order = orders.find(o => o.id === orderId);
+            let customer: PBCustomer | null = null;
+            if (order && order.customer_id) {
+                try {
+                    customer = await pb.collection('customers').getOne(order.customer_id) as PBCustomer;
+                } catch (err) {
+                    console.warn('Failed to fetch customer:', err);
+                }
+            }
+
+            let address: PBAddress | null = null;
+            let provinceName: string | null = null;
+            let districtName: string | null = null;
+            if (order && order.address_id) {
+                try {
+                    address = await pb.collection('addresses').getOne(order.address_id) as PBAddress;
+                    if (address.province_id) {
+                        try {
+                            const provinceData = await pb.collection('provinces').getOne(address.province_id);
+                            provinceName = provinceData.name;
+                        } catch (err) {
+                            console.warn('Failed to fetch province:', err);
+                        }
+                    }
+                    if (address.district_id) {
+                        try {
+                            const districtData = await pb.collection('districts').getOne(address.district_id);
+                            districtName = districtData.name;
+                        } catch (err) {
+                            console.warn('Failed to fetch district:', err);
+                        }
+                    }
+                } catch (err) {
+                    console.warn('Failed to fetch address:', err);
+                }
+            }
+
+            const productIds = detailsCache[orderId].orderItems.map((item) => item.product_id);
+            const uniqueProductIds = Array.from(new Set(productIds));
+            const productPromises = uniqueProductIds.map(async (productId) => {
+                try {
+                    const productData = await pb.collection('products').getOne(productId);
+                    return { id: productId, data: productData as unknown as PBProduct };
+                } catch (err) {
+                    console.warn(`Failed to fetch product ${productId}:`, err);
+                    return null;
+                }
+            });
+            const productResults = await Promise.all(productPromises);
+            const products: { [key: string]: PBProduct } = {};
+            productResults.forEach((result) => {
+                if (result) {
+                    products[result.id] = result.data;
+                }
+            });
+
+            setDetailsCache(prev => ({ ...prev, [orderId]: { ...prev[orderId], customer, address, products, provinceName, districtName } }));
+        } catch (err) {
+            console.error('Error fetching order details:', err);
+        }
     };
 
-    fetchOrders();
-  }, [status]);
+    const handleToggle = (orderId: string) => {
+        const newOpenOrderId = openOrderId === orderId ? null : orderId;
+        setOpenOrderId(newOpenOrderId);
+        if (newOpenOrderId) {
+            fetchOrderDetails(newOpenOrderId);
+        }
+    };
 
-  if (loading) return <Loading />;
-  if (error) return <Alert severity='error'>{error}</Alert>;
+    useEffect(() => {
+      const fetchOrders = async () => {
+        setLoading(true);
+        setError(null);
 
-  if (orders.length === 0) {
+        try {
+          let filter = `status = "${status}"`;
+          if (searchTerm) {
+            const searchFilter = `(reference_id ~ "${searchTerm}" || customer_name ~ "${searchTerm}" || phone_number ~ "${searchTerm}" || address ~ "${searchTerm}")`;
+            filter += ` && ${searchFilter}`;
+          }
+
+          const response = await pb.collection('orders').getList(1, 50, {
+            filter: filter,
+            sort: '-created',
+          });
+          const orders = response.items as unknown as PBOrder[];
+          setOrders(orders);
+
+          const newDetailsCache: OrderDetailsCache = {};
+          await Promise.all(orders.map(async (order) => {
+            const itemsResponse = await pb.collection('order_items').getList(1, 50, {
+                filter: `order_id = "${order.id}"`,
+            });
+            const orderItems = itemsResponse.items as unknown as PBOrderItem[];
+            newDetailsCache[order.id] = { orderItems, customer: null, address: null, products: {}, provinceName: null, districtName: null };
+          }));
+          setDetailsCache(newDetailsCache);
+
+        } catch (err) {
+          console.error('Error fetching orders:', err);
+          setError('Failed to load orders');
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchOrders();
+    }, [status, searchTerm]);
+
+    if (loading) return <Loading />;
+    if (error) return <Alert severity='error'>{error}</Alert>;
+
+    if (orders.length === 0) {
+      return (
+        <Box sx={{ p: 2 }}>
+          <Typography variant='body1' color='text.secondary'>
+            No orders found for status: {status}
+          </Typography>
+        </Box>
+      );
+    }
+    if (!Array.isArray(orders)) {
+      return (
+        <Box sx={{ p: 2 }}>
+          <Alert severity='error'>Invalid data format for orders</Alert>
+        </Box>
+      );
+    }
+
     return (
-      <Box sx={{ p: 2 }}>
-        <Typography variant='body1' color='text.secondary'>
-          No orders found for status: {status}
-        </Typography>
-      </Box>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Date</TableCell>
+              <TableCell>Reference</TableCell>
+              <TableCell>Customer</TableCell>
+              <TableCell>Phone</TableCell>
+              <TableCell>Address</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Total</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {orders.map((order) => (
+              <OrderDetail key={order.id} order={order} details={detailsCache[order.id]} onToggle={() => handleToggle(order.id)} open={openOrderId === order.id} />
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     );
   }
-  if (!Array.isArray(orders)) {
-    return (
-      <Box sx={{ p: 2 }}>
-        <Alert severity='error'>Invalid data format for orders</Alert>
-      </Box>
-    );
-  }
-
-  return (
-    <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Date</TableCell>
-            <TableCell>Reference</TableCell>
-            <TableCell>Customer</TableCell>
-            <TableCell>Phone</TableCell>
-            <TableCell>Address</TableCell>
-            <TableCell>Status</TableCell>
-            <TableCell>Total</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {orders.map((order) => (
-            <OrderDetail key={order.id} order={order} />
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  );
-});
+);
 
 export default OrderList;
