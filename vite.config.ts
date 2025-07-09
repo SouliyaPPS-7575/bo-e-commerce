@@ -46,7 +46,7 @@ export default defineConfig(async ({ mode }) => {
     },
     build: {
       sourcemap: true,
-      chunkSizeWarningLimit: 2000,
+      chunkSizeWarningLimit: 5000,
     },
     resolve: {
       preserveSymlinks: true,
