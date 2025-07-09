@@ -12,6 +12,7 @@ import {
     ArrayInput,
     SimpleFormIterator,
 } from 'react-admin';
+import ImageUploadField from '../components/ImageUploadField';
 
 const RichTextInput = React.lazy(() =>
     import('ra-input-rich-text').then(module => ({
@@ -74,12 +75,7 @@ const ProductCreate = () => (
             </ReferenceInput>
             <ArrayInput source="image_url" label="Image URLs">
                 <SimpleFormIterator inline>
-                    <TextInput 
-                        source="" 
-                        label="Image URL" 
-                        fullWidth
-                        helperText="Enter image URL"
-                    />
+                    <ImageUploadField source="" />
                 </SimpleFormIterator>
             </ArrayInput>
             <React.Suspense fallback={<div>Loading...</div>}>
