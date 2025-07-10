@@ -1,5 +1,6 @@
 import {
   Check as CheckIcon,
+  Delete as DeleteIcon,
   Edit as EditIcon,
   Search as SearchIcon,
   Visibility as VisibilityIcon,
@@ -27,6 +28,7 @@ import {
 } from '@mui/material';
 import * as React from 'react';
 import {
+  Confirm,
   CreateButton,
   ExportButton,
   InputProps,
@@ -37,9 +39,11 @@ import {
   TopToolbar,
   useDataProvider,
   useDefaultTitle,
+  useDelete,
   useListContext,
   useNotify,
   useRecordContext,
+  useRefresh,
   useTranslate,
 } from 'react-admin';
 import { useCurrencyContext } from '../components/CurrencySelector/CurrencyProvider';
@@ -227,6 +231,10 @@ const ProductCard = () => {
         >
           {formatCurrency(convert(record.price))} {displayCurrency}
         </Typography>
+
+        <Typography variant='caption' color='textSecondary'>
+          Updated: {new Date(record.updated).toLocaleDateString()}
+        </Typography>
       </CardContent>
       <CardActions sx={{ pt: 0, justifyContent: 'space-between' }}>
         <Box>
@@ -235,6 +243,7 @@ const ProductCard = () => {
             component='a'
             href={`#/products/${record.id}/show`}
             sx={{ color: 'info.main' }}
+            onClick={(e) => e.stopPropagation()}
           >
             <VisibilityIcon fontSize='small' />
           </IconButton>
@@ -243,15 +252,70 @@ const ProductCard = () => {
             component='a'
             href={`#/products/${record.id}`}
             sx={{ color: 'primary.main' }}
+            onClick={(e) => e.stopPropagation()}
           >
             <EditIcon fontSize='small' />
           </IconButton>
         </Box>
-        <Typography variant='caption' color='textSecondary'>
-          {new Date(record.created).toLocaleDateString()}
-        </Typography>
+        <DeleteProductButton record={record} />
       </CardActions>
     </Card>
+  );
+};
+
+const DeleteProductButton = ({ record }: any) => {
+  const [open, setOpen] = React.useState(false);
+  const notify = useNotify();
+  const refresh = useRefresh();
+  const [deleteProduct, { isLoading }] = useDelete();
+
+  const handleClick = (e: any) => {
+    e.stopPropagation();
+    setOpen(true);
+  };
+
+  const handleDialogClose = (e: any) => {
+    e.stopPropagation();
+    setOpen(false);
+  };
+
+  const handleConfirm = (e: any) => {
+    e.stopPropagation();
+    deleteProduct(
+      'products',
+      { id: record.id, previousData: record },
+      {
+        onSuccess: () => {
+          notify('Product deleted');
+          refresh();
+        },
+        onError: () => {
+          notify('Error: Product not deleted', { type: 'warning' });
+        },
+      },
+    );
+    setOpen(false);
+  };
+
+  return (
+    <>
+      <IconButton
+        size='small'
+        onClick={handleClick}
+        disabled={isLoading}
+        sx={{ color: 'error.main' }}
+      >
+        <DeleteIcon fontSize='small' />
+      </IconButton>
+      <Confirm
+        isOpen={open}
+        loading={isLoading}
+        title='Delete Product'
+        content='Are you sure you want to delete this product?'
+        onConfirm={handleConfirm}
+        onClose={handleDialogClose}
+      />
+    </>
   );
 };
 

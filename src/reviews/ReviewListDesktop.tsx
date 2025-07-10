@@ -24,7 +24,11 @@ const ReviewsBulkActionButtons = () => (
     <>
         <BulkAcceptButton />
         <BulkRejectButton />
-        <BulkDeleteButton />
+        <BulkDeleteButton
+            mutationMode="pessimistic"
+            confirmTitle="Delete Reviews"
+            confirmContent="Are you sure you want to delete these reviews?"
+        />
     </>
 );
 

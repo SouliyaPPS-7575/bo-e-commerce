@@ -50,7 +50,13 @@ const ReviewEditToolbar = (props: ToolbarProps) => {
                         }}
                         type="button"
                     />
-                    <DeleteButton record={record} resource={resource} />
+                    <DeleteButton
+                        record={record}
+                        resource={resource}
+                        mutationMode="pessimistic"
+                        confirmTitle="Delete Review"
+                        confirmContent="Are you sure you want to delete this review?"
+                    />
                 </Fragment>
             )}
         </Toolbar>

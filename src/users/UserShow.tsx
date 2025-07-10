@@ -15,7 +15,11 @@ import { Box, Typography, Card, CardContent, Grid, Chip } from '@mui/material';
 const UserShowActions = () => (
     <TopToolbar>
         <EditButton />
-        <DeleteButton />
+        <DeleteButton
+            mutationMode="pessimistic"
+            confirmTitle="Delete User"
+            confirmContent="Are you sure you want to delete this user?"
+        />
     </TopToolbar>
 );
 

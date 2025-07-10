@@ -3,8 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { defineConfig } from 'vite';
 
-// https://vitejs.dev/config/
-export default defineConfig(async ({ mode }) => {
+export default defineConfig(async () => {
   let aliases: Record<string, string> = {};
   if (fs.existsSync(path.resolve(__dirname, '../../packages'))) {
     const packages = fs.readdirSync(path.resolve(__dirname, '../../packages'));
@@ -51,15 +50,6 @@ export default defineConfig(async ({ mode }) => {
     resolve: {
       preserveSymlinks: true,
       alias: [
-        // FIXME: doesn't work with react 19
-        // allow profiling in production
-        // { find: /^react-dom$/, replacement: 'react-dom/profiling' },
-        // {
-        //     find: 'scheduler/tracing',
-        //     replacement: 'scheduler/tracing-profiling',
-        // },
-
-        // we need to manually follow the symlinks for local packages to allow deep HMR
         ...Object.keys(aliases).map((packageName) => ({
           find: packageName,
           replacement: aliases[packageName],
