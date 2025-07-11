@@ -174,7 +174,12 @@ const OrderForm = () => {
               <Spacer />
 
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={12} md={9}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 12,
+                    md: 9
+                  }}>
                   <Typography variant='h6' gutterBottom>
                     {translate('resources.orders.section.items')}
                   </Typography>
@@ -182,7 +187,12 @@ const OrderForm = () => {
                     <Basket />
                   </div>
                 </Grid>
-                <Grid item xs={12} sm={12} md={3}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 12,
+                    md: 3
+                  }}>
                   <Typography variant='h6' gutterBottom>
                     {translate('resources.orders.section.total')}
                   </Typography>
