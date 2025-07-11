@@ -350,233 +350,236 @@ const OrderDetail: React.FC<{ order: PBOrder, details: any, onToggle: () => void
                     flexWrap: 'wrap',
                   }}
                 >
-                  {/* Order Information Section */}
-                  <Box sx={{ width: { xs: '100%', md: '33%' } }}>
-                    <Card>
-                      <CardContent>
-                        <Typography variant='h6' gutterBottom>
-                          <Receipt sx={{ mr: 1, verticalAlign: 'middle' }} />
-                          Order Information
-                        </Typography>
-                        <Typography variant='body2' color='text.secondary'>
-                          <strong>Reference:</strong> {order.reference_id}
-                        </Typography>
-                        <Typography variant='body2' color='text.secondary'>
-                          <strong>Created:</strong>{' '}
-                          {new Date(order.created).toLocaleString()}
-                        </Typography>
-                        <Typography variant='body2' color='text.secondary'>
-                          <strong>Status:</strong> {order.status}
-                        </Typography>
-                        {order.remark && (
-                          <Typography variant='body2' color='text.secondary'>
-                            <strong>Remark:</strong> {order.remark}
+                  {/* Order Information, Items, and Totals Section */}
+                  <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 2, width: '100%' }}>
+                    {/* Order Information Section */}
+                    <Box sx={{ width: { xs: '100%', md: '33%' } }}>
+                      <Card>
+                        <CardContent>
+                          <Typography variant='h6' gutterBottom>
+                            <Receipt sx={{ mr: 1, verticalAlign: 'middle' }} />
+                            Order Information
                           </Typography>
-                        )}
-                        {details.customer && (
-                          <Box sx={{ mt: 2 }}>
-                            <Typography variant='subtitle2' gutterBottom>
-                              <Person sx={{ mr: 1, verticalAlign: 'middle' }} />
-                              Customer Details
-                            </Typography>
-                            <Typography variant='body2' color='text.secondary'>
-                              <strong>Name:</strong>{' '}
-                              {details.customer.name ||
-                                details.customer.username}
-                            </Typography>
-                            <Typography variant='body2' color='text.secondary'>
-                              <strong>Email:</strong> {details.customer.email}
-                            </Typography>
-                            <Typography variant='body2' color='text.secondary'>
-                              <strong>Phone:</strong>{' '}
-                              {details.customer.phone_number}
-                            </Typography>
-                            <Typography variant='body2' color='text.secondary'>
-                              <strong>Verified:</strong>{' '}
-                              {details.customer.verified ? 'Yes' : 'No'}
-                            </Typography>
-                          </Box>
-                        )}
-                        {details.address && (
-                          <Box sx={{ mt: 2 }}>
-                            <Typography variant='subtitle2' gutterBottom>
-                              <LocationOn
-                                sx={{ mr: 1, verticalAlign: 'middle' }}
-                              />
-                              Shipping Address
-                            </Typography>
-                            <Typography variant='body2' color='text.secondary'>
-                              <strong>Name:</strong>{' '}
-                              {details.address.shipping_name}
-                            </Typography>
-                            <Typography variant='body2' color='text.secondary'>
-                              <strong>Village:</strong>{' '}
-                              {details.address.village}
-                            </Typography>
-                            <Typography variant='body2' color='text.secondary'>
-                              <strong>District:</strong>{' '}
-                              {details.districtName ||
-                                details.address.district_id}
-                            </Typography>
-                            <Typography variant='body2' color='text.secondary'>
-                              <strong>Province:</strong>{' '}
-                              {details.provinceName ||
-                                details.address.province_id}
-                            </Typography>
-                          </Box>
-                        )}
-                      </CardContent>
-                    </Card>
-                  </Box>
-
-                  {/* Order Items Section */}
-                  <Box sx={{ width: { xs: '100%', md: '42%' } }}>
-                    <Card>
-                      <CardContent>
-                        <Typography variant='h6' gutterBottom>
-                          Order Items
-                        </Typography>
-                        {details.orderItems.length > 0 ? (
-                          <TableContainer>
-                            <Table size='small'>
-                              <TableHead>
-                                <TableRow>
-                                  <TableCell>Image</TableCell>
-                                  <TableCell>Product</TableCell>
-                                  <TableCell align='right'>Qty</TableCell>
-                                  <TableCell align='right'>Price</TableCell>
-                                  <TableCell align='right'>Total</TableCell>
-                                </TableRow>
-                              </TableHead>
-                              <TableBody>
-                                {details.orderItems.map((item: any) => {
-                                  const product =
-                                    details.products[item.product_id];
-                                  const getPrice = () => {
-                                    switch (currency) {
-                                      case 'LAK':
-                                        return item.price_lak;
-                                      case 'USD':
-                                        return item.price_usd;
-                                      case 'THB':
-                                        return item.price_thb;
-                                      default:
-                                        return item.price_usd;
-                                    }
-                                  };
-                                  const price = getPrice();
-                                  const total = price * item.quantity;
-
-                                  return (
-                                    <TableRow key={item.id}>
-                                      <TableCell>
-                                        {product?.image_url && (
-                                          <img
-                                            src={product.image_url}
-                                            alt={product.name}
-                                            style={{
-                                              width: 50,
-                                              height: 50,
-                                              objectFit: 'cover',
-                                            }}
-                                          />
-                                        )}
-                                      </TableCell>
-                                      <TableCell>
-                                        {product?.name || item.product_name}
-                                      </TableCell>
-                                      <TableCell align='right'>
-                                        {item.quantity}
-                                      </TableCell>
-                                      <TableCell align='right'>
-                                        {formatCurrency(price, currency)}
-                                      </TableCell>
-                                      <TableCell align='right'>
-                                        {formatCurrency(total, currency)}
-                                      </TableCell>
-                                    </TableRow>
-                                  );
-                                })}
-                              </TableBody>
-                            </Table>
-                          </TableContainer>
-                        ) : (
                           <Typography variant='body2' color='text.secondary'>
-                            No items found
+                            <strong>Reference:</strong> {order.reference_id}
                           </Typography>
-                        )}
-                      </CardContent>
-                    </Card>
-                  </Box>
+                          <Typography variant='body2' color='text.secondary'>
+                            <strong>Created:</strong>{' '}
+                            {new Date(order.created).toLocaleString()}
+                          </Typography>
+                          <Typography variant='body2' color='text.secondary'>
+                            <strong>Status:</strong> {order.status}
+                          </Typography>
+                          {order.remark && (
+                            <Typography variant='body2' color='text.secondary'>
+                              <strong>Remark:</strong> {order.remark}
+                            </Typography>
+                          )}
+                          {details.customer && (
+                            <Box sx={{ mt: 2 }}>
+                              <Typography variant='subtitle2' gutterBottom>
+                                <Person sx={{ mr: 1, verticalAlign: 'middle' }} />
+                                Customer Details
+                              </Typography>
+                              <Typography variant='body2' color='text.secondary'>
+                                <strong>Name:</strong>{' '}
+                                {details.customer.name ||
+                                  details.customer.username}
+                              </Typography>
+                              <Typography variant='body2' color='text.secondary'>
+                                <strong>Email:</strong> {details.customer.email}
+                              </Typography>
+                              <Typography variant='body2' color='text.secondary'>
+                                <strong>Phone:</strong>{' '}
+                                {details.customer.phone_number}
+                              </Typography>
+                              <Typography variant='body2' color='text.secondary'>
+                                <strong>Verified:</strong>{' '}
+                                {details.customer.verified ? 'Yes' : 'No'}
+                              </Typography>
+                            </Box>
+                          )}
+                          {details.address && (
+                            <Box sx={{ mt: 2 }}>
+                              <Typography variant='subtitle2' gutterBottom>
+                                <LocationOn
+                                  sx={{ mr: 1, verticalAlign: 'middle' }}
+                                />
+                                Shipping Address
+                              </Typography>
+                              <Typography variant='body2' color='text.secondary'>
+                                <strong>Name:</strong>{' '}
+                                {details.address.shipping_name}
+                              </Typography>
+                              <Typography variant='body2' color='text.secondary'>
+                                <strong>Village:</strong>{' '}
+                                {details.address.village}
+                              </Typography>
+                              <Typography variant='body2' color='text.secondary'>
+                                <strong>District:</strong>{' '}
+                                {details.districtName ||
+                                  details.address.district_id}
+                              </Typography>
+                              <Typography variant='body2' color='text.secondary'>
+                                <strong>Province:</strong>{' '}
+                                {details.provinceName ||
+                                  details.address.province_id}
+                              </Typography>
+                            </Box>
+                          )}
+                        </CardContent>
+                      </Card>
+                    </Box>
 
-                  {/* Order Totals Section */}
-                  <Box sx={{ width: { xs: '100%', md: '25%' } }}>
-                    <Card>
-                      <CardContent>
-                        <Typography variant='h6' gutterBottom>
-                          Order Totals
-                        </Typography>
-                        <Box
-                          sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 1,
-                          }}
-                        >
+                    {/* Order Items Section */}
+                    <Box sx={{ width: { xs: '100%', md: '33%' } }}>
+                      <Card>
+                        <CardContent>
+                          <Typography variant='h6' gutterBottom>
+                            Order Items
+                          </Typography>
+                          {details.orderItems.length > 0 ? (
+                            <TableContainer>
+                              <Table size='small'>
+                                <TableHead>
+                                  <TableRow>
+                                    <TableCell>Image</TableCell>
+                                    <TableCell>Product</TableCell>
+                                    <TableCell align='right'>Qty</TableCell>
+                                    <TableCell align='right'>Price</TableCell>
+                                    <TableCell align='right'>Total</TableCell>
+                                  </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                  {details.orderItems.map((item: any) => {
+                                    const product =
+                                      details.products[item.product_id];
+                                    const getPrice = () => {
+                                      switch (currency) {
+                                        case 'LAK':
+                                          return item.price_lak;
+                                        case 'USD':
+                                          return item.price_usd;
+                                        case 'THB':
+                                          return item.price_thb;
+                                        default:
+                                          return item.price_usd;
+                                      }
+                                    };
+                                    const price = getPrice();
+                                    const total = price * item.quantity;
+
+                                    return (
+                                      <TableRow key={item.id}>
+                                        <TableCell>
+                                          {product?.image_url && (
+                                            <img
+                                              src={product.image_url}
+                                              alt={product.name}
+                                              style={{
+                                                width: 50,
+                                                height: 50,
+                                                objectFit: 'cover',
+                                              }}
+                                            />
+                                          )}
+                                        </TableCell>
+                                        <TableCell>
+                                          {product?.name || item.product_name}
+                                        </TableCell>
+                                        <TableCell align='right'>
+                                          {item.quantity}
+                                        </TableCell>
+                                        <TableCell align='right'>
+                                          {formatCurrency(price, currency)}
+                                        </TableCell>
+                                        <TableCell align='right'>
+                                          {formatCurrency(total, currency)}
+                                        </TableCell>
+                                      </TableRow>
+                                    );
+                                  })}
+                                </TableBody>
+                              </Table>
+                            </TableContainer>
+                          ) : (
+                            <Typography variant='body2' color='text.secondary'>
+                              No items found
+                            </Typography>
+                          )}
+                        </CardContent>
+                      </Card>
+                    </Box>
+
+                    {/* Order Totals Section */}
+                    <Box sx={{ width: { xs: '100%', md: '33%' } }}>
+                      <Card>
+                        <CardContent>
+                          <Typography variant='h6' gutterBottom>
+                            Order Totals
+                          </Typography>
                           <Box
                             sx={{
                               display: 'flex',
-                              justifyContent: 'space-between',
+                              flexDirection: 'column',
+                              gap: 1,
                             }}
                           >
-                            <Typography variant='body2'>LAK:</Typography>
-                            <Typography variant='body2' fontWeight='bold'>
-                              {formatCurrency(totals.lak, 'LAK')}
-                            </Typography>
-                          </Box>
-                          <Box
-                            sx={{
-                              display: 'flex',
-                              justifyContent: 'space-between',
-                            }}
-                          >
-                            <Typography variant='body2'>USD:</Typography>
-                            <Typography variant='body2' fontWeight='bold'>
-                              {formatCurrency(totals.usd, 'USD')}
-                            </Typography>
-                          </Box>
-                          <Box
-                            sx={{
-                              display: 'flex',
-                              justifyContent: 'space-between',
-                            }}
-                          >
-                            <Typography variant='body2'>THB:</Typography>
-                            <Typography variant='body2' fontWeight='bold'>
-                              {formatCurrency(totals.thb, 'THB')}
-                            </Typography>
-                          </Box>
-                          <Divider sx={{ my: 1 }} />
-                          <Box
-                            sx={{
-                              display: 'flex',
-                              justifyContent: 'space-between',
-                            }}
-                          >
-                            <Typography variant='body1' fontWeight='bold'>
-                              Current ({currency}):
-                            </Typography>
-                            <Typography
-                              variant='body1'
-                              fontWeight='bold'
-                              color='primary'
+                            <Box
+                              sx={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                              }}
                             >
-                              {getCurrentTotal()}
-                            </Typography>
+                              <Typography variant='body2'>LAK:</Typography>
+                              <Typography variant='body2' fontWeight='bold'>
+                                {formatCurrency(totals.lak, 'LAK')}
+                              </Typography>
+                            </Box>
+                            <Box
+                              sx={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                              }}
+                            >
+                              <Typography variant='body2'>USD:</Typography>
+                              <Typography variant='body2' fontWeight='bold'>
+                                {formatCurrency(totals.usd, 'USD')}
+                              </Typography>
+                            </Box>
+                            <Box
+                              sx={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                              }}
+                            >
+                              <Typography variant='body2'>THB:</Typography>
+                              <Typography variant='body2' fontWeight='bold'>
+                                {formatCurrency(totals.thb, 'THB')}
+                              </Typography>
+                            </Box>
+                            <Divider sx={{ my: 1 }} />
+                            <Box
+                              sx={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                              }}
+                            >
+                              <Typography variant='body1' fontWeight='bold'>
+                                Current ({currency}):
+                              </Typography>
+                              <Typography
+                                variant='body1'
+                                fontWeight='bold'
+                                color='primary'
+                              >
+                                {getCurrentTotal()}
+                              </Typography>
+                            </Box>
                           </Box>
-                        </Box>
-                      </CardContent>
-                    </Card>
+                        </CardContent>
+                      </Card>
+                    </Box>
                   </Box>
                 </Box>
               )}

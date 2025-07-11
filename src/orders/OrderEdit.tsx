@@ -173,20 +173,24 @@ const OrderForm = () => {
               </Grid>
               <Spacer />
 
-              <Typography variant='h6' gutterBottom>
-                {translate('resources.orders.section.items')}
-              </Typography>
-              <div>
-                <Basket />
-              </div>
-              <Spacer />
-
-              <Typography variant='h6' gutterBottom>
-                {translate('resources.orders.section.total')}
-              </Typography>
-              <div>
-                <Totals />
-              </div>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={12} md={9}>
+                  <Typography variant='h6' gutterBottom>
+                    {translate('resources.orders.section.items')}
+                  </Typography>
+                  <div>
+                    <Basket />
+                  </div>
+                </Grid>
+                <Grid item xs={12} sm={12} md={3}>
+                  <Typography variant='h6' gutterBottom>
+                    {translate('resources.orders.section.total')}
+                  </Typography>
+                  <div>
+                    <Totals />
+                  </div>
+                </Grid>
+              </Grid>
             </CardContent>
             <Toolbar />
           </Card>
