@@ -339,7 +339,9 @@ const OrderDetail: React.FC<{ order: PBOrder, details: any, onToggle: () => void
         <TableCell colSpan={7} sx={{ paddingBottom: 0, paddingTop: 0 }}>
           <Collapse in={open} timeout='auto' unmountOnExit>
             <Box sx={{ margin: 2 }}>
-              {!details || !details.customer ? <Loading /> : (
+              {!details || !details.customer ? (
+                <Loading />
+              ) : (
                 <Box
                   sx={{
                     display: 'flex',
@@ -379,13 +381,15 @@ const OrderDetail: React.FC<{ order: PBOrder, details: any, onToggle: () => void
                             </Typography>
                             <Typography variant='body2' color='text.secondary'>
                               <strong>Name:</strong>{' '}
-                              {details.customer.name || details.customer.username}
+                              {details.customer.name ||
+                                details.customer.username}
                             </Typography>
                             <Typography variant='body2' color='text.secondary'>
                               <strong>Email:</strong> {details.customer.email}
                             </Typography>
                             <Typography variant='body2' color='text.secondary'>
-                              <strong>Phone:</strong> {details.customer.phone_number}
+                              <strong>Phone:</strong>{' '}
+                              {details.customer.phone_number}
                             </Typography>
                             <Typography variant='body2' color='text.secondary'>
                               <strong>Verified:</strong>{' '}
@@ -402,18 +406,22 @@ const OrderDetail: React.FC<{ order: PBOrder, details: any, onToggle: () => void
                               Shipping Address
                             </Typography>
                             <Typography variant='body2' color='text.secondary'>
-                              <strong>Name:</strong> {details.address.shipping_name}
+                              <strong>Name:</strong>{' '}
+                              {details.address.shipping_name}
                             </Typography>
                             <Typography variant='body2' color='text.secondary'>
-                              <strong>Village:</strong> {details.address.village}
+                              <strong>Village:</strong>{' '}
+                              {details.address.village}
                             </Typography>
                             <Typography variant='body2' color='text.secondary'>
                               <strong>District:</strong>{' '}
-                              {details.districtName || details.address.district_id}
+                              {details.districtName ||
+                                details.address.district_id}
                             </Typography>
                             <Typography variant='body2' color='text.secondary'>
                               <strong>Province:</strong>{' '}
-                              {details.provinceName || details.address.province_id}
+                              {details.provinceName ||
+                                details.address.province_id}
                             </Typography>
                           </Box>
                         )}
@@ -433,6 +441,7 @@ const OrderDetail: React.FC<{ order: PBOrder, details: any, onToggle: () => void
                             <Table size='small'>
                               <TableHead>
                                 <TableRow>
+                                  <TableCell>Image</TableCell>
                                   <TableCell>Product</TableCell>
                                   <TableCell align='right'>Qty</TableCell>
                                   <TableCell align='right'>Price</TableCell>
@@ -440,8 +449,9 @@ const OrderDetail: React.FC<{ order: PBOrder, details: any, onToggle: () => void
                                 </TableRow>
                               </TableHead>
                               <TableBody>
-                                {details.orderItems.map((item:any) => {
-                                  const product = details.products[item.product_id];
+                                {details.orderItems.map((item: any) => {
+                                  const product =
+                                    details.products[item.product_id];
                                   const getPrice = () => {
                                     switch (currency) {
                                       case 'LAK':
@@ -459,6 +469,19 @@ const OrderDetail: React.FC<{ order: PBOrder, details: any, onToggle: () => void
 
                                   return (
                                     <TableRow key={item.id}>
+                                      <TableCell>
+                                        {product?.image_url && (
+                                          <img
+                                            src={product.image_url}
+                                            alt={product.name}
+                                            style={{
+                                              width: 50,
+                                              height: 50,
+                                              objectFit: 'cover',
+                                            }}
+                                          />
+                                        )}
+                                      </TableCell>
                                       <TableCell>
                                         {product?.name || item.product_name}
                                       </TableCell>

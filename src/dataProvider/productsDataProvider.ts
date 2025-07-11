@@ -1,6 +1,5 @@
 import pb, {
   createPocketbaseDocument,
-  deletePocketbaseDocument,
   fetchPocketbaseDocument,
   updatePocketbaseDocument,
 } from '../api/pocketbase';
@@ -17,6 +16,7 @@ export interface ProductData {
   name_la: string;
   description_la: string;
   details: string;
+  is_delete: boolean;
   created: string;
   updated: string;
 }
@@ -115,7 +115,9 @@ export const productsDataProvider: any = {
     }
 
     if (filterConditions.length > 0) {
-      filterStr = filterConditions.join(' && ');
+      filterStr = `(${filterConditions.join(' && ')}) && is_delete = false`;
+    } else {
+      filterStr = `is_delete = false`;
     }
 
     const sortStr = `${order === 'DESC' ? '-' : ''}${field}`;
@@ -146,6 +148,9 @@ export const productsDataProvider: any = {
         'products',
         params.id
       );
+      if (record.is_delete) {
+        throw new Error('Product not found'); // Or handle as appropriate for your UI
+      }
       return { data: record };
     } catch (error) {
       console.error('Error fetching product:', error);
@@ -217,7 +222,10 @@ export const productsDataProvider: any = {
     params: { data: Partial<ProductData> }
   ): Promise<{ data: ProductData }> => {
     try {
-      const id = await createPocketbaseDocument('products', params.data);
+      const id = await createPocketbaseDocument('products', {
+        ...params.data,
+        is_delete: false,
+      });
       const record = await fetchPocketbaseDocument<ProductData>('products', id);
       return { data: record };
     } catch (error) {
@@ -264,11 +272,11 @@ export const productsDataProvider: any = {
     const { id } = params;
     try {
       const record = await fetchPocketbaseDocument<ProductData>('products', id);
-      await deletePocketbaseDocument('products', id);
-      return { data: record };
+      await updatePocketbaseDocument('products', id, { is_delete: true });
+      return { data: { ...record, is_delete: true } };
     } catch (error) {
-      console.error('Error deleting product:', error);
-      throw new Error('Failed to delete product');
+      console.error('Error soft-deleting product:', error);
+      throw new Error('Failed to soft-delete product');
     }
   },
 
@@ -279,12 +287,14 @@ export const productsDataProvider: any = {
     const { ids } = params;
     try {
       await Promise.all(
-        ids.map((id) => deletePocketbaseDocument('products', id))
+        ids.map((id) =>
+          updatePocketbaseDocument('products', id, { is_delete: true })
+        )
       );
       return { data: ids };
     } catch (error) {
-      console.error('Error deleting products:', error);
-      throw new Error('Failed to delete products');
+      console.error('Error soft-deleting products:', error);
+      throw new Error('Failed to soft-delete products');
     }
   },
 };

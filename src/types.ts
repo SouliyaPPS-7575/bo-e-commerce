@@ -3,7 +3,10 @@ import * as DataGenerator from 'data-generator-retail';
 export type ThemeName = 'light' | 'dark';
 
 export type Category = DataGenerator.Category;
-export type Product = DataGenerator.Product;
+export interface AppProduct extends DataGenerator.Product {
+    is_delete: boolean;
+}
+export type Product = AppProduct;
 export type Customer = DataGenerator.Customer;
 export type Order = DataGenerator.Order;
 export type Invoice = DataGenerator.Invoice;
