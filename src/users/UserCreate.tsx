@@ -7,6 +7,7 @@ import {
     SimpleForm,
     TextInput,
     PasswordInput,
+    SelectInput,
     useNotify,
     useRedirect,
     ImageInput,
@@ -84,6 +85,16 @@ const UserCreate = () => {
                         source="phone_number"
                         fullWidth
                         label="Phone Number"
+                    />
+
+                    <SelectInput
+                        source="role"
+                        validate={[required()]}
+                        choices={[
+                            { id: 'admin', name: 'Admin' },
+                            { id: 'staff', name: 'Staff' },
+                        ]}
+                        fullWidth
                     />
 
                     <ImageInput source="avatar" label="Avatar">

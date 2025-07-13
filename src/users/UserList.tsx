@@ -201,6 +201,7 @@ const UserList = () => {
         <Column source='username' label='Username' />
         <Column source='email' field={EmailField} />
         <Column source='phone_number' label='Phone' />
+        <Column source='role' label='Role' />
         {/* <Column source='verified' render={VerifiedField} label='Verified' /> */}
 
         <Column source='created' field={DateField} label='Created' />

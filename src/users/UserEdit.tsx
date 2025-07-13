@@ -11,6 +11,7 @@ import {
   SimpleForm,
   TextField,
   TextInput,
+  SelectInput,
   useRecordContext,
   useRefresh,
 } from 'react-admin';
@@ -72,6 +73,16 @@ const UserEdit = () => {
                     source='phone_number'
                     fullWidth
                     label='Phone Number'
+                  />
+
+                  <SelectInput
+                    source="role"
+                    validate={[required()]}
+                    choices={[
+                        { id: 'admin', name: 'Admin' },
+                        { id: 'staff', name: 'Staff' },
+                    ]}
+                    fullWidth
                   />
 
                   <ImageInput
