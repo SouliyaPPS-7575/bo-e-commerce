@@ -70,8 +70,8 @@ export const currenciesDataProvider: Partial<DataProvider> = {
   update: async (resource, params) => {
     try {
       const { id, data } = params;
-      const updatedRecord = await pb.collection('currency').update(id, data);
-      return { data: { ...updatedRecord, id } as any };
+      const updatedRecord = await pb.collection('currency').update(id.toString(), data);
+      return { data: updatedRecord as any };
     } catch (error) {
       console.error('Error updating currency:', error);
       throw error;
