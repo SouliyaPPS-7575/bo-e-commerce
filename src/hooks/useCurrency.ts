@@ -4,7 +4,7 @@ import { CurrencyItem } from '../model/currency';
 
 export const useCurrency = () => {
   const { data: currencies } = useQuery({
-    queryKey: ['currencies'],
+    queryKey: ['currency'],
     queryFn: async () => {
       return await fetchAllPocketbaseDocuments<CurrencyItem>('currency');
     },

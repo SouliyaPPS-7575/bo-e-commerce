@@ -6,8 +6,6 @@ import {
     NumberField,
     DateField,
     EditButton,
-    DeleteButton,
-    CreateButton,
     TopToolbar,
     FilterButton,
     SearchInput,
@@ -29,12 +27,12 @@ const CurrencyFilter = [
 const CurrencyListActions = () => (
     <TopToolbar>
         <FilterButton />
-        <CreateButton />
     </TopToolbar>
 );
 
 const CurrencyList = () => (
     <List
+        resource="currency"
         filters={CurrencyFilter}
         actions={<CurrencyListActions />}
         sort={{ field: 'updated', order: 'DESC' }}
@@ -46,7 +44,6 @@ const CurrencyList = () => (
             <DateField source="created" label="Created" showTime />
             <DateField source="updated" label="Last Updated" showTime />
             <EditButton />
-            <DeleteButton />
         </Datagrid>
     </List>
 );

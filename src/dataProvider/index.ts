@@ -64,7 +64,8 @@ export default (type: string) => {
           }
 
           // Use custom currencies data provider for currencies resource
-          if (resource === 'currencies' && currenciesDataProvider[name.toString()]) {
+          if ((resource === 'currency') && currenciesDataProvider[name.toString()]) {
+            console.log("=> call api currency")
             return await currenciesDataProvider[name.toString()](resource, params);
           }
 

@@ -123,7 +123,7 @@ const Menu = ({ dense = false }: MenuProps) => {
         dense={dense}
       />
       <MenuItemLink
-        to='/currencies'
+        to='/currency'
         state={{ _scrollToTop: true }}
         primaryText={translate(`resources.currencies.name`, {
           smart_count: 2,

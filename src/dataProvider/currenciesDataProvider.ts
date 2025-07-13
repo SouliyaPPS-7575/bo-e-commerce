@@ -57,45 +57,55 @@ export const currenciesDataProvider: Partial<DataProvider> = {
     }
   },
 
-  create: async (resource, params) => {
-    try {
-      const record = await pb.collection('currency').create(params.data);
-      return { data: record as any };
-    } catch (error) {
-      console.error('Error creating currency:', error);
-      throw error;
-    }
-  },
 
   update: async (resource, params) => {
+    console.log("=> start call update ccy")
     try {
       const { id, data } = params;
-      const updatedRecord = await pb.collection('currency').update(id.toString(), data);
-      return { data: updatedRecord as any };
+
+      // Prepare data in the exact format from the example
+      const updateData = {
+        ccy: data.ccy,
+        type: data.type,
+        rate: typeof data.rate === 'string' ? parseFloat(data.rate) : data.rate
+      };
+
+      console.log('=> Updating currency with data:', updateData);
+      const record = await pb.collection('currency').update(id.toString(), updateData);
+      console.log('Update successful:', record);
+      return { data: record as any };
     } catch (error) {
       console.error('Error updating currency:', error);
       throw error;
     }
   },
 
-  delete: async (resource, params) => {
+
+  create: async (resource, params) => {
     try {
-      await pb.collection('currency').delete(params.id.toString());
-      return { data: { id: params.id } } as any;
+      const { data } = params;
+
+      // Transform rate to number if it's a string
+      const transformedData = {
+        ...data,
+        rate: typeof data.rate === 'string' ? parseFloat(data.rate) : data.rate
+      };
+
+      const createdRecord = await pb.collection('currency').create(transformedData);
+      return { data: createdRecord as any };
     } catch (error) {
-      console.error('Error deleting currency:', error);
+      console.error('Error creating currency:', error);
       throw error;
     }
   },
 
-  deleteMany: async (resource, params) => {
+  delete: async (resource, params) => {
     try {
-      await Promise.all(
-        params.ids.map(id => pb.collection('currency').delete(id.toString()))
-      );
-      return { data: params.ids };
+      const record = await pb.collection('currency').getOne(params.id.toString());
+      await pb.collection('currency').delete(params.id.toString());
+      return { data: record as any };
     } catch (error) {
-      console.error('Error deleting currencies:', error);
+      console.error('Error deleting currency:', error);
       throw error;
     }
   },
@@ -119,7 +129,7 @@ export const currenciesDataProvider: Partial<DataProvider> = {
 
     try {
       const filter = `${target} = "${id}"`;
-      
+
       const result = await pb.collection('currency').getList(page, perPage, {
         sort: order === 'ASC' ? `+${field}` : `-${field}`,
         filter,

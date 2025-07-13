@@ -99,7 +99,7 @@ const App = () => {
       <Resource name='reviews' {...reviews} />
       <Resource name='blogs' {...blogs} />
       <Resource name='users' {...users} />
-      <Resource name='currencies' {...currencies} />
+      <Resource name='currency' {...currencies} />
     </Admin>
   );
 };
