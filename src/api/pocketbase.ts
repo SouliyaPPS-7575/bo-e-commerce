@@ -1,7 +1,6 @@
 import PocketBase from "pocketbase";
 
-// const pb = new PocketBase("http://localhost:8080"); // Replace with your PocketBase URL
-const pb = new PocketBase("https://sensornode.shop"); // Replace with your PocketBase URL
+const pb = new PocketBase(process.env.REACT_APP_API_BASE_URL || "https://sensornode.shop");
 pb.autoCancellation(false);
 
 export default pb;
