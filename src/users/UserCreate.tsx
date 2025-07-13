@@ -119,6 +119,7 @@ const UserCreate = () => {
                         label="Confirm Password"
                         helperText="Must match the password above"
                     />
+                    <BooleanInput source="emailVisibility" defaultValue={true} style={{ display: 'none' }} />
                 </Box>
             </SimpleForm>
         </Create>

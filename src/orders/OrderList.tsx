@@ -12,6 +12,11 @@ import {
   Card,
   CardContent,
   Collapse,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Divider,
   FormControl,
   IconButton,
@@ -24,17 +29,13 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  TablePagination,
   TableRow,
   Tabs,
   TextField,
   Theme,
   Typography,
   useMediaQuery,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
 } from '@mui/material';
 import * as React from 'react';
 import { Fragment, useCallback, useEffect, useState } from 'react';
@@ -54,24 +55,54 @@ import {
 
 const OrderListFilter = ({
   setSearchTerm,
+  setDateRange,
 }: {
   setSearchTerm: (value: string) => void;
+  setDateRange: (range: { start: string; end: string }) => void;
 }) => {
   const [searchTerm, setSearchTermState] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTermState(event.target.value);
     setSearchTerm(event.target.value);
   };
 
+  const handleDateChange = () => {
+    setDateRange({ start: startDate, end: endDate });
+  };
+
   return (
-    <Box sx={{ p: 2, display: 'flex', alignItems: 'center', mb: -1, mt: -2 }}>
+    <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 2, mb: -1, mt: -2 }}>
       <TextField
         label='Search'
         variant='outlined'
         onChange={handleSearch}
         value={searchTerm}
         fullWidth
+      />
+      <TextField
+        label="Start Date"
+        type="datetime-local"
+        variant="outlined"
+        value={startDate}
+        onChange={(e) => setStartDate(e.target.value)}
+        onBlur={handleDateChange}
+        InputLabelProps={{
+          shrink: true,
+        }}
+      />
+      <TextField
+        label="End Date"
+        type="datetime-local"
+        variant="outlined"
+        value={endDate}
+        onChange={(e) => setEndDate(e.target.value)}
+        onBlur={handleDateChange}
+        InputLabelProps={{
+          shrink: true,
+        }}
       />
     </Box>
   );
@@ -102,9 +133,9 @@ export const OrderList = () => {
 const tabs = [
   { id: 'pending', name: 'pending' },
   { id: 'purchased', name: 'purchased' },
-  { id: 'cancel', name: 'cancel' },
   { id: 'delivering', name: 'delivering' },
   { id: 'completed', name: 'completed' },
+  { id: 'cancel', name: 'cancel' },
 ];
 
 interface OrderDetailsCache {
@@ -122,6 +153,7 @@ const TabbedDatagrid = () => {
   const [activeTab, setActiveTab] = useState<string>('pending');
   const [orderCounts, setOrderCounts] = useState<{ [key: string]: number }>({});
   const [searchTerm, setSearchTerm] = useState('');
+  const [dateRange, setDateRange] = useState({ start: '', end: '' });
   const { currency } = useCurrencyContext();
   const isXSmall = useMediaQuery<Theme>((theme) =>
     theme.breakpoints.down('sm')
@@ -234,7 +266,7 @@ const TabbedDatagrid = () => {
   return (
     <Fragment>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <OrderListFilter setSearchTerm={setSearchTerm} />
+        <OrderListFilter setSearchTerm={setSearchTerm} setDateRange={setDateRange} />
         <Button
           variant='contained'
           onClick={downloadExcel}
@@ -264,7 +296,7 @@ const TabbedDatagrid = () => {
       </Tabs>
       <Divider />
       <br />
-      <OrdersTable status={activeTab} searchTerm={searchTerm} />
+      <OrdersTable status={activeTab} searchTerm={searchTerm} dateRange={dateRange} />
     </Fragment>
   );
 };
@@ -577,7 +609,9 @@ const OrderDetail: React.FC<{
                                       <TableRow key={item.id}>
                                         <TableCell>
                                           {product?.image_url && (
-                                            <Link to={`/products/${product?.id}/show`}>
+                                            <Link
+                                              to={`/products/${product?.id}/show`}
+                                            >
                                               <img
                                                 src={product.image_url}
                                                 alt={product.name}
@@ -591,7 +625,9 @@ const OrderDetail: React.FC<{
                                           )}
                                         </TableCell>
                                         <TableCell>
-                                          <Link to={`/products/${product?.id}/show`}>
+                                          <Link
+                                            to={`/products/${product?.id}/show`}
+                                          >
                                             {product?.name || item.product_name}
                                           </Link>
                                         </TableCell>
@@ -726,12 +762,15 @@ const OrderDetail: React.FC<{
 
 // Custom Orders Table with PocketBase integration
 const OrdersTable = React.memo(
-  ({ status, searchTerm }: { status: string; searchTerm: string }) => {
+  ({ status, searchTerm, dateRange }: { status: string; searchTerm: string; dateRange: { start: string; end: string } }) => {
     const [orders, setOrders] = useState<PBOrder[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [openOrderId, setOpenOrderId] = useState<string | null>(null);
     const [detailsCache, setDetailsCache] = useState<OrderDetailsCache>({});
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [total, setTotal] = useState(0);
 
     const fetchOrders = useCallback(async () => {
       setLoading(true);
@@ -744,12 +783,19 @@ const OrdersTable = React.memo(
           filter += ` && ${searchFilter}`;
         }
 
-        const response = await pb.collection('orders').getList(1, 50, {
-          filter: filter,
-          sort: '-created',
-        });
+        if (dateRange.start && dateRange.end) {
+          filter += ` && created >= "${dateRange.start}" && created <= "${dateRange.end}"`;
+        }
+
+        const response = await pb
+          .collection('orders')
+          .getList(page + 1, rowsPerPage, {
+            filter: filter,
+            sort: '-created',
+          });
         const orders = response.items as unknown as PBOrder[];
         setOrders(orders);
+        setTotal(response.totalItems);
 
         const newDetailsCache: OrderDetailsCache = {};
         await Promise.all(
@@ -781,7 +827,7 @@ const OrdersTable = React.memo(
 
     useEffect(() => {
       fetchOrders();
-    }, [fetchOrders]);
+    }, [fetchOrders, page, rowsPerPage, dateRange]);
 
     const fetchOrderDetails = async (orderId: string) => {
       if (detailsCache[orderId] && detailsCache[orderId].customer) return;
@@ -951,6 +997,18 @@ const OrdersTable = React.memo(
             ))}
           </TableBody>
         </Table>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component='div'
+          count={total}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={(event, newPage) => setPage(newPage)}
+          onRowsPerPageChange={(event) => {
+            setRowsPerPage(parseInt(event.target.value, 10));
+            setPage(0);
+          }}
+        />
       </TableContainer>
     );
   }

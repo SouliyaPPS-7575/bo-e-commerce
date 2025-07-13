@@ -129,8 +129,9 @@ const StatusCountCards: React.FC<Props> = ({
         size={{
           xs: 12,
           sm: 6,
-          lg: 4
-        }}>
+          lg: 4,
+        }}
+      >
         <ModernStatusCard
           title='Monthly Revenue'
           value={
@@ -155,8 +156,9 @@ const StatusCountCards: React.FC<Props> = ({
         size={{
           xs: 12,
           sm: 6,
-          lg: 4
-        }}>
+          lg: 4,
+        }}
+      >
         <ModernStatusCard
           title='Total Customers'
           value={customerCount}
@@ -173,8 +175,9 @@ const StatusCountCards: React.FC<Props> = ({
         size={{
           xs: 12,
           sm: 6,
-          lg: 4
-        }}>
+          lg: 4,
+        }}
+      >
         <ModernStatusCard
           title='Pending Orders'
           value={orderStatusCount.pending}
@@ -191,10 +194,11 @@ const StatusCountCards: React.FC<Props> = ({
         size={{
           xs: 12,
           sm: 6,
-          lg: 3
-        }}>
+          lg: 3,
+        }}
+      >
         <ModernStatusCard
-          title='Accepted Orders'
+          title='Purchased Orders'
           value={orderStatusCount.accepted}
           icon={
             <Box sx={{ fontSize: 35 }}>
@@ -224,10 +228,11 @@ const StatusCountCards: React.FC<Props> = ({
         size={{
           xs: 12,
           sm: 6,
-          lg: 3
-        }}>
+          lg: 3,
+        }}
+      >
         <ModernStatusCard
-          title='Orders Delivering'
+          title='Delivering Orders'
           value={orderStatusCount.delivering}
           icon={
             <Box sx={{ fontSize: 35 }}>
@@ -256,8 +261,9 @@ const StatusCountCards: React.FC<Props> = ({
         size={{
           xs: 12,
           sm: 6,
-          lg: 3
-        }}>
+          lg: 3,
+        }}
+      >
         <ModernStatusCard
           title='Completed Orders'
           value={orderStatusCount.completed}
@@ -274,8 +280,9 @@ const StatusCountCards: React.FC<Props> = ({
         size={{
           xs: 12,
           sm: 6,
-          lg: 3
-        }}>
+          lg: 3,
+        }}
+      >
         <ModernStatusCard
           title='Cancelled Orders'
           value={orderStatusCount.cancel}

@@ -7,6 +7,8 @@ import { productCategoriesDataProvider } from './productCategoriesDataProvider';
 import { usersDataProvider } from './usersDataProvider';
 import { addressesDataProvider } from './addressesDataProvider';
 
+import { notify } from '../utils/notify';
+
 export default (type: string) => {
   // The fake servers require to generate data, which can take some time.
   // Here we start the server initialization but we don't wait for it to finish
@@ -23,45 +25,49 @@ export default (type: string) => {
       if (name === 'supportAbortSignal') {
         return import.meta.env.MODE === 'production';
       }
-      return (resource: string, params: any) => {
-        // Use custom orders API for orders resource
-        if (resource === 'orders' && ordersApiDataProvider[name.toString()]) {
-          return ordersApiDataProvider[name.toString()](resource, params);
-        }
+      return async (resource: string, params: any) => {
+        try {
+          // Use custom orders API for orders resource
+          if (resource === 'orders' && ordersApiDataProvider[name.toString()]) {
+            return await ordersApiDataProvider[name.toString()](resource, params);
+          }
 
-        // Use custom blogs data provider for blogs resource
-        if (resource === 'blogs' && blogsDataProvider[name.toString()]) {
-          return blogsDataProvider[name.toString()](resource, params);
-        }
+          // Use custom blogs data provider for blogs resource
+          if (resource === 'blogs' && blogsDataProvider[name.toString()]) {
+            return await blogsDataProvider[name.toString()](resource, params);
+          }
 
-        // Use custom customers data provider for customers resource
-        if (resource === 'customers' && customersDataProvider[name.toString()]) {
-          return customersDataProvider[name.toString()](resource, params);
-        }
+          // Use custom customers data provider for customers resource
+          if (resource === 'customers' && customersDataProvider[name.toString()]) {
+            return await customersDataProvider[name.toString()](resource, params);
+          }
 
-        // Use custom products data provider for products resource
-        if (resource === 'products' && productsDataProvider[name.toString()]) {
-          return productsDataProvider[name.toString()](resource, params);
-        }
+          // Use custom products data provider for products resource
+          if (resource === 'products' && productsDataProvider[name.toString()]) {
+            return await productsDataProvider[name.toString()](resource, params);
+          }
 
-        // Use custom product categories data provider for product_categories and categories resources
-        if ((resource === 'product_categories' || resource === 'categories') && productCategoriesDataProvider[name.toString()]) {
-          return productCategoriesDataProvider[name.toString()](resource, params);
-        }
+          // Use custom product categories data provider for product_categories and categories resources
+          if ((resource === 'product_categories' || resource === 'categories') && productCategoriesDataProvider[name.toString()]) {
+            return await productCategoriesDataProvider[name.toString()](resource, params);
+          }
 
-        // Use custom users data provider for users resource
-        if (resource === 'users' && usersDataProvider[name.toString()]) {
-          return usersDataProvider[name.toString()](resource, params);
-        }
+          // Use custom users data provider for users resource
+          if (resource === 'users' && usersDataProvider[name.toString()]) {
+            return await usersDataProvider[name.toString()](resource, params);
+          }
 
-        // Use custom addresses data provider for addresses resource
-        if (resource === 'addresses' && addressesDataProvider[name.toString()]) {
-          return addressesDataProvider[name.toString()](resource, params);
-        }
+          // Use custom addresses data provider for addresses resource
+          if (resource === 'addresses' && addressesDataProvider[name.toString()]) {
+            return await addressesDataProvider[name.toString()](resource, params);
+          }
 
-        return dataProviderPromise.then((dataProvider) => {
-          return dataProvider[name.toString()](resource, params);
-        });
+          const dataProvider = await dataProviderPromise;
+          return await dataProvider[name.toString()](resource, params);
+        } catch (error: any) {
+          notify(error.message, 'error');
+          throw error;
+        }
       };
     },
   });

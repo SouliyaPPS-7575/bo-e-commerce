@@ -1,5 +1,6 @@
 import { Box, Card, CardContent, Grid, Typography } from '@mui/material';
 import { useEffect } from 'react';
+import { BooleanInput } from 'react-admin';
 import {
   DateField,
   Edit,
@@ -126,6 +127,7 @@ const UserEdit = () => {
                     label='Confirm Password'
                     helperText='Must match the password above'
                   />
+                  <BooleanInput source="emailVisibility" defaultValue={true} style={{ display: 'none' }} />
                 </Box>
               </CardContent>
             </Card>

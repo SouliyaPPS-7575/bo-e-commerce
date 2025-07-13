@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
 import {
   Admin,
@@ -6,6 +7,7 @@ import {
   StoreContextProvider,
   localStorageStore,
   useStore,
+  useNotify,
 } from 'react-admin';
 import { Route } from 'react-router';
 
@@ -48,6 +50,20 @@ const i18nProvider = polyglotI18nProvider(
 const store = localStorageStore(undefined, 'ECommerce');
 
 const App = () => {
+  const notify = useNotify();
+  useEffect(() => {
+    const handleNotification = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      const { message, type } = customEvent.detail;
+      notify(message, { type });
+    };
+
+    window.addEventListener('show-notification', handleNotification);
+
+    return () => {
+      window.removeEventListener('show-notification', handleNotification);
+    };
+  }, [notify]);
   const [themeName] = useStore<ThemeName>('themeName', 'soft');
   const singleTheme = themes.find((theme) => theme.name === themeName)?.single;
   const lightTheme = themes.find((theme) => theme.name === themeName)?.light;
