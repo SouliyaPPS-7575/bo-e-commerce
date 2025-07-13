@@ -11,6 +11,7 @@ import {
 
 import blogs from '../blogs';
 import categories from '../categories';
+import currencies from '../currencies';
 import customers from '../customers';
 import orders from '../orders';
 import products from '../products';
@@ -119,6 +120,15 @@ const Menu = ({ dense = false }: MenuProps) => {
             </svg>
           </Box>
         }
+        dense={dense}
+      />
+      <MenuItemLink
+        to='/currencies'
+        state={{ _scrollToTop: true }}
+        primaryText={translate(`resources.currencies.name`, {
+          smart_count: 2,
+        })}
+        leftIcon={<currencies.icon />}
         dense={dense}
       />
     </Box>

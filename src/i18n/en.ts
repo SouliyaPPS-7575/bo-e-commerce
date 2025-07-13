@@ -150,6 +150,21 @@ const customEnglishMessages: TranslationMessages = {
         passwordConfirm: 'Confirm Password',
       },
     },
+    currencies: {
+      name: 'Currency |||| Currencies',
+      fields: {
+        ccy: 'Currency Code',
+        type: 'Type',
+        rate: 'Exchange Rate',
+        created: 'Created',
+        updated: 'Updated',
+      },
+      notifications: {
+        created: 'Currency created |||| %{smart_count} currencies created',
+        updated: 'Currency updated |||| %{smart_count} currencies updated',
+        deleted: 'Currency deleted |||| %{smart_count} currencies deleted',
+      },
+    },
     invoices: {
       name: 'Invoice |||| Invoices',
       fields: {

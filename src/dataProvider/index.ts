@@ -6,6 +6,7 @@ import { productsDataProvider } from './productsDataProvider';
 import { productCategoriesDataProvider } from './productCategoriesDataProvider';
 import { usersDataProvider } from './usersDataProvider';
 import { addressesDataProvider } from './addressesDataProvider';
+import { currenciesDataProvider } from './currenciesDataProvider';
 
 import { notify } from '../utils/notify';
 
@@ -60,6 +61,11 @@ export default (type: string) => {
           // Use custom addresses data provider for addresses resource
           if (resource === 'addresses' && addressesDataProvider[name.toString()]) {
             return await addressesDataProvider[name.toString()](resource, params);
+          }
+
+          // Use custom currencies data provider for currencies resource
+          if (resource === 'currencies' && currenciesDataProvider[name.toString()]) {
+            return await currenciesDataProvider[name.toString()](resource, params);
           }
 
           const dataProvider = await dataProviderPromise;

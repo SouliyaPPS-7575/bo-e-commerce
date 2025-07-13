@@ -16,6 +16,7 @@ import authProvider from './authProvider';
 import blogs from './blogs';
 import categories from './categories';
 import { CurrencyProvider } from './components/CurrencySelector/CurrencyProvider';
+import currencies from './currencies';
 import customers from './customers';
 import { Dashboard } from './dashboard';
 import dataProviderFactory from './dataProvider';
@@ -98,6 +99,7 @@ const App = () => {
       <Resource name='reviews' {...reviews} />
       <Resource name='blogs' {...blogs} />
       <Resource name='users' {...users} />
+      <Resource name='currencies' {...currencies} />
     </Admin>
   );
 };
