@@ -14,7 +14,7 @@ import { formatCurrency } from '../utils/format';
 
 interface OrderStatusCount {
   pending: number;
-  accepted: number;
+  purchased: number;
   delivering: number;
   completed: number;
   cancel: number;
@@ -138,10 +138,10 @@ const StatusCountCards: React.FC<Props> = ({
             currency === 'USD' && sellRevenue?.amountUSD
               ? `${formatCurrency(Number(sellRevenue?.amountUSD))} $`
               : currency === 'THB' && sellRevenue?.amountTHB
-              ? `${formatCurrency(Number(sellRevenue?.amountTHB))} ฿`
-              : currency === 'LAK' && sellRevenue?.amountLAK
-              ? `${formatCurrency(Number(sellRevenue?.amountLAK))} ₭`
-              : ''
+                ? `${formatCurrency(Number(sellRevenue?.amountTHB))} ฿`
+                : currency === 'LAK' && sellRevenue?.amountLAK
+                  ? `${formatCurrency(Number(sellRevenue?.amountLAK))} ₭`
+                  : ''
           }
           icon={
             <Box>
@@ -199,7 +199,7 @@ const StatusCountCards: React.FC<Props> = ({
       >
         <ModernStatusCard
           title='Purchased Orders'
-          value={orderStatusCount.accepted}
+          value={orderStatusCount.purchased}
           icon={
             <Box sx={{ fontSize: 35 }}>
               <svg
