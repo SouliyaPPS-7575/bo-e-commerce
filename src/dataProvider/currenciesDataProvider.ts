@@ -59,9 +59,10 @@ export const currenciesDataProvider: Partial<DataProvider> = {
 
 
   update: async (resource, params) => {
-    console.log("=> start call update ccy")
     try {
       const { id, data } = params;
+
+      console.log('=> Raw update params:', { id, data });
 
       // Prepare data in the exact format from the example
       const updateData = {
@@ -72,10 +73,10 @@ export const currenciesDataProvider: Partial<DataProvider> = {
 
       console.log('=> Updating currency with data:', updateData);
       const record = await pb.collection('currency').update(id.toString(), updateData);
-      console.log('Update successful:', record);
+      console.log('=> Update successful:', record);
       return { data: record as any };
     } catch (error) {
-      console.error('Error updating currency:', error);
+      console.error('=> Error updating currency:', error);
       throw error;
     }
   },

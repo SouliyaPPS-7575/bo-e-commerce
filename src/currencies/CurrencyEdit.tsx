@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {
   Edit,
   required,
@@ -6,14 +5,18 @@ import {
   TextInput,
   NumberInput,
   SelectInput,
-  useNotify,
-  useRedirect,
+  TopToolbar,
+  ShowButton,
 } from 'react-admin';
 import { Box, Typography } from '@mui/material';
 
+const CCYEditActions = () => (
+  <TopToolbar>
+    <ShowButton />
+  </TopToolbar>
+);
+
 const CurrencyEdit = () => {
-  const notify = useNotify();
-  const redirect = useRedirect();
 
   const validateForm = (values: any) => {
     const errors: any = {};
@@ -30,21 +33,7 @@ const CurrencyEdit = () => {
   };
 
   return (
-    <Edit
-      resource="currency"
-      title="Edit Currency"
-      mutationOptions={{
-        onSuccess: (data: any) => {
-          console.log('Currency update success:', data);
-          notify('Currency updated successfully', { type: 'success' });
-          redirect('list', 'currency');
-        },
-        onError: (error: any) => {
-          console.error('Currency update error:', error);
-          notify(`Error updating currency: ${error.message || 'Unknown error'}`, { type: 'error' });
-        },
-      }}
-    >
+    <Edit actions={<CCYEditActions />}>
       <SimpleForm validate={validateForm}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, maxWidth: 600 }}>
           <Typography variant="h6" gutterBottom>

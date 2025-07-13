@@ -64,9 +64,19 @@ export default (type: string) => {
           }
 
           // Use custom currencies data provider for currencies resource
-          if ((resource === 'currency') && currenciesDataProvider[name.toString()]) {
-            console.log("=> call api currency")
-            return await currenciesDataProvider[name.toString()](resource, params);
+          if (resource === 'currency' || resource === 'currencies') {
+            console.log("=> currency resource detected", { method: name.toString(), resource, params });
+            console.log("=> currenciesDataProvider methods:", Object.keys(currenciesDataProvider));
+            
+            const methodName = name.toString();
+            const providerMethod = currenciesDataProvider[methodName as keyof typeof currenciesDataProvider];
+            
+            if (providerMethod && typeof providerMethod === 'function') {
+              console.log("=> call api currency", { method: methodName, resource, params });
+              return await providerMethod(resource, params);
+            } else {
+              console.log("=> method not found in currenciesDataProvider, falling back to default", { methodName });
+            }
           }
 
           const dataProvider = await dataProviderPromise;
