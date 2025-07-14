@@ -127,6 +127,7 @@ const Dashboard = () => {
             data={sellRevenue}
             onFilterChange={handleFilterChange}
             loading={revenueLoading}
+            filterParams={filterParams}
           />
         )}
         {/* Order Pending List Section */}

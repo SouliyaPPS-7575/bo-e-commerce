@@ -38,12 +38,14 @@ interface Props {
   data: SellRevenueData[];
   onFilterChange?: (params: FilterParams) => void;
   loading?: boolean;
+  filterParams?: FilterParams;
 }
 
 const SellRevenueChart: React.FC<Props> = ({
   data,
   onFilterChange,
   loading,
+  filterParams,
 }) => {
   const { currency, displayCurrency } = useCurrencyContext();
 
@@ -54,8 +56,14 @@ const SellRevenueChart: React.FC<Props> = ({
 
     return data.map((item) => {
       const date = new Date(item.period);
-      const day = date.toLocaleDateString('en-US', { day: '2-digit' });
-      const month = date.toLocaleDateString('en-US', { month: 'short' });
+      let formattedDate;
+      if (filterParams?.isYear) {
+        formattedDate = date.getFullYear().toString();
+      } else {
+        const day = date.toLocaleDateString('en-US', { day: '2-digit' });
+        const month = date.toLocaleDateString('en-US', { month: '2-digit' });
+        formattedDate = `${day}/${month}`;
+      }
 
       let amount = 0;
       switch (currency) {
@@ -73,11 +81,11 @@ const SellRevenueChart: React.FC<Props> = ({
       }
 
       return {
-        date: `${day} ${month}`,
+        date: formattedDate,
         amount,
       };
     });
-  }, [data, currency]);
+  }, [data, currency, filterParams?.isYear]);
 
   const totalLAK = React.useMemo(
     () =>
