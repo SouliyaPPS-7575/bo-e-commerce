@@ -115,7 +115,7 @@ const Dashboard = () => {
         {/* Status Section */}
         {statusCount && (
           <StatusCountCards
-            sellRevenue={sumSellRevenue as any}
+            sellRevenue={sumSellRevenue(sellRevenue || [])}
             orderStatusCount={statusCount.orderStatusCount}
             customerCount={statusCount.customerCount}
             sellAmount={statusCount.sellAmount}
@@ -139,7 +139,7 @@ const Dashboard = () => {
       {statusCount && (
         <div style={styles.singleCol}>
           <StatusCountCards
-            sellRevenue={sumSellRevenue as any}
+            sellRevenue={sumSellRevenue(sellRevenue || [])}
             orderStatusCount={statusCount.orderStatusCount}
             customerCount={statusCount.customerCount}
             sellAmount={statusCount.sellAmount}
@@ -173,7 +173,7 @@ const Dashboard = () => {
         {/* Status Section */}
         {statusCount && (
           <StatusCountCards
-            sellRevenue={sellRevenue?.[0] as SellRevenue}
+            sellRevenue={sumSellRevenue(sellRevenue || [])}
             orderStatusCount={statusCount.orderStatusCount}
             customerCount={statusCount.customerCount}
             sellAmount={statusCount.sellAmount}
