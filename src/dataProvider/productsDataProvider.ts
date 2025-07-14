@@ -16,6 +16,7 @@ export interface ProductData {
   name_la: string;
   description_la: string;
   details: string;
+  details_la: string;
   is_delete: boolean;
   created: string;
   updated: string;
