@@ -1,8 +1,9 @@
-import { Download } from '@mui/icons-material';
+import { Download, LockReset } from '@mui/icons-material';
 import { Avatar, Button, Switch, Theme, useMediaQuery } from '@mui/material';
 import * as React from 'react';
 import {
   ColumnsButton,
+  Confirm,
   CreateButton,
   DataTable,
   DateField,
@@ -20,6 +21,7 @@ import {
 } from 'react-admin';
 import * as XLSX from 'xlsx';
 import { User } from '../dataProvider/usersDataProvider';
+import pb from '../api/pocketbase';
 
 const userFilters = [
   <SearchInput key='q' source='q' alwaysOn />,
@@ -173,6 +175,8 @@ const AvatarField = (record: User) => {
   );
 };
 
+const BlackEmailField = (props: any) => <EmailField sx={{ color: 'black' }} {...props} />;
+
 const UserList = () => {
   const isXsmall = useMediaQuery<Theme>((theme) =>
     theme.breakpoints.down('sm')
@@ -199,15 +203,68 @@ const UserList = () => {
         <Column source='avatar' render={AvatarField} />
         <Column source='full_name' label='Full Name' />
         <Column source='username' label='Username' />
-        <Column source='email' field={EmailField} />
+        <Column source='email' field={BlackEmailField} />
         <Column source='phone_number' label='Phone' />
         <Column source='role' label='Role' />
         {/* <Column source='verified' render={VerifiedField} label='Verified' /> */}
 
         <Column source='created' field={DateField} label='Created' />
         <Column source='updated' field={DateField} label='Updated' />
+        <Column
+          source='reset_password'
+          label='Reset Password'
+          render={(record) => <ResetPasswordButton record={record} />}
+        />
       </DataTable>
     </List>
+  );
+};
+
+const ResetPasswordButton = ({ record }: { record: User }) => {
+  const notify = useNotify();
+  const [open, setOpen] = React.useState(false);
+
+  const handleClick = (event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent row click from triggering edit form
+    setOpen(true);
+  };
+
+  const handleConfirm = async () => {
+    setOpen(false);
+    if (!record || !record.email) {
+      notify('User email not found', { type: 'warning' });
+      return;
+    }
+    try {
+      await pb.collection('users').requestPasswordReset(record.email);
+      notify(`Password reset email sent to ${record.email}`, { type: 'success' });
+    } catch (error) {
+      console.error('Error requesting password reset:', error);
+      notify(`Failed to send password reset email to ${record.email}`, {
+        type: 'error',
+      });
+    }
+  };
+
+  const handleCancel = () => {
+    setOpen(false);
+  };
+
+  return (
+    <>
+      <Button size='small' onClick={handleClick} startIcon={<LockReset />}>
+        Reset
+      </Button>
+      <Confirm
+        isOpen={open}
+        title='Reset Password'
+        content={
+          `Are you sure you want to send a password reset email to ${record.email}?`
+        }
+        onConfirm={handleConfirm}
+        onClose={handleCancel}
+      />
+    </>
   );
 };
 

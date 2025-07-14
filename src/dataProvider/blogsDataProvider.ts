@@ -27,6 +27,9 @@ export const blogsDataProvider: Partial<DataProvider> = {
       if (filter.q) {
         filters.push(`(title ~ "${filter.q}" || description ~ "${filter.q}")`);
       }
+      if (filter.count) {
+        filters.push(`count = ${filter.count}`);
+      }
       filterString = filters.join(' && ');
     }
 
@@ -47,9 +50,10 @@ export const blogsDataProvider: Partial<DataProvider> = {
   create: async (resource, params) => {
     if (resource !== 'blogs') return { data: {} as any };
 
-    const { image, ...rest } = params.data;
+    const { image, description_la, ...rest } = params.data;
     const data = await blogService.create({
       ...rest,
+      description_la: description_la || '',
       image_url:
         image && image.rawFile
           ? await uploadImageToCloudinary(image.rawFile)
@@ -61,7 +65,7 @@ export const blogsDataProvider: Partial<DataProvider> = {
   update: async (resource, params) => {
     if (resource !== 'blogs') return { data: {} as any };
 
-    const { image, ...rest } = params.data;
+    const { image, description_la, ...rest } = params.data;
     let imageUrl = rest.image_url; // Keep existing URL by default
 
     if (image && image.rawFile) {
@@ -72,6 +76,7 @@ export const blogsDataProvider: Partial<DataProvider> = {
 
     const dataToUpdate = {
       ...rest,
+      description_la: description_la || '',
       image_url: imageUrl,
     };
 

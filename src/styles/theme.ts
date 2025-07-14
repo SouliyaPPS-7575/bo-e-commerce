@@ -8,8 +8,8 @@ const theme = createTheme({
     warning: { main: '#FF5722' },
     success: { main: '#8BC34A' },
     background: {
-      default: 'linear-gradient(to bottom right, #F5F5F5, #FBF8F4)',
-      paper: '#FBF8F4',
+      default: '#fbf8f4',
+      paper: '#fbf8f4',
     },
     text: { primary: '#000', secondary: '#000' },
   },

@@ -1,5 +1,12 @@
 import { Download } from '@mui/icons-material';
-import { Avatar, Button, FormControlLabel, Switch } from '@mui/material';
+import {
+  Avatar,
+  Button,
+  FormControlLabel,
+  Switch,
+  Select as MuiSelect,
+  MenuItem,
+} from '@mui/material';
 import * as React from 'react';
 import {
   ColumnsButton,
@@ -27,8 +34,8 @@ const customerFilters = [
     source='verified'
     choices={[
       { id: '', name: 'All Status' },
-      { id: true, name: 'Verified' },
-      { id: false, name: 'Unverified' },
+      { id: 'true', name: 'Verified' },
+      { id: 'false', name: 'Unverified' },
     ]}
     label='Status'
     emptyText='All Status'
@@ -138,17 +145,13 @@ const AvatarField = (record: Customer) => {
   );
 };
 
-const AccountStatusField = ({ record }: { record?: Customer }) => {
+const AccountStatusField = (record: Customer) => {
   const [update] = useUpdate();
   const notify = useNotify();
   const refresh = useRefresh();
 
-  const handleStatusChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    if (!record) return;
-
-    const newStatus = event.target.checked;
+  const handleStatusChange = async (event: any) => {
+    const newStatus = event.target.value === 'true' ? true : false;
     try {
       await update('customers', {
         id: record.id,
@@ -165,21 +168,33 @@ const AccountStatusField = ({ record }: { record?: Customer }) => {
   };
 
   return (
-    <FormControlLabel
-      control={
-        <Switch
-          checked={record?.verified || false}
-          onChange={handleStatusChange}
-          size='small'
-          color='primary'
-        />
-      }
-      label={record?.verified ? 'Active' : 'Inactive'}
-      labelPlacement='start'
-      sx={{ margin: 0 }}
-    />
+    <MuiSelect
+      value={record.verified ? 'true' : 'false'}
+      onChange={handleStatusChange}
+      variant='outlined'
+      size='small'
+      sx={{
+        width: 120,
+        color: record.verified ? 'green' : 'red',
+        fontWeight: 'bold',
+        '& .MuiSelect-select': {
+          paddingRight: '24px !important',
+        },
+      }}
+    >
+      <MenuItem value='true' sx={{ color: 'green' }}>
+        Active
+      </MenuItem>
+      <MenuItem value='false' sx={{ color: 'red' }}>
+        Inactive
+      </MenuItem>
+    </MuiSelect>
   );
 };
+
+const BlackEmailField = (props: any) => (
+  <EmailField sx={{ color: 'black' }} {...props} />
+);
 
 const CustomerList = () => {
   return (
@@ -205,8 +220,9 @@ const CustomerList = () => {
         <Column source='avatar' render={AvatarField} />
         <Column source='name' label='Name' />
         <Column source='username' label='Username' />
-        <Column source='email' field={EmailField} />
+        <Column source='email' field={BlackEmailField} />
         <Column source='phone_number' label='Phone' />
+        <Column source='verified' render={AccountStatusField} label='Status' />
       </DataTable>
     </List>
   );

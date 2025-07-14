@@ -134,7 +134,7 @@ const ProductCreate = () => (
         </React.Suspense>
       </div>
 
-      <Divider sx={{ my: 0.2 }} />
+      <Divider sx={{ my: 0.5 }} />
 
       <React.Suspense fallback={<div>Loading...</div>}>
         <RichTextInput
@@ -144,10 +144,24 @@ const ProductCreate = () => (
         />
       </React.Suspense>
 
-      <Divider sx={{ my: 0.2 }} />
+      <Divider
+        sx={{
+          my: 0.5,
+          width: '100%',
+          border: '1px solid',
+          color: '#1976d2', // Change to any color you want
+        }}
+      />
+      <Divider sx={{ my: 1 }} />
 
       <React.Suspense fallback={<div>Loading...</div>}>
         <RichTextInput source='details' fullWidth />
+      </React.Suspense>
+
+      <Divider sx={{ my: 0.5 }} />
+
+      <React.Suspense fallback={<div>Loading...</div>}>
+        <RichTextInput source='details_la' label='Details (Lao)' fullWidth />
       </React.Suspense>
     </SimpleForm>
   </Create>

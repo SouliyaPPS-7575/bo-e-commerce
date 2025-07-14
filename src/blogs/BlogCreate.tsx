@@ -100,6 +100,14 @@ export const BlogCreate = () => (
         <RichTextInput source='description' validate={[required()]} fullWidth />
       </div>
 
+      <Divider sx={{ my: 0.2 }} />
+
+      <RichTextInput
+        source='description_la'
+        label='Description (Lao)'
+        fullWidth
+      />
+
       {/* <TextInput source='video_url' fullWidth /> */}
       {/* <NumberInput source='count' defaultValue={0} /> */}
     </SimpleForm>

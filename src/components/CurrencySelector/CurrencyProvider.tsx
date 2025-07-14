@@ -50,9 +50,12 @@ export const CurrencyProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const convert = useCallback(
     (value: number) => {
+      if (currency === 'LAK') {
+        return value;
+      }
       return value / rate;
     },
-    [rate]
+    [rate, currency]
   );
 
   return (

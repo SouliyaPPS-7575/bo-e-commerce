@@ -146,6 +146,14 @@ export const BlogEdit = () => {
           />
         </div>
 
+        <Divider sx={{ my: 0.2 }} />
+
+        <RichTextInput
+          source='description_la'
+          label='Description (Lao)'
+          fullWidth
+        />
+
         <NumberInput source='count' />
         {/* <TextInput source='video_url' fullWidth /> */}
         {/* <DateField source='created' /> */}
