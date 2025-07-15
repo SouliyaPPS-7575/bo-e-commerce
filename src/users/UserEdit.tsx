@@ -1,6 +1,5 @@
 import { Box, Card, CardContent, Grid, Typography } from '@mui/material';
 import { useEffect } from 'react';
-import { BooleanInput } from 'react-admin';
 import {
   DateField,
   Edit,
@@ -9,10 +8,10 @@ import {
   ImageInput,
   PasswordInput,
   required,
+  SelectInput,
   SimpleForm,
   TextField,
   TextInput,
-  SelectInput,
   useRecordContext,
   useRefresh,
 } from 'react-admin';
@@ -29,8 +28,6 @@ const UserEdit = () => {
     setSelectImage(null);
     refresh();
   }, [location.pathname, setSelectImage]);
-
-  console.log('=> selectImage', selectImage);
 
   return (
     <Edit title='Edit User'>
@@ -77,11 +74,11 @@ const UserEdit = () => {
                   />
 
                   <SelectInput
-                    source="role"
+                    source='role'
                     validate={[required()]}
                     choices={[
-                        { id: 'admin', name: 'Admin' },
-                        { id: 'staff', name: 'Staff' },
+                      { id: 'admin', name: 'Admin' },
+                      { id: 'staff', name: 'Staff' },
                     ]}
                     fullWidth
                   />
@@ -127,7 +124,11 @@ const UserEdit = () => {
                     label='Confirm Password'
                     helperText='Must match the password above'
                   />
-                  <BooleanInput source="emailVisibility" defaultValue={true} style={{ display: 'none' }} />
+                  {/* <BooleanInput
+                    source='emailVisibility'
+                    defaultValue={true}
+                    style={{ display: 'none' }}
+                  /> */}
                 </Box>
               </CardContent>
             </Card>

@@ -1,5 +1,5 @@
 import { Download, LockReset } from '@mui/icons-material';
-import { Avatar, Button, Switch, Theme, useMediaQuery } from '@mui/material';
+import { Avatar, Button, Switch } from '@mui/material';
 import * as React from 'react';
 import {
   ColumnsButton,
@@ -20,8 +20,8 @@ import {
   useUpdate,
 } from 'react-admin';
 import * as XLSX from 'xlsx';
-import { User } from '../dataProvider/usersDataProvider';
 import pb from '../api/pocketbase';
+import { User } from '../dataProvider/usersDataProvider';
 
 const userFilters = [
   <SearchInput key='q' source='q' alwaysOn />,
@@ -175,13 +175,14 @@ const AvatarField = (record: User) => {
   );
 };
 
-const BlackEmailField = (props: any) => <EmailField sx={{ color: 'black' }} {...props} />;
+const BlackEmailField = (props: any) => (
+  <EmailField sx={{ color: 'black' }} {...props} />
+);
 
 const UserList = () => {
-  const isXsmall = useMediaQuery<Theme>((theme) =>
-    theme.breakpoints.down('sm')
-  );
-  const isSmall = useMediaQuery<Theme>((theme) => theme.breakpoints.down('md'));
+  const isAdmin = localStorage.getItem('role') === 'admin';
+
+  console.log('=> isAdmin', isAdmin);
 
   return (
     <List
@@ -210,11 +211,13 @@ const UserList = () => {
 
         <Column source='created' field={DateField} label='Created' />
         <Column source='updated' field={DateField} label='Updated' />
-        <Column
-          source='reset_password'
-          label='Reset Password'
-          render={(record) => <ResetPasswordButton record={record} />}
-        />
+        {isAdmin && (
+          <Column
+            source='reset_password'
+            label='Reset Password'
+            render={(record) => <ResetPasswordButton record={record} />}
+          />
+        )}
       </DataTable>
     </List>
   );
@@ -237,7 +240,9 @@ const ResetPasswordButton = ({ record }: { record: User }) => {
     }
     try {
       await pb.collection('users').requestPasswordReset(record.email);
-      notify(`Password reset email sent to ${record.email}`, { type: 'success' });
+      notify(`Password reset email sent to ${record.email}`, {
+        type: 'success',
+      });
     } catch (error) {
       console.error('Error requesting password reset:', error);
       notify(`Failed to send password reset email to ${record.email}`, {
@@ -258,9 +263,7 @@ const ResetPasswordButton = ({ record }: { record: User }) => {
       <Confirm
         isOpen={open}
         title='Reset Password'
-        content={
-          `Are you sure you want to send a password reset email to ${record.email}?`
-        }
+        content={`Are you sure you want to send a password reset email to ${record.email}?`}
         onConfirm={handleConfirm}
         onClose={handleCancel}
       />
