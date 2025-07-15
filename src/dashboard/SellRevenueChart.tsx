@@ -54,11 +54,14 @@ const SellRevenueChart: React.FC<Props> = ({
       return [];
     }
 
+    console.log('=> data', data[0].period);
+
     return data.map((item) => {
       const date = new Date(item.period);
       let formattedDate;
-      if (filterParams?.isYear) {
-        formattedDate = date.getFullYear().toString();
+
+      if (item.period.length === 4) { // Check if period is a 4-digit year
+        formattedDate = item.period;
       } else {
         const day = date.toLocaleDateString('en-US', { day: '2-digit' });
         const month = date.toLocaleDateString('en-US', { month: '2-digit' });
@@ -184,8 +187,9 @@ const SellRevenueChart: React.FC<Props> = ({
           <Grid
             size={{
               xs: 12,
-              md: 4
-            }}>
+              md: 4,
+            }}
+          >
             <Box
               sx={{
                 textAlign: 'center',
@@ -205,8 +209,9 @@ const SellRevenueChart: React.FC<Props> = ({
           <Grid
             size={{
               xs: 12,
-              md: 4
-            }}>
+              md: 4,
+            }}
+          >
             <Box
               sx={{
                 textAlign: 'center',
@@ -226,8 +231,9 @@ const SellRevenueChart: React.FC<Props> = ({
           <Grid
             size={{
               xs: 12,
-              md: 4
-            }}>
+              md: 4,
+            }}
+          >
             <Box
               sx={{
                 textAlign: 'center',

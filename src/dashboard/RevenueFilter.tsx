@@ -49,14 +49,21 @@ const RevenueFilter: React.FC<Props> = ({ onFilterChange }) => {
     setIsYearChecked(checked);
     if (checked) {
       setIsMonthChecked(false);
-    }
-    onFilterChange({
-      isYear: checked ? true : false,
-      ...(checked ? {} : {
+      const currentYear = dayjs().year();
+      const yearStartDate = dayjs(`${currentYear}-01-01`).format('YYYY-MM-DD');
+      const yearEndDate = dayjs(`${currentYear}-12-31`).format('YYYY-MM-DD');
+      onFilterChange({
+        isYear: true,
+        startDate: yearStartDate,
+        endDate: yearEndDate,
+      });
+    } else {
+      onFilterChange({
+        isYear: false,
         startDate: startDate?.format('YYYY-MM-DD'),
         endDate: endDate?.format('YYYY-MM-DD'),
-      })
-    });
+      });
+    }
   };
 
   const handleDateChange = () => {
