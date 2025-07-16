@@ -8,6 +8,7 @@ export interface Customer {
   phone_number: string;
   avatar: string;
   verified: boolean;
+  status: boolean;
   email: string;
   emailVisibility: boolean;
   address_id: string;

@@ -1,7 +1,7 @@
 import PocketBase from 'pocketbase';
 
-// const pb = new PocketBase('https://sensornode.shop');
-const pb = new PocketBase('http://localhost:8080');
+const pb = new PocketBase('https://sensornode.shop');
+// const pb = new PocketBase('http://localhost:8080');
 pb.autoCancellation(false);
 
 export default pb;

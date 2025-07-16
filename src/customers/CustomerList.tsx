@@ -1,16 +1,8 @@
 import { Download } from '@mui/icons-material';
-import {
-  Avatar,
-  Button,
-  FormControlLabel,
-  Switch,
-  Select as MuiSelect,
-  MenuItem,
-} from '@mui/material';
+import { Avatar, Button, MenuItem, Select as MuiSelect } from '@mui/material';
 import * as React from 'react';
 import {
-  ColumnsButton,
-  CreateButton,
+  Confirm,
   DataTable,
   EmailField,
   List,
@@ -23,8 +15,6 @@ import {
   useNotify,
   useRefresh,
   useUpdate,
-  useTranslate,
-  Confirm,
 } from 'react-admin';
 import * as XLSX from 'xlsx';
 import { Customer } from '../dataProvider/customersDataProvider';
@@ -152,7 +142,9 @@ const AccountStatusField = (record: Customer) => {
   const notify = useNotify();
   const refresh = useRefresh();
   const [open, setOpen] = React.useState(false);
-  const [newStatusValue, setNewStatusValue] = React.useState<boolean | null>(null);
+  const [newStatusValue, setNewStatusValue] = React.useState<boolean | null>(
+    null
+  );
 
   const handleStatusChange = async (event: any) => {
     const status = event.target.value === 'true';
@@ -167,12 +159,15 @@ const AccountStatusField = (record: Customer) => {
     try {
       await update('customers', {
         id: record.id,
-        data: { ...record, verified: newStatusValue },
+        data: { ...record, status: newStatusValue ? 'true' : 'false' }, // Convert boolean to string
         previousData: record,
       });
-      notify(`Account status updated to ${newStatusValue ? 'Active' : 'Inactive'}`, {
-        type: 'success',
-      });
+      notify(
+        `Account status updated to ${newStatusValue ? 'Active' : 'Inactive'}`,
+        {
+          type: 'success',
+        }
+      );
       refresh();
     } catch (error) {
       notify('Error updating account status', { type: 'error' });
@@ -187,31 +182,33 @@ const AccountStatusField = (record: Customer) => {
   return (
     <>
       <MuiSelect
-        value={record.verified ? 'true' : 'false'}
+        value={record.status ? 'true' : 'false'}
         onChange={handleStatusChange}
         onClick={(e) => e.stopPropagation()} // Stop propagation
-        variant="outlined"
-        size="small"
+        variant='outlined'
+        size='small'
         sx={{
           width: 120,
-          color: record.verified ? 'green' : 'red',
+          color: record.status ? 'green' : 'red',
           fontWeight: 'bold',
           '& .MuiSelect-select': {
             paddingRight: '24px !important',
           },
         }}
       >
-        <MenuItem value="true" sx={{ color: 'green' }}>
+        <MenuItem value='true' sx={{ color: 'green' }}>
           Active
         </MenuItem>
-        <MenuItem value="false" sx={{ color: 'red' }}>
+        <MenuItem value='false' sx={{ color: 'red' }}>
           Inactive
         </MenuItem>
       </MuiSelect>
       <Confirm
         isOpen={open}
-        title="Confirm Status Change"
-        content={`Are you sure you want to change the status to ${newStatusValue ? 'Active' : 'Inactive'}?`}
+        title='Confirm Status Change'
+        content={`Are you sure you want to change the status to ${
+          newStatusValue ? 'Active' : 'Inactive'
+        }?`}
         onConfirm={handleConfirm}
         onClose={handleCancel}
       />
