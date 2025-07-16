@@ -13,6 +13,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
+import { useTranslate } from 'react-admin';
 
 interface FilterParams {
   isYear: boolean;
@@ -25,10 +26,13 @@ interface Props {
 }
 
 const RevenueFilter: React.FC<Props> = ({ onFilterChange }) => {
+  const translate = useTranslate();
   const [isOpen, setIsOpen] = useState(false);
   const [isMonthChecked, setIsMonthChecked] = useState(false);
   const [isYearChecked, setIsYearChecked] = useState(false);
-  const [startDate, setStartDate] = useState<Dayjs | null>(dayjs().subtract(30, 'day'));
+  const [startDate, setStartDate] = useState<Dayjs | null>(
+    dayjs().subtract(30, 'day')
+  );
   const [endDate, setEndDate] = useState<Dayjs | null>(dayjs());
 
   const handleMonthCheck = (checked: boolean) => {
@@ -38,10 +42,12 @@ const RevenueFilter: React.FC<Props> = ({ onFilterChange }) => {
     }
     onFilterChange({
       isYear: checked ? false : isYearChecked,
-      ...(checked ? {} : {
-        startDate: startDate?.format('YYYY-MM-DD'),
-        endDate: endDate?.format('YYYY-MM-DD'),
-      })
+      ...(checked
+        ? {}
+        : {
+            startDate: startDate?.format('YYYY-MM-DD'),
+            endDate: endDate?.format('YYYY-MM-DD'),
+          }),
     });
   };
 
@@ -70,10 +76,12 @@ const RevenueFilter: React.FC<Props> = ({ onFilterChange }) => {
     if (startDate && endDate) {
       onFilterChange({
         isYear: isYearChecked,
-        ...(!isMonthChecked && !isYearChecked ? {
-          startDate: startDate.format('YYYY-MM-DD'),
-          endDate: endDate.format('YYYY-MM-DD'),
-        } : {})
+        ...(!isMonthChecked && !isYearChecked
+          ? {
+              startDate: startDate.format('YYYY-MM-DD'),
+              endDate: endDate.format('YYYY-MM-DD'),
+            }
+          : {}),
       });
     }
   };
@@ -87,7 +95,7 @@ const RevenueFilter: React.FC<Props> = ({ onFilterChange }) => {
       <Box sx={{ position: 'relative' }}>
         <IconButton
           onClick={() => setIsOpen(!isOpen)}
-          sx={{ 
+          sx={{
             color: '#666',
             border: '1px solid #e0e0e0',
             borderRadius: 1,
@@ -113,8 +121,8 @@ const RevenueFilter: React.FC<Props> = ({ onFilterChange }) => {
               zIndex: 1000,
             }}
           >
-            <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600 }}>
-              Filter Options
+            <Typography variant='subtitle2' sx={{ mb: 2, fontWeight: 600 }}>
+              {translate('filter_options')}
             </Typography>
 
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -125,9 +133,9 @@ const RevenueFilter: React.FC<Props> = ({ onFilterChange }) => {
                     onChange={(e) => handleMonthCheck(e.target.checked)}
                   />
                 }
-                label="Month"
+                label={translate('month')}
               />
-              
+
               <FormControlLabel
                 control={
                   <Checkbox
@@ -135,22 +143,25 @@ const RevenueFilter: React.FC<Props> = ({ onFilterChange }) => {
                     onChange={(e) => handleYearCheck(e.target.checked)}
                   />
                 }
-                label="Year"
+                label={translate('year')}
               />
 
-              <Typography variant="subtitle2" sx={{ mt: 2, mb: 1, fontWeight: 600 }}>
-                Date Range
+              <Typography
+                variant='subtitle2'
+                sx={{ mt: 2, mb: 1, fontWeight: 600 }}
+              >
+                {translate('date_range')}
               </Typography>
-              
+
               <DatePicker
-                label="Start Date"
+                label={translate('start_date')}
                 value={startDate}
                 onChange={(newValue) => setStartDate(newValue)}
                 slotProps={{ textField: { size: 'small' } }}
               />
-              
+
               <DatePicker
-                label="End Date"
+                label={translate('end_date')}
                 value={endDate}
                 onChange={(newValue) => setEndDate(newValue)}
                 slotProps={{ textField: { size: 'small' } }}

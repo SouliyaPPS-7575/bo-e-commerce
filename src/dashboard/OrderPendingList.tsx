@@ -1,19 +1,20 @@
-import * as React from 'react';
 import {
+  Box,
   Card,
-  CardHeader,
   CardContent,
+  CardHeader,
+  Chip,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Chip,
   Typography,
-  Box,
 } from '@mui/material';
 import { format, parseISO } from 'date-fns';
+import * as React from 'react';
+import { useTranslate } from 'react-admin';
 import { useCurrencyContext } from '../components/CurrencySelector/CurrencyProvider';
 import { formatCurrency } from '../utils/format';
 
@@ -46,16 +47,17 @@ interface Props {
 }
 
 const OrderPendingList: React.FC<Props> = ({ data }) => {
+  const translate = useTranslate();
   if (!data || !data.items || data.items.length === 0) {
     return (
       <Card elevation={3} sx={{ borderRadius: 3, p: 2 }}>
         <CardHeader
-          title='Pending Orders'
+          title={translate('pending_orders')}
           titleTypographyProps={{ fontWeight: 'bold', fontSize: 18 }}
         />
         <CardContent>
           <Typography variant='body2' color='text.secondary'>
-            No pending orders
+            {translate('no_pending_orders')}
           </Typography>
         </CardContent>
       </Card>
@@ -76,8 +78,10 @@ const OrderPendingList: React.FC<Props> = ({ data }) => {
     <Card sx={{ borderRadius: '10px', p: 2 }}>
       <CardHeader
         sx={{ mt: -1 }}
-        title={`Pending Orders (${data.totalItems})`}
-        subheader={`Showing ${data.items.length} of ${data.totalItems} orders`}
+        title={`${translate('pending_orders')} (${data.totalItems})`}
+        subheader={`${translate('showing')} ${data.items.length} ${translate(
+          'of'
+        )} ${data.totalItems} ${translate('orders')}`}
         titleTypographyProps={{ fontWeight: 'bold', fontSize: 18 }}
         subheaderTypographyProps={{ color: 'text.secondary' }}
       />
@@ -87,12 +91,12 @@ const OrderPendingList: React.FC<Props> = ({ data }) => {
             <Table size='small' sx={{ minWidth: '800px' }}>
               <TableHead>
                 <TableRow>
-                  <TableCell>Reference ID</TableCell>
-                  <TableCell>Customer</TableCell>
-                  <TableCell>Quantity</TableCell>
-                  <TableCell>Amount</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Created</TableCell>
+                  <TableCell>{translate('reference_id')}</TableCell>
+                  <TableCell>{translate('customer')}</TableCell>
+                  <TableCell>{translate('quantity')}</TableCell>
+                  <TableCell>{translate('amount')}</TableCell>
+                  <TableCell>{translate('status')}</TableCell>
+                  <TableCell>{translate('created')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>

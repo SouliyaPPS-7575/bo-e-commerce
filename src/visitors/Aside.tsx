@@ -274,11 +274,11 @@ const OrderTitle = () => {
     const translate = useTranslate();
     if (!record) return null;
     return (
-        <>
-            {translate('pos.events.order.title', {
-                smart_count: record.basket.length,
-            })}
-        </>
+      <>
+        {translate('events.order.title', {
+          smart_count: record.basket.length,
+        })}
+      </>
     );
 };
 
@@ -320,11 +320,11 @@ const ReviewTitle = () => {
     });
     if (!record) return null;
     return (
-        <>
-            {translate('pos.events.review.title', {
-                product: referenceRecord?.reference,
-            })}
-        </>
+      <>
+        {translate('events.review.title', {
+          product: referenceRecord?.reference,
+        })}
+      </>
     );
 };
 

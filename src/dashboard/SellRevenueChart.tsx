@@ -18,6 +18,7 @@ import {
 } from 'recharts';
 import { useCurrencyContext } from '../components/CurrencySelector/CurrencyProvider';
 import RevenueFilter from './RevenueFilter';
+import { useTranslate } from 'react-admin';
 
 interface SellRevenueData {
   period: string;
@@ -47,6 +48,7 @@ const SellRevenueChart: React.FC<Props> = ({
   loading,
   filterParams,
 }) => {
+  const translate = useTranslate();
   const { currency, displayCurrency } = useCurrencyContext();
 
   const chartData = React.useMemo(() => {
@@ -54,13 +56,12 @@ const SellRevenueChart: React.FC<Props> = ({
       return [];
     }
 
-    console.log('=> data', data[0].period);
-
     return data.map((item) => {
       const date = new Date(item.period);
       let formattedDate;
 
-      if (item.period.length === 4) { // Check if period is a 4-digit year
+      if (item.period.length === 4) {
+        // Check if period is a 4-digit year
         formattedDate = item.period;
       } else {
         const day = date.toLocaleDateString('en-US', { day: '2-digit' });
@@ -114,7 +115,7 @@ const SellRevenueChart: React.FC<Props> = ({
             variant='h6'
             sx={{ fontWeight: 'bold', textAlign: 'start' }}
           >
-            30 Day Revenue History
+            {translate('day_revenue_history')}
           </Typography>
         }
         action={

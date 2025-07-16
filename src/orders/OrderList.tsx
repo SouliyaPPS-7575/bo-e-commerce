@@ -43,8 +43,6 @@ import { DateField, Loading, useTranslate } from 'react-admin';
 import { Link } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 
-import dayjs from 'dayjs';
-
 import pb from '../api/pocketbase';
 import { useCurrencyContext } from '../components/CurrencySelector/CurrencyProvider'; // Import useCurrencyContext
 import {
@@ -57,11 +55,11 @@ import {
 
 const OrderListFilter = ({
   setSearchTerm,
-  setDateRange,
 }: {
   setSearchTerm: (value: string) => void;
   setDateRange: (range: { start: string; end: string }) => void;
 }) => {
+  const translate = useTranslate();
   const [searchTerm, setSearchTermState] = useState('');
   // const [startDate, setStartDate] = useState('');
   // const [endDate, setEndDate] = useState('');
@@ -93,7 +91,7 @@ const OrderListFilter = ({
       }}
     >
       <TextField
-        label='Search'
+        label={translate('search')}
         variant='outlined'
         onChange={handleSearch}
         value={searchTerm}
@@ -139,7 +137,7 @@ export const OrderList = () => {
         }}
       >
         <Typography variant='h5' component='h5'>
-          {translate('pos.orders_management')}
+          {translate('orders_management')}
         </Typography>
       </Box>
       <TabbedDatagrid />
@@ -172,31 +170,32 @@ const TabbedDatagrid = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
   const { currency } = useCurrencyContext();
+  const translate = useTranslate();
   const isXSmall = useMediaQuery<Theme>((theme) =>
     theme.breakpoints.down('sm')
   );
 
-  // Fetch order counts for each status
-  useEffect(() => {
-    const fetchOrderCounts = async () => {
-      try {
-        const counts: { [key: string]: number } = {};
+  const fetchOrderCounts = useCallback(async () => {
+    try {
+      const counts: { [key: string]: number } = {};
 
-        for (const tab of tabs) {
-          const response = await pb.collection('orders').getList(1, 1, {
-            filter: `status = "${tab.id}"`,
-          });
-          counts[tab.id] = response.totalItems;
-        }
-
-        setOrderCounts(counts);
-      } catch (error) {
-        console.error('Error fetching order counts:', error);
+      for (const tab of tabs) {
+        const response = await pb.collection('orders').getList(1, 1, {
+          filter: `status = "${tab.id}"`,
+        });
+        counts[tab.id] = response.totalItems;
       }
-    };
 
-    fetchOrderCounts();
+      setOrderCounts(counts);
+    } catch (error) {
+      console.error('Error fetching order counts:', error);
+    }
   }, []);
+
+  // Fetch order counts on component mount
+  useEffect(() => {
+    fetchOrderCounts();
+  }, [fetchOrderCounts]);
 
   const handleChange = useCallback(
     (event: React.SyntheticEvent, value: string) => {
@@ -292,7 +291,7 @@ const TabbedDatagrid = () => {
           onClick={downloadExcel}
           sx={{ m: 2, ml: 'auto', height: '50px' }}
         >
-          Export Excel
+          {translate('export_excel')}
         </Button>
       </Box>
       <Tabs
@@ -307,7 +306,7 @@ const TabbedDatagrid = () => {
             key={choice.id}
             label={
               <span style={{ color: getStatusColor(choice.id) }}>
-                {choice.name} ({orderCounts[choice.id] || 0})
+                {translate(choice.name)} ({orderCounts[choice.id] || 0})
               </span>
             }
             value={choice.id}
@@ -320,6 +319,7 @@ const TabbedDatagrid = () => {
         status={activeTab}
         searchTerm={searchTerm}
         dateRange={dateRange}
+        fetchOrderCounts={fetchOrderCounts}
       />
     </Fragment>
   );
@@ -350,6 +350,7 @@ const OrderDetail: React.FC<{
   open: boolean;
   onStatusChange: (orderId: string, newStatus: string) => void;
 }> = ({ order, details, onToggle, open, onStatusChange }) => {
+  const translate = useTranslate();
   const { currency } = useCurrencyContext();
   const [openConfirm, setOpenConfirm] = useState(false);
   const [pendingStatus, setPendingStatus] = useState<{
@@ -452,11 +453,36 @@ const OrderDetail: React.FC<{
                 },
               }}
             >
-              <MenuItem value={'pending'}>Pending</MenuItem>
-              <MenuItem value={'purchased'}>Purchased</MenuItem>
-              <MenuItem value={'delivering'}>Delivering</MenuItem>
-              <MenuItem value={'completed'}>Completed</MenuItem>
-              <MenuItem value={'cancel'}>Cancel</MenuItem>
+              <MenuItem
+                value={'pending'}
+                sx={{ color: getStatusColor('pending') }}
+              >
+                {translate('pending')}
+              </MenuItem>
+              <MenuItem
+                value={'purchased'}
+                sx={{ color: getStatusColor('purchased') }}
+              >
+                {translate('purchased')}
+              </MenuItem>
+              <MenuItem
+                value={'delivering'}
+                sx={{ color: getStatusColor('delivering') }}
+              >
+                {translate('delivering')}
+              </MenuItem>
+              <MenuItem
+                value={'completed'}
+                sx={{ color: getStatusColor('completed') }}
+              >
+                {translate('completed')}
+              </MenuItem>
+              <MenuItem
+                value={'cancel'}
+                sx={{ color: getStatusColor('cancel') }}
+              >
+                {translate('cancel')}
+              </MenuItem>
             </Select>
           </FormControl>
         </TableCell>
@@ -492,21 +518,24 @@ const OrderDetail: React.FC<{
                         <CardContent>
                           <Typography variant='h6' gutterBottom>
                             <Receipt sx={{ mr: 1, verticalAlign: 'middle' }} />
-                            Order Information
+                            {translate('order_information')}
                           </Typography>
                           <Typography variant='body2' color='text.secondary'>
-                            <strong>Reference:</strong> {order.reference_id}
+                            <strong>{translate('reference')}:</strong>{' '}
+                            {order.reference_id}
                           </Typography>
                           <Typography variant='body2' color='text.secondary'>
-                            <strong>Created:</strong>{' '}
+                            <strong>{translate('created')}:</strong>{' '}
                             {new Date(order.created).toLocaleString()}
                           </Typography>
                           <Typography variant='body2' color='text.secondary'>
-                            <strong>Status:</strong> {order.status}
+                            <strong>{translate('status')}:</strong>{' '}
+                            {translate('' + order.status)}
                           </Typography>
                           {order.remark && (
                             <Typography variant='body2' color='text.secondary'>
-                              <strong>Remark:</strong> {order.remark}
+                              <strong>{translate('remark')}:</strong>{' '}
+                              {order.remark}
                             </Typography>
                           )}
                           {details.customer && (
@@ -515,13 +544,13 @@ const OrderDetail: React.FC<{
                                 <Person
                                   sx={{ mr: 1, verticalAlign: 'middle' }}
                                 />
-                                Customer Details
+                                {translate('customer_details')}
                               </Typography>
                               <Typography
                                 variant='body2'
                                 color='text.secondary'
                               >
-                                <strong>Name:</strong>{' '}
+                                <strong>{translate('name')}:</strong>{' '}
                                 {details.customer.name ||
                                   details.customer.username}
                               </Typography>
@@ -529,20 +558,21 @@ const OrderDetail: React.FC<{
                                 variant='body2'
                                 color='text.secondary'
                               >
-                                <strong>Email:</strong> {details.customer.email}
+                                <strong>{translate('email')}:</strong>{' '}
+                                {details.customer.email}
                               </Typography>
                               <Typography
                                 variant='body2'
                                 color='text.secondary'
                               >
-                                <strong>Phone:</strong>{' '}
+                                <strong>{translate('phone_number')}:</strong>{' '}
                                 {details.customer.phone_number}
                               </Typography>
                               <Typography
                                 variant='body2'
                                 color='text.secondary'
                               >
-                                <strong>Verified:</strong>{' '}
+                                <strong>{translate('verified')}:</strong>{' '}
                                 {details.customer.verified ? 'Yes' : 'No'}
                               </Typography>
                             </Box>
@@ -553,27 +583,27 @@ const OrderDetail: React.FC<{
                                 <LocationOn
                                   sx={{ mr: 1, verticalAlign: 'middle' }}
                                 />
-                                Shipping Address
+                                {translate('shipping_address')}
                               </Typography>
                               <Typography
                                 variant='body2'
                                 color='text.secondary'
                               >
-                                <strong>Name:</strong>{' '}
+                                <strong>{translate('name')}:</strong>{' '}
                                 {details.address.shipping_name}
                               </Typography>
                               <Typography
                                 variant='body2'
                                 color='text.secondary'
                               >
-                                <strong>Village:</strong>{' '}
+                                <strong>{translate('village')}:</strong>{' '}
                                 {details.address.village}
                               </Typography>
                               <Typography
                                 variant='body2'
                                 color='text.secondary'
                               >
-                                <strong>District:</strong>{' '}
+                                <strong>{translate('district')}:</strong>{' '}
                                 {details.districtName ||
                                   details.address.district_id}
                               </Typography>
@@ -581,7 +611,7 @@ const OrderDetail: React.FC<{
                                 variant='body2'
                                 color='text.secondary'
                               >
-                                <strong>Province:</strong>{' '}
+                                <strong>{translate('province')}:</strong>{' '}
                                 {details.provinceName ||
                                   details.address.province_id}
                               </Typography>
@@ -596,18 +626,26 @@ const OrderDetail: React.FC<{
                       <Card>
                         <CardContent>
                           <Typography variant='h6' gutterBottom>
-                            Order Items
+                            {translate('order_items')}
                           </Typography>
                           {details.orderItems.length > 0 ? (
                             <TableContainer>
                               <Table size='small'>
                                 <TableHead>
                                   <TableRow>
-                                    <TableCell>Image</TableCell>
-                                    <TableCell>Product</TableCell>
-                                    <TableCell align='right'>Qty</TableCell>
-                                    <TableCell align='right'>Price</TableCell>
-                                    <TableCell align='right'>Total</TableCell>
+                                    <TableCell>{translate('image')}</TableCell>
+                                    <TableCell>
+                                      {translate('product')}
+                                    </TableCell>
+                                    <TableCell align='right'>
+                                      {translate('qty')}
+                                    </TableCell>
+                                    <TableCell align='right'>
+                                      {translate('price')}
+                                    </TableCell>
+                                    <TableCell align='right'>
+                                      {translate('total')}
+                                    </TableCell>
                                   </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -672,7 +710,7 @@ const OrderDetail: React.FC<{
                             </TableContainer>
                           ) : (
                             <Typography variant='body2' color='text.secondary'>
-                              No items found
+                              {translate('no_items_found')}
                             </Typography>
                           )}
                         </CardContent>
@@ -684,7 +722,7 @@ const OrderDetail: React.FC<{
                       <Card>
                         <CardContent>
                           <Typography variant='h6' gutterBottom>
-                            Order Totals
+                            {translate('order_totals')}
                           </Typography>
                           <Box
                             sx={{
@@ -699,7 +737,9 @@ const OrderDetail: React.FC<{
                                 justifyContent: 'space-between',
                               }}
                             >
-                              <Typography variant='body2'>LAK:</Typography>
+                              <Typography variant='body2'>
+                                {translate('lak')}
+                              </Typography>
                               <Typography variant='body2' fontWeight='bold'>
                                 {formatCurrency(totals.lak, 'LAK')}
                               </Typography>
@@ -710,7 +750,9 @@ const OrderDetail: React.FC<{
                                 justifyContent: 'space-between',
                               }}
                             >
-                              <Typography variant='body2'>USD:</Typography>
+                              <Typography variant='body2'>
+                                {translate('usd')}
+                              </Typography>
                               <Typography variant='body2' fontWeight='bold'>
                                 {formatCurrency(totals.usd, 'USD')}
                               </Typography>
@@ -721,7 +763,9 @@ const OrderDetail: React.FC<{
                                 justifyContent: 'space-between',
                               }}
                             >
-                              <Typography variant='body2'>THB:</Typography>
+                              <Typography variant='body2'>
+                                {translate('thb')}
+                              </Typography>
                               <Typography variant='body2' fontWeight='bold'>
                                 {formatCurrency(totals.thb, 'THB')}
                               </Typography>
@@ -734,7 +778,7 @@ const OrderDetail: React.FC<{
                               }}
                             >
                               <Typography variant='body1' fontWeight='bold'>
-                                Current ({currency}):
+                                {translate('current')} ({currency}):
                               </Typography>
                               <Typography
                                 variant='body1'
@@ -763,20 +807,20 @@ const OrderDetail: React.FC<{
         aria-describedby='confirm-dialog-description'
       >
         <DialogTitle id='confirm-dialog-title'>
-          {'Confirm Status Change'}
+          {translate('confirm_status_change')}
         </DialogTitle>
         <DialogContent>
           <DialogContentText id='confirm-dialog-description'>
-            Are you sure you want to change the status to{' '}
+            {translate('confirm_status_change_message')}{' '}
             <strong>{pendingStatus?.newStatus}</strong>?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCancelStatusChange} color='primary'>
-            Cancel
+            {translate('cancel')}
           </Button>
           <Button onClick={handleConfirmStatusChange} color='primary' autoFocus>
-            Confirm
+            {translate('confirm')}
           </Button>
         </DialogActions>
       </Dialog>
@@ -790,11 +834,14 @@ const OrdersTable = React.memo(
     status,
     searchTerm,
     dateRange,
+    fetchOrderCounts,
   }: {
     status: string;
     searchTerm: string;
     dateRange: { start: string; end: string };
+    fetchOrderCounts: () => void; // Callback to refresh order counts
   }) => {
+    const translate = useTranslate();
     const [orders, setOrders] = useState<PBOrder[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -976,6 +1023,7 @@ const OrdersTable = React.memo(
 
         // Re-fetch orders to ensure counts are updated and order moves to correct tab
         fetchOrders();
+        fetchOrderCounts();
       } catch (error) {
         console.error('Error updating order status:', error);
         alert('Failed to update order status.');
@@ -989,7 +1037,7 @@ const OrdersTable = React.memo(
       return (
         <Box sx={{ p: 2 }}>
           <Typography variant='body1' color='text.secondary'>
-            No orders found for status: {status}
+            {translate('no_orders_found')} {status}
           </Typography>
         </Box>
       );
@@ -997,7 +1045,9 @@ const OrdersTable = React.memo(
     if (!Array.isArray(orders)) {
       return (
         <Box sx={{ p: 2 }}>
-          <Alert severity='error'>Invalid data format for orders</Alert>
+          <Alert severity='error'>
+            {translate('orders.invalid_data_format')}
+          </Alert>
         </Box>
       );
     }
@@ -1006,14 +1056,14 @@ const OrdersTable = React.memo(
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
-            <TableRow>
-              <TableCell>Date</TableCell>
-              <TableCell>Reference</TableCell>
-              <TableCell>Customer</TableCell>
-              <TableCell>Phone</TableCell>
-              <TableCell>Address</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Total</TableCell>
+            <TableRow key={status}>
+              <TableCell>{translate('fields.basket.date')}</TableCell>
+              <TableCell>{translate('fields.basket.reference')}</TableCell>
+              <TableCell>{translate('fields.basket.customer')}</TableCell>
+              <TableCell>{translate('fields.phone')}</TableCell>
+              <TableCell>{translate('fields.address')}</TableCell>
+              <TableCell>{translate('fields.status')}</TableCell>
+              <TableCell>{translate('fields.basket.total')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

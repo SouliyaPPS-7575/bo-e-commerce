@@ -5,6 +5,7 @@ import PersonAddRoundedIcon from '@mui/icons-material/PersonAddRounded';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Box, Card, Grid, Typography } from '@mui/material';
 import * as React from 'react';
+import { useTranslate } from 'react-admin';
 import { useCurrencyContext } from '../components/CurrencySelector/CurrencyProvider';
 import { formatCurrency } from '../utils/format';
 
@@ -41,82 +42,85 @@ const ModernStatusCard: React.FC<{
   icon: React.ReactNode;
   color: string;
   bgColor: string;
-}> = ({ title, value, icon }) => (
-  <Card
-    sx={{
-      height: '100%',
-      borderRadius: 2,
-      backgroundColor: '#fff',
-      border: '1px solid #ece7df',
-      boxShadow: 'none',
-      px: 3,
-      py: 3,
-      position: 'relative',
-      overflow: 'hidden',
-      display: 'flex',
-      alignItems: 'center',
-    }}
-  >
-    {/* Background shape */}
-    <Box
+}> = ({ title, value, icon }) => {
+  const translate = useTranslate();
+  return (
+    <Card
       sx={{
-        position: 'absolute',
-        left: -60,
-        top: 0,
-        bottom: 0,
-        width: 170,
-        backgroundColor: '#fef1dc',
-        borderTopRightRadius: 100,
-        borderBottomRightRadius: 180,
-      }}
-    />
-    {/* Icon */}
-    <Box
-      sx={{
+        height: '100%',
+        borderRadius: 2,
+        backgroundColor: '#fff',
+        border: '1px solid #ece7df',
+        boxShadow: 'none',
+        px: 3,
+        py: 3,
         position: 'relative',
-        width: 48,
-        height: 48,
-        minWidth: 48,
-        borderRadius: '50%',
-        backgroundColor: '#fef1dc',
-        color: '#D4AF37',
+        overflow: 'hidden',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: 22,
-        zIndex: 1,
-        ml: -1,
-        mr: 3,
-        mt: 1,
       }}
     >
-      {icon}
-    </Box>
-    {/* Text */}
-    <Box
-      sx={{
-        ml: 5,
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-end',
-      }}
-    >
-      <Typography
-        variant='body2'
-        sx={{ fontSize: '0.9rem', color: '#7b7462', fontWeight: 500 }}
+      {/* Background shape */}
+      <Box
+        sx={{
+          position: 'absolute',
+          left: -60,
+          top: 0,
+          bottom: 0,
+          width: 170,
+          backgroundColor: '#fef1dc',
+          borderTopRightRadius: 100,
+          borderBottomRightRadius: 180,
+        }}
+      />
+      {/* Icon */}
+      <Box
+        sx={{
+          position: 'relative',
+          width: 48,
+          height: 48,
+          minWidth: 48,
+          borderRadius: '50%',
+          backgroundColor: '#fef1dc',
+          color: '#D4AF37',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 22,
+          zIndex: 1,
+          ml: -1,
+          mr: 3,
+          mt: 1,
+        }}
       >
-        {title}
-      </Typography>
-      <Typography
-        variant='h6'
-        sx={{ fontSize: '1.5rem', color: '#000', fontWeight: 700 }}
+        {icon}
+      </Box>
+      {/* Text */}
+      <Box
+        sx={{
+          ml: 5,
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-end',
+        }}
       >
-        {value}
-      </Typography>
-    </Box>
-  </Card>
-);
+        <Typography
+          variant='body2'
+          sx={{ fontSize: '0.9rem', color: '#7b7462', fontWeight: 500 }}
+        >
+          {translate(title)}
+        </Typography>
+        <Typography
+          variant='h6'
+          sx={{ fontSize: '1.5rem', color: '#000', fontWeight: 700 }}
+        >
+          {value}
+        </Typography>
+      </Box>
+    </Card>
+  );
+};
 
 const StatusCountCards: React.FC<Props> = ({
   sellRevenue,
@@ -124,6 +128,7 @@ const StatusCountCards: React.FC<Props> = ({
   customerCount,
 }) => {
   const { currency } = useCurrencyContext();
+  const translate = useTranslate();
 
   return (
     <Grid container spacing={3}>
@@ -135,7 +140,7 @@ const StatusCountCards: React.FC<Props> = ({
         }}
       >
         <ModernStatusCard
-          title='Monthly Revenue'
+          title='dashboard.monthly_revenue'
           value={
             currency === 'USD' && sellRevenue?.totalUSD
               ? `${formatCurrency(Number(sellRevenue?.totalUSD))} $`
@@ -162,7 +167,7 @@ const StatusCountCards: React.FC<Props> = ({
         }}
       >
         <ModernStatusCard
-          title='Total Customers'
+          title='dashboard.total_customers'
           value={customerCount}
           icon={
             <Box>
@@ -181,7 +186,7 @@ const StatusCountCards: React.FC<Props> = ({
         }}
       >
         <ModernStatusCard
-          title='Pending Orders'
+          title='pending_orders'
           value={orderStatusCount.pending}
           icon={
             <Box>
@@ -200,7 +205,7 @@ const StatusCountCards: React.FC<Props> = ({
         }}
       >
         <ModernStatusCard
-          title='Purchased Orders'
+          title='purchased'
           value={orderStatusCount.purchased}
           icon={
             <Box sx={{ fontSize: 35 }}>
@@ -234,7 +239,7 @@ const StatusCountCards: React.FC<Props> = ({
         }}
       >
         <ModernStatusCard
-          title='Delivering Orders'
+          title='delivering'
           value={orderStatusCount.delivering}
           icon={
             <Box sx={{ fontSize: 35 }}>
@@ -267,7 +272,7 @@ const StatusCountCards: React.FC<Props> = ({
         }}
       >
         <ModernStatusCard
-          title='Completed Orders'
+          title='completed'
           value={orderStatusCount.completed}
           icon={
             <Box sx={{ fontSize: 35 }}>
@@ -286,7 +291,7 @@ const StatusCountCards: React.FC<Props> = ({
         }}
       >
         <ModernStatusCard
-          title='Cancelled Orders'
+          title='cancel'
           value={orderStatusCount.cancel}
           icon={
             <Box sx={{ fontSize: 35 }}>

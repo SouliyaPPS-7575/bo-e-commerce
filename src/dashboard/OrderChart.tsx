@@ -157,12 +157,12 @@ const OrderChart = (props: { orders?: Order[] }) => {
     }, [orders]);
 
     return (
-        <Card>
-            <CardHeader title={translate('pos.dashboard.month_history')} />
-            <CardContent>
-                <div ref={chartRef} style={{ width: '100%', height: 300 }} />
-            </CardContent>
-        </Card>
+      <Card>
+        <CardHeader title={translate('dashboard.month_history')} />
+        <CardContent>
+          <div ref={chartRef} style={{ width: '100%', height: 300 }} />
+        </CardContent>
+      </Card>
     );
 };
 
