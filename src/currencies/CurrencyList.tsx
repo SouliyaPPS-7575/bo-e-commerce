@@ -1,8 +1,6 @@
 import {
-  CreateButton,
   Datagrid,
   DateField,
-  DeleteButton,
   EditButton,
   FilterButton,
   List,
@@ -11,7 +9,7 @@ import {
   SelectInput,
   TextField,
   TopToolbar,
-  useTranslate
+  useTranslate,
 } from 'react-admin';
 const CurrencyFilter = [
   <SearchInput key='search' source='q' alwaysOn />,
@@ -37,7 +35,7 @@ const CurrencyFilter = [
 const CurrencyListActions = () => (
   <TopToolbar>
     <FilterButton />
-    <CreateButton resource='currency' />
+    {/* <CreateButton resource='currency' /> */}
   </TopToolbar>
 );
 
@@ -57,10 +55,10 @@ const CurrencyList = () => {
         <DateField source='created' label={translate('created')} showTime />
         <DateField source='updated' label={translate('updated')} showTime />
         <EditButton />
-        <DeleteButton
+        {/* <DeleteButton
           confirmTitle={translate('currency.delete.confirm_title')}
           confirmContent={translate('currency.delete.confirm_content')}
-        />
+        /> */}
       </Datagrid>
     </List>
   );
