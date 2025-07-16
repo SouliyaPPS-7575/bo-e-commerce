@@ -8,23 +8,25 @@ import {
   SelectInput,
   useNotify,
   useRedirect,
+  useTranslate,
 } from 'react-admin';
 import { Box, Typography } from '@mui/material';
 
 const CurrencyCreate = () => {
   const notify = useNotify();
   const redirect = useRedirect();
+  const translate = useTranslate();
 
   const validateForm = (values: any) => {
     const errors: any = {};
     if (!values.ccy) {
-      errors.ccy = 'Currency code is required';
+      errors.ccy = translate('currency.validation.code_required');
     }
     if (!values.type) {
-      errors.type = 'Type is required';
+      errors.type = translate('currency.validation.type_required');
     }
     if (!values.rate || values.rate <= 0) {
-      errors.rate = 'Rate must be greater than 0';
+      errors.rate = translate('currency.validation.rate_positive');
     }
     return errors;
   };
@@ -32,14 +34,14 @@ const CurrencyCreate = () => {
   return (
     <Create
       resource="currency"
-      title="Create Currency"
+      title={translate('currency.create.title')}
       mutationOptions={{
         onSuccess: () => {
-          notify('Currency created successfully', { type: 'success' });
+          notify(translate('currency.create.success'), { type: 'success' });
           redirect('list', 'currency');
         },
         onError: (error: any) => {
-          notify(`Error creating currency: ${error.message}`, { type: 'error' });
+          notify(translate('currency.create.error', { message: error.message }), { type: 'error' });
         },
       }}
     >

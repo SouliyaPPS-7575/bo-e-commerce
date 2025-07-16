@@ -25,6 +25,7 @@ import {
   useDefaultTitle,
   useRecordContext,
   useShowContext,
+  useTranslate,
 } from 'react-admin';
 import { useCurrencyContext } from '../components/CurrencySelector/CurrencyProvider';
 
@@ -40,6 +41,7 @@ const ProductTitle = () => {
 };
 
 const ProductImage = () => {
+  const translate = useTranslate();
   const record = useRecordContext();
 
   if (!record) return null;
@@ -54,7 +56,7 @@ const ProductImage = () => {
       <CardMedia
         component='img'
         image='/placeholder-product.svg'
-        alt={record.name || 'Product image'}
+        alt={record.name || translate('product_image')}
         sx={{
           width: '100%',
           height: 'auto',
@@ -72,7 +74,7 @@ const ProductImage = () => {
       <CardMedia
         component='img'
         image={validImageUrls[0]}
-        alt={record.name || 'Product image'}
+        alt={record.name || translate('product_image')}
         sx={{
           width: '100%',
           height: 'auto',
@@ -95,7 +97,7 @@ const ProductImage = () => {
           <CardMedia
             component='img'
             image={imageUrl}
-            alt={`${record.name || 'Product'} image ${index + 1}`}
+            alt={`${record.name || translate('product')} ${translate('image')} ${index + 1}`}
             sx={{
               width: '100%',
               height: 'auto',
@@ -115,6 +117,7 @@ const ProductImage = () => {
 
 const ProductShow = () => {
   const { displayCurrency } = useCurrencyContext();
+  const translate = useTranslate();
 
   return (
     <Show title={<ProductTitle />}>
@@ -132,7 +135,7 @@ const ProductShow = () => {
             <Card sx={{ mb: 3 }}>
               <CardContent>
                 <Typography variant='h5' gutterBottom>
-                  Product Information
+                  {translate('product_information')}
                 </Typography>
                 <Box sx={{ mb: 3 }}>
                   <TextField
@@ -160,7 +163,7 @@ const ProductShow = () => {
                     variant='h6'
                     sx={{ fontSize: '1rem', fontWeight: 600, mr: 1 }}
                   >
-                    Price:
+                    {translate('price')}:
                   </Typography>
                   <NumberField
                     source='price'
@@ -197,14 +200,14 @@ const ProductShow = () => {
             <Card sx={{ mb: 3 }}>
               <CardContent>
                 <Typography variant='h5' sx={{ mb: 1, color: 'text.primary' }}>
-                  Description
+                  {translate('description')}
                 </Typography>
                 <Box sx={{ mb: 2 }}>
                   <Typography
                     variant='h6'
                     sx={{ mb: 1, color: 'text.secondary' }}
                   >
-                    English
+                    {translate('english')}
                   </Typography>
                   <RichTextField
                     source='description'
@@ -221,7 +224,7 @@ const ProductShow = () => {
                     variant='h6'
                     sx={{ mb: 1, color: 'text.secondary' }}
                   >
-                    Lao
+                    {translate('lao')}
                   </Typography>
                   <RichTextField
                     source='description_la'
@@ -241,14 +244,14 @@ const ProductShow = () => {
             <Card sx={{ mb: 3 }}>
               <CardContent>
                 <Typography variant='h5' sx={{ mb: 2, color: 'text.primary' }}>
-                  Product Details
+                  {translate('product_details')}
                 </Typography>
                 <Box sx={{ mb: 2 }}>
                   <Typography
                     variant='h6'
                     sx={{ mb: 1, color: 'text.secondary' }}
                   >
-                    English
+                    {translate('english')}
                   </Typography>
                   <RichTextField
                     source='details'
@@ -264,7 +267,7 @@ const ProductShow = () => {
                     variant='h6'
                     sx={{ mb: 1, color: 'text.secondary' }}
                   >
-                    Lao
+                    {translate('lao')}
                   </Typography>
                   <RichTextField
                     source='details_la'
@@ -282,7 +285,7 @@ const ProductShow = () => {
             <Card>
               <CardContent>
                 <Typography variant='h5' gutterBottom>
-                  Timestamps
+                  {translate('timestamps')}
                 </Typography>
                 <Grid container spacing={2}>
                   <Grid size={{ xs: 6 }}>
@@ -297,7 +300,7 @@ const ProductShow = () => {
                           display='block'
                           color='text.secondary'
                         >
-                          Created
+                          {translate('created')}
                         </Typography>
                         <DateField source='created' />
                       </Box>
@@ -315,7 +318,7 @@ const ProductShow = () => {
                           display='block'
                           color='text.secondary'
                         >
-                          Updated
+                          {translate('updated')}
                         </Typography>
                         <DateField source='updated' />
                       </Box>

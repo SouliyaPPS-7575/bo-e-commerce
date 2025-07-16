@@ -113,6 +113,13 @@ const customEnglishMessages: TranslationMessages = {
   loading_categories: 'Loading categories...',
   categories: 'Categories',
   updated: 'Updated',
+  product_information: 'Product Information',
+  description: 'Description',
+  english: 'English',
+  lao: 'Lao',
+  product_details: 'Product Details',
+  timestamps: 'Timestamps',
+  product_image: 'Product image',
   order: {
     items:
       'by %{customer_name}, one item |||| by %{customer_name}, %{nb_items} items',
