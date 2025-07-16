@@ -3,7 +3,6 @@ import {
   Delete as DeleteIcon,
   Edit as EditIcon,
   Search as SearchIcon,
-  Visibility as VisibilityIcon,
 } from '@mui/icons-material';
 import {
   Box,
@@ -257,7 +256,9 @@ const ProductCard = () => {
             sx={{ color: 'primary.main' }}
             onClick={(e) => e.stopPropagation()}
           >
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box
+              sx={{ display: 'flex', alignItems: 'center', fontSize: '1.1rem' }}
+            >
               <EditIcon fontSize='small' />
               Edit
             </Box>
@@ -311,9 +312,9 @@ const DeleteProductButton = ({ record }: any) => {
         disabled={isLoading}
         sx={{ color: 'error.main' }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', fontSize: '1.1rem' }}>
           <DeleteIcon fontSize='small' />
-           Delete
+          Delete
         </Box>
       </IconButton>
       <Confirm

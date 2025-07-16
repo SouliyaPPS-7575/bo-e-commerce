@@ -23,6 +23,8 @@ import {
   useNotify,
   useRefresh,
   useUpdate,
+  useTranslate,
+  Confirm,
 } from 'react-admin';
 import * as XLSX from 'xlsx';
 import { Customer } from '../dataProvider/customersDataProvider';
@@ -34,10 +36,10 @@ const customerFilters = [
     source='verified'
     choices={[
       { id: '', name: 'All Status' },
-      { id: 'true', name: 'Verified' },
-      { id: 'false', name: 'Unverified' },
+      { id: true, name: 'Verified' },
+      { id: false, name: 'Unverified' },
     ]}
-    label='Status'
+    label='resources.customers.fields.verified'
     emptyText='All Status'
   />,
   <SelectInput
@@ -48,7 +50,7 @@ const customerFilters = [
       { id: true, name: 'Has Orders' },
       { id: false, name: 'No Orders' },
     ]}
-    label='Order Status'
+    label='resources.customers.filters.has_ordered'
     emptyText='All Customers'
   />,
   <SelectInput
@@ -59,13 +61,13 @@ const customerFilters = [
       { id: true, name: 'Email Visible' },
       { id: false, name: 'Email Hidden' },
     ]}
-    label='Email Visibility'
+    label='resources.customers.fields.emailVisibility'
     emptyText='All Email Visibility'
   />,
   <SearchInput
     key='email'
     source='email'
-    label='Search by Email'
+    label='resources.customers.fields.email'
     placeholder='Enter email address'
   />,
 ];
@@ -149,16 +151,26 @@ const AccountStatusField = (record: Customer) => {
   const [update] = useUpdate();
   const notify = useNotify();
   const refresh = useRefresh();
+  const [open, setOpen] = React.useState(false);
+  const [newStatusValue, setNewStatusValue] = React.useState<boolean | null>(null);
 
   const handleStatusChange = async (event: any) => {
-    const newStatus = event.target.value === 'true' ? true : false;
+    const status = event.target.value === 'true';
+    setNewStatusValue(status);
+    setOpen(true);
+  };
+
+  const handleConfirm = async () => {
+    setOpen(false);
+    if (newStatusValue === null) return;
+
     try {
       await update('customers', {
         id: record.id,
-        data: { ...record, verified: newStatus },
+        data: { ...record, verified: newStatusValue },
         previousData: record,
       });
-      notify(`Account status updated to ${newStatus ? 'Active' : 'Inactive'}`, {
+      notify(`Account status updated to ${newStatusValue ? 'Active' : 'Inactive'}`, {
         type: 'success',
       });
       refresh();
@@ -167,28 +179,43 @@ const AccountStatusField = (record: Customer) => {
     }
   };
 
+  const handleCancel = () => {
+    setOpen(false);
+    setNewStatusValue(null);
+  };
+
   return (
-    <MuiSelect
-      value={record.verified ? 'true' : 'false'}
-      onChange={handleStatusChange}
-      variant='outlined'
-      size='small'
-      sx={{
-        width: 120,
-        color: record.verified ? 'green' : 'red',
-        fontWeight: 'bold',
-        '& .MuiSelect-select': {
-          paddingRight: '24px !important',
-        },
-      }}
-    >
-      <MenuItem value='true' sx={{ color: 'green' }}>
-        Active
-      </MenuItem>
-      <MenuItem value='false' sx={{ color: 'red' }}>
-        Inactive
-      </MenuItem>
-    </MuiSelect>
+    <>
+      <MuiSelect
+        value={record.verified ? 'true' : 'false'}
+        onChange={handleStatusChange}
+        onClick={(e) => e.stopPropagation()} // Stop propagation
+        variant="outlined"
+        size="small"
+        sx={{
+          width: 120,
+          color: record.verified ? 'green' : 'red',
+          fontWeight: 'bold',
+          '& .MuiSelect-select': {
+            paddingRight: '24px !important',
+          },
+        }}
+      >
+        <MenuItem value="true" sx={{ color: 'green' }}>
+          Active
+        </MenuItem>
+        <MenuItem value="false" sx={{ color: 'red' }}>
+          Inactive
+        </MenuItem>
+      </MuiSelect>
+      <Confirm
+        isOpen={open}
+        title="Confirm Status Change"
+        content={`Are you sure you want to change the status to ${newStatusValue ? 'Active' : 'Inactive'}?`}
+        onConfirm={handleConfirm}
+        onClose={handleCancel}
+      />
+    </>
   );
 };
 

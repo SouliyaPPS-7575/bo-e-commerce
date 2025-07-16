@@ -18,6 +18,7 @@ import {
   useNotify,
   useRefresh,
   useUpdate,
+  useTranslate,
 } from 'react-admin';
 import * as XLSX from 'xlsx';
 import pb from '../api/pocketbase';
@@ -33,7 +34,7 @@ const userFilters = [
       { id: true, name: 'Verified' },
       { id: false, name: 'Unverified' },
     ]}
-    label='Status'
+    label='resources.users.fields.verified'
     emptyText='All Status'
   />,
   <SelectInput
@@ -44,19 +45,19 @@ const userFilters = [
       { id: true, name: 'Email Visible' },
       { id: false, name: 'Email Hidden' },
     ]}
-    label='Email Visibility'
+    label='resources.users.fields.emailVisibility'
     emptyText='All Email Visibility'
   />,
   <SearchInput
     key='email'
     source='email'
-    label='Search by Email'
+    label='resources.users.fields.email'
     placeholder='Enter email address'
   />,
   <SearchInput
     key='username'
     source='username'
-    label='Search by Username'
+    label='resources.users.fields.username'
     placeholder='Enter username'
   />,
 ];
