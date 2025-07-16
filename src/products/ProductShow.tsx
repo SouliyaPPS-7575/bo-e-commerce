@@ -194,6 +194,40 @@ const ProductShow = () => {
                     />
                   </ReferenceField>
                 </Box>
+
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <Inventory color='primary' sx={{ mr: 1 }} />
+                  <Typography
+                    variant='h6'
+                    sx={{ fontSize: '1rem', fontWeight: 600, mr: 1 }}
+                  >
+                    {translate('total_count')}:
+                  </Typography>
+                  <NumberField
+                    source='total_count'
+                    sx={{
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                    }}
+                  />
+                </Box>
+
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <AttachMoney color='primary' sx={{ mr: 1 }} />
+                  <Typography
+                    variant='h6'
+                    sx={{ fontSize: '1rem', fontWeight: 600, mr: 1 }}
+                  >
+                    {translate('sell_count')}:
+                  </Typography>
+                  <NumberField
+                    source='sell_count'
+                    sx={{
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                    }}
+                  />
+                </Box>
               </CardContent>
             </Card>
 

@@ -52,6 +52,16 @@ const ProductCreate = () => (
 
       <Divider sx={{ my: 0.2 }} />
 
+      <NumberInput
+        source='total_count'
+        validate={required()}
+        min={0}
+        step={1}
+        fullWidth
+      />
+
+      <Divider sx={{ my: 0.2 }} />
+
       <ReferenceInput source='category_id' reference='categories'>
         <SelectInput source='name' fullWidth validate={required()} />
       </ReferenceInput>

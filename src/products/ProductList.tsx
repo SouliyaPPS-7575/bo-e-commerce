@@ -238,6 +238,15 @@ const ProductCard = () => {
           {formatCurrency(convert(record.price))} {displayCurrency}
         </Typography>
 
+        <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
+          <Typography variant='caption' color='textSecondary'>
+            {translate('total_count')}: {record.total_count || 0}
+          </Typography>
+          <Typography variant='caption' color='textSecondary'>
+            {translate('sell_count')}: {record.sell_count || 0}
+          </Typography>
+        </Box>
+
         <Typography variant='caption' color='textSecondary'>
           {translate('updated')}:{' '}
           {new Date(record.updated).toLocaleDateString()}

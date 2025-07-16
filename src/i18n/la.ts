@@ -124,6 +124,8 @@ const customLaoMessages: TranslationMessages = {
   loading_categories: 'ກຳລັງໂຫຼດໝວດໝູ່...',
   categories: 'ໝວດໝູ່',
   updated: 'ອັບເດດແລ້ວ',
+  total_count: 'ຈໍານວນທັງໝົດ',
+  sell_count: 'ຈໍານວນຂາຍແລ້ວ',
   product_information: 'ຂໍ້ມູນສິນຄ້າ',
   description: 'ລາຍລະອຽດ',
   english: 'ພາສາອັງກິດ',

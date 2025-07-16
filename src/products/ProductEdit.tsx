@@ -11,6 +11,7 @@ import {
   required,
   useDefaultTitle,
   useEditContext,
+  FormDataConsumer,
 } from 'react-admin';
 import Divider from '@mui/material/Divider';
 import ImageUploadField from '../components/ImageUploadField';
@@ -49,6 +50,28 @@ const ProductEdit = () => (
         step={0.01}
         fullWidth
       />
+
+      <Divider sx={{ my: 0.2 }} />
+
+      <FormDataConsumer>
+        {({ formData }) => (
+          <NumberInput
+            source='total_count'
+            validate={[
+              required(),
+              (value) => {
+                if (value < (formData.sell_count || 0)) {
+                  return 'Total count cannot be less than sell count';
+                }
+                return undefined;
+              },
+            ]}
+            min={formData.sell_count || 0}
+            step={1}
+            fullWidth
+          />
+        )}
+      </FormDataConsumer>
 
       <Divider sx={{ my: 0.2 }} />
 

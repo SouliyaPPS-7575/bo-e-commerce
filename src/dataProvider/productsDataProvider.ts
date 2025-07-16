@@ -17,6 +17,8 @@ export interface ProductData {
   description_la: string;
   details: string;
   details_la: string;
+  total_count: number;
+  sell_count: number;
   is_delete: boolean;
   created: string;
   updated: string;
@@ -235,6 +237,8 @@ export const productsDataProvider: any = {
       const id = await createPocketbaseDocument('products', {
         ...params.data,
         details_la: params.data.details_la || '',
+        total_count: params.data.total_count || 0,
+        sell_count: params.data.sell_count || 0,
         is_delete: false,
       });
       const record = await fetchPocketbaseDocument<ProductData>('products', id);

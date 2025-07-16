@@ -113,6 +113,8 @@ const customEnglishMessages: TranslationMessages = {
   loading_categories: 'Loading categories...', 
   categories: 'Categories',
   updated: 'Updated',
+  total_count: 'Total Count',
+  sell_count: 'Sold Count',
   product_information: 'Product Information',
   description: 'Description',
   english: 'English',
