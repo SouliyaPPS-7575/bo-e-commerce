@@ -57,7 +57,10 @@ const CurrencyList = () => {
         <DateField source='created' label={translate('created')} showTime />
         <DateField source='updated' label={translate('updated')} showTime />
         <EditButton />
-        <DeleteButton />
+        <DeleteButton
+          confirmTitle={translate('currency.delete.confirm_title')}
+          confirmContent={translate('currency.delete.confirm_content')}
+        />
       </Datagrid>
     </List>
   );
