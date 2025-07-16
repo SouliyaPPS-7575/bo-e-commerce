@@ -7,6 +7,7 @@ import {
   SelectInput,
   TopToolbar,
   ShowButton,
+  useTranslate,
 } from 'react-admin';
 import { Box, Typography } from '@mui/material';
 
@@ -17,17 +18,18 @@ const CCYEditActions = () => (
 );
 
 const CurrencyEdit = () => {
+  const translate = useTranslate();
 
   const validateForm = (values: any) => {
     const errors: any = {};
     if (!values.ccy) {
-      errors.ccy = 'Currency code is required';
+      errors.ccy = translate('code_required');
     }
     if (!values.type) {
-      errors.type = 'Type is required';
+      errors.type = translate('type_required');
     }
     if (!values.rate || values.rate <= 0) {
-      errors.rate = 'Rate must be greater than 0';
+      errors.rate = translate('rate_positive');
     }
     return errors;
   };
@@ -35,36 +37,43 @@ const CurrencyEdit = () => {
   return (
     <Edit actions={<CCYEditActions />}>
       <SimpleForm validate={validateForm}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, maxWidth: 600 }}>
-          <Typography variant="h6" gutterBottom>
-            Currency Information
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+            maxWidth: 600,
+          }}
+        >
+          <Typography variant='h6' gutterBottom>
+            {translate('information_title')}
           </Typography>
 
           <TextInput
-            source="ccy"
+            source='ccy'
             validate={[required()]}
             fullWidth
-            label="Currency Code"
-            helperText="e.g., USD, EUR, LAK"
+            label={translate('code_label')}
+            helperText={translate('code_helper')}
           />
 
           <SelectInput
-            source="type"
+            source='type'
             validate={[required()]}
             choices={[
               { id: 'BUY', name: 'BUY' },
               { id: 'SELL', name: 'SELL' },
             ]}
             fullWidth
-            label="Type"
+            label={translate('type_label')}
           />
 
           <NumberInput
-            source="rate"
+            source='rate'
             validate={[required()]}
             fullWidth
-            label="Exchange Rate"
-            helperText="Exchange rate value"
+            label={translate('rate_label')}
+            helperText={translate('rate_helper')}
           />
         </Box>
       </SimpleForm>

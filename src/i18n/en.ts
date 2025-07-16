@@ -120,6 +120,15 @@ const customEnglishMessages: TranslationMessages = {
   product_details: 'Product Details',
   timestamps: 'Timestamps',
   product_image: 'Product image',
+  information_title: 'Information Title',
+  code_required: 'Code is required',
+  type_required: 'Type is required',
+  rate_positive: 'Rate must be positive',
+  code_label: 'Currency Code',
+  code_helper: 'Currency Code',
+  type_label: 'Type',
+  rate_label: 'Rate',
+  rate_helper: 'Rate',
   order: {
     items:
       'by %{customer_name}, one item |||| by %{customer_name}, %{nb_items} items',

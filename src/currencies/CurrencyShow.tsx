@@ -8,6 +8,7 @@ import {
     TopToolbar,
     EditButton,
     DeleteButton,
+    useTranslate,
 } from 'react-admin';
 import { Box } from '@mui/material';
 
@@ -18,19 +19,22 @@ const CurrencyShowActions = () => (
     </TopToolbar>
 );
 
-const CurrencyShow = () => (
+const CurrencyShow = () => {
+  const translate = useTranslate();
+  return (
     <Show actions={<CurrencyShowActions />}>
-        <SimpleShowLayout>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <TextField source="id" label="ID" />
-                <TextField source="ccy" label="Currency Code" />
-                <TextField source="type" label="Type" />
-                <NumberField source="rate" label="Exchange Rate" />
-                <DateField source="created" label="Created" showTime />
-                <DateField source="updated" label="Last Updated" showTime />
-            </Box>
-        </SimpleShowLayout>
+      <SimpleShowLayout>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <TextField source="id" label="ID" />
+          <TextField source="ccy" label={translate('currency.fields.ccy')} />
+          <TextField source="type" label={translate('currency.fields.type')} />
+          <NumberField source="rate" label={translate('currency.fields.rate')} />
+          <DateField source="created" label={translate('currency.fields.created')} showTime />
+          <DateField source="updated" label={translate('currency.fields.updated')} showTime />
+        </Box>
+      </SimpleShowLayout>
     </Show>
-);
+  );
+};
 
 export default CurrencyShow;

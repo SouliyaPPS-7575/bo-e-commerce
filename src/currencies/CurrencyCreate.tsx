@@ -20,20 +20,20 @@ const CurrencyCreate = () => {
   const validateForm = (values: any) => {
     const errors: any = {};
     if (!values.ccy) {
-      errors.ccy = translate('currency.validation.code_required');
+      errors.ccy = translate('code_required');
     }
     if (!values.type) {
-      errors.type = translate('currency.validation.type_required');
+      errors.type = translate('type_required');
     }
     if (!values.rate || values.rate <= 0) {
-      errors.rate = translate('currency.validation.rate_positive');
+      errors.rate = translate('rate_positive');
     }
     return errors;
   };
 
   return (
     <Create
-      resource="currency"
+      resource='currency'
       title={translate('currency.create.title')}
       mutationOptions={{
         onSuccess: () => {
@@ -41,41 +41,51 @@ const CurrencyCreate = () => {
           redirect('list', 'currency');
         },
         onError: (error: any) => {
-          notify(translate('currency.create.error', { message: error.message }), { type: 'error' });
+          notify(
+            translate('currency.create.error', { message: error.message }),
+            { type: 'error' }
+          );
         },
       }}
     >
       <SimpleForm validate={validateForm}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, maxWidth: 600 }}>
-          <Typography variant="h6" gutterBottom>
-            Currency Information
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+            maxWidth: 600,
+          }}
+        >
+          <Typography variant='h6' gutterBottom>
+            {translate('information_title')}
           </Typography>
 
           <TextInput
-            source="ccy"
+            source='ccy'
             validate={[required()]}
             fullWidth
-            label="Currency Code"
-            helperText="e.g., USD, EUR, LAK"
+            label={translate('code_label')}
+            helperText={translate('code_helper')}
           />
 
           <SelectInput
-            source="type"
+            source='type'
             validate={[required()]}
             choices={[
               { id: 'BUY', name: 'BUY' },
               { id: 'SELL', name: 'SELL' },
             ]}
             fullWidth
-            label="Type"
+            label={translate('type_label')}
           />
 
           <NumberInput
-            source="rate"
+            source='rate'
             validate={[required()]}
             fullWidth
-            label="Exchange Rate"
-            helperText="Exchange rate value"
+            label={translate('rate_label')}
+            helperText={translate('rate_helper')}
           />
         </Box>
       </SimpleForm>

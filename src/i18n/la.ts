@@ -25,6 +25,15 @@ const customLaoMessages: TranslationMessages = {
   end_date: 'ວັນທີສິ້ນສຸດ',
   product_image: 'ຮູບພາບສິນຄ້າ',
   product: 'ສິນຄ້າ',
+  information_title: 'ຊື່ຂໍ້ມູນ',
+  code_required: 'ກະລຸນາປ່ຽນສະກຸນເງິນ',
+  type_required: 'ກະລຸນາປ່ຽນປະເພດ',
+  rate_positive: 'ອັດຕາແລກປ່ຽນຕໍ່ເປັນ0',
+  code_label: 'ສະກຸນເງິນ',
+  code_helper: 'ສະກຸນເງິນ',
+  type_label: 'ປະເພດ',
+  rate_label: 'ອັດຕາພາສີ',
+  rate_helper: 'ອັດຕາພາສີ',
   fields: {
     basket: {
       date: 'ວັນທີ',
@@ -95,6 +104,7 @@ const customLaoMessages: TranslationMessages = {
   total: 'ລວມ',
   image: 'ຮູບພາບ',
   currency: 'ສະກຸນເງິນ',
+
   no_items_found: 'ບໍ່ພົບລາຍການ',
   lak: 'ກີບ',
   usd: 'ໂດລາສະຫະລັດ',
@@ -120,6 +130,9 @@ const customLaoMessages: TranslationMessages = {
   lao: 'ພາສາລາວ',
   product_details: 'ລາຍລະອຽດສິນຄ້າ',
   timestamps: 'ເວລາ',
+  ccy: 'ລະຫັດສະກຸນເງິນ',
+  type: 'ປະເພດ',
+  rate: 'ອັດຕາແລກປ່ຽນ',
   order: {
     items:
       'ໂດຍ %{customer_name}, ຫນຶ່ງລາຍການ |||| ໂດຍ %{customer_name}, %{nb_items} ລາຍການ',
