@@ -23,7 +23,7 @@
         "inflection": "^3.0.0",
         "lucide-react": "^0.517.0",
         "pocketbase": "^0.26.1",
-        "query-string": "^8.2.0",
+        "query-string": "^6.9.0",
         "ra-data-simple-rest": "^5.0.0",
         "ra-i18n-polyglot": "^5.0.0",
         "ra-input-rich-text": "^5.0.0",
