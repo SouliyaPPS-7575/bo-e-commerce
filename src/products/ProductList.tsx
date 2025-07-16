@@ -73,6 +73,7 @@ const ProductList = () => {
 };
 
 const ProductGrid = () => {
+  const translate = useTranslate();
   const { data, isLoading } = useListContext();
   const theme = useTheme();
 
@@ -113,34 +114,37 @@ const ProductGrid = () => {
     return (
       <Box sx={{ textAlign: 'center', py: 4 }}>
         <Typography variant='h6' color='textSecondary'>
-          No products found
+          {translate('no_products_found')}
         </Typography>
       </Box>
     );
   }
 
   return (
-    <Grid container spacing={2} sx={{ px: { xs: 1, sm: 2 } }}>
-      {data.map((record: any) => (
-        <Grid
-          key={record.id}
-          size={{
-            xs: 12,
-            sm: 6,
-            md: 4,
-            lg: 3,
-          }}
-        >
-          <RecordContextProvider value={record}>
-            <ProductCard />
-          </RecordContextProvider>
-        </Grid>
-      ))}
-    </Grid>
+    <Box sx={{ pt: 2, pb: 4 }}>
+      <Grid container spacing={2} sx={{ px: { xs: 1, sm: 2 } }}>
+        {data.map((record: any) => (
+          <Grid
+            key={record.id}
+            size={{
+              xs: 12,
+              sm: 6,
+              md: 4,
+              lg: 3,
+            }}
+          >
+            <RecordContextProvider value={record}>
+              <ProductCard />
+            </RecordContextProvider>
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
   );
 };
 
 const ProductCard = () => {
+  const translate = useTranslate();
   const record = useRecordContext();
   const theme = useTheme();
 
@@ -235,7 +239,8 @@ const ProductCard = () => {
         </Typography>
 
         <Typography variant='caption' color='textSecondary'>
-          Updated: {new Date(record.updated).toLocaleDateString()}
+          {translate('updated')}:{' '}
+          {new Date(record.updated).toLocaleDateString()}
         </Typography>
       </CardContent>
       <CardActions sx={{ pt: 0, justifyContent: 'space-between' }}>
@@ -260,7 +265,7 @@ const ProductCard = () => {
               sx={{ display: 'flex', alignItems: 'center', fontSize: '1.1rem' }}
             >
               <EditIcon fontSize='small' />
-              Edit
+              {translate('edit')}
             </Box>
           </IconButton>
         </Box>
@@ -271,6 +276,7 @@ const ProductCard = () => {
 };
 
 const DeleteProductButton = ({ record }: any) => {
+  const translate = useTranslate();
   const [open, setOpen] = React.useState(false);
   const notify = useNotify();
   const refresh = useRefresh();
@@ -293,11 +299,11 @@ const DeleteProductButton = ({ record }: any) => {
       { id: record.id, previousData: record },
       {
         onSuccess: () => {
-          notify('Product deleted');
+          notify(translate('product_deleted'));
           refresh();
         },
         onError: () => {
-          notify('Error: Product not deleted', { type: 'warning' });
+          notify(translate('product_delete_error'), { type: 'warning' });
         },
       }
     );
@@ -312,16 +318,18 @@ const DeleteProductButton = ({ record }: any) => {
         disabled={isLoading}
         sx={{ color: 'error.main' }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', fontSize: '1.1rem' }}>
+        <Box
+          sx={{ display: 'flex', alignItems: 'center', typography: 'body1' }}
+        >
           <DeleteIcon fontSize='small' />
-          Delete
+          {translate('delete')}
         </Box>
       </IconButton>
       <Confirm
         isOpen={open}
         loading={isLoading}
-        title='Delete Product'
-        content='Are you sure you want to delete this product?'
+        title={translate('delete_product')}
+        content={translate('delete_product_confirmation')}
         onConfirm={handleConfirm}
         onClose={handleDialogClose}
       />
@@ -387,13 +395,13 @@ const ProductFilters = () => {
     setFilters({ ...filterValues, q: value }, null);
   };
 
-  const handleSalesFilter = (filterType: string, value: boolean) => {
-    setFilters({ ...filterValues, [filterType]: value }, null);
-  };
+  // const handleSalesFilter = (filterType: string, value: boolean) => {
+  //   setFilters({ ...filterValues, [filterType]: value }, null);
+  // };
 
-  const handleStockFilter = (filterType: string, value: boolean) => {
-    setFilters({ ...filterValues, [filterType]: value }, null);
-  };
+  // const handleStockFilter = (filterType: string, value: boolean) => {
+  //   setFilters({ ...filterValues, [filterType]: value }, null);
+  // };
 
   return (
     <Card
@@ -406,12 +414,12 @@ const ProductFilters = () => {
     >
       <CardContent>
         <Typography variant='h6' gutterBottom>
-          Filters
+          {translate('filters')}
         </Typography>
 
         <MuiTextField
           fullWidth
-          placeholder='Search products...'
+          placeholder={translate('search_products')}
           value={searchValue}
           onChange={handleSearchChange}
           size='small'
@@ -591,11 +599,11 @@ const ProductFilters = () => {
           variant='subtitle2'
           sx={{ mt: 2, mb: 1, display: 'flex', alignItems: 'center' }}
         >
-          🏷️ CATEGORIES
+          {translate('categories')}
         </Typography>
         {loadingCategories ? (
           <Typography variant='body2' color='textSecondary'>
-            Loading categories...
+            {translate('loading_categories')}
           </Typography>
         ) : (
           <MuiList dense sx={{ py: 0 }}>

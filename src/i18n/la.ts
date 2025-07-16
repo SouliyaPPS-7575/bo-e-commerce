@@ -100,8 +100,20 @@ const customLaoMessages: TranslationMessages = {
   thb: 'ບາດໄທ',
   order_totals: 'ຍອດລວມຄໍາສັ່ງຊື້',
   current: 'ປັດຈຸບັນ',
-  no_orders_found: 'ບໍ່ພົບຄໍາສັ່ງຊື້ສໍາລັບສະຖານະ:',
-  order: {
+    no_orders_found: 'ບໍ່ພົບຄໍາສັ່ງຊື້ສໍາລັບສະຖານະ:',
+    no_products_found: 'ບໍ່ພົບສິນຄ້າ',
+    edit: 'ແກ້ໄຂ',
+    delete: 'ລຶບ',
+    delete_product: 'ລຶບສິນຄ້າ',
+    delete_product_confirmation: 'ທ່ານແນ່ໃຈບໍວ່າຕ້ອງການລຶບສິນຄ້ານີ້?',
+    product_deleted: 'ສິນຄ້າຖືກລຶບແລ້ວ',
+    product_delete_error: 'ຜິດພາດ: ບໍ່ສາມາດລຶບສິນຄ້າໄດ້',
+    filters: 'ຕົວກອງ',
+    search_products: 'ຄົ້ນຫາສິນຄ້າ...',
+    loading_categories: 'ກຳລັງໂຫຼດໝວດໝູ່...',
+    categories: 'ໝວດໝູ່',
+    updated: 'ອັບເດດແລ້ວ',
+    order: {
     items:
       'ໂດຍ %{customer_name}, ຫນຶ່ງລາຍການ |||| ໂດຍ %{customer_name}, %{nb_items} ລາຍການ',
   },
