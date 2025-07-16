@@ -54,7 +54,7 @@ export const softDarkTheme = {
 export const softLightTheme = {
   palette: {
     primary: {
-      main: '#4f3cc9',
+      main: '#D4AF37',
     },
     secondary: {
       light: '#5f5fc4',
@@ -63,7 +63,7 @@ export const softLightTheme = {
       contrastText: '#fff',
     },
     background: {
-      default: '#fcfcfe',
+      default: '#fbf8f4',
     },
     mode: 'light' as 'light',
   },
@@ -83,7 +83,7 @@ export const softLightTheme = {
         root: {
           borderLeft: '3px solid #fff',
           '&.RaMenuItemLink-active': {
-            borderLeft: '3px solid #4f3cc9',
+            borderLeft: '3px solid #D4AF37',
           },
         },
       },

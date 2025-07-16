@@ -16,6 +16,7 @@ export interface ProductData {
   name_la: string;
   description_la: string;
   details: string;
+  details_la: string;
   is_delete: boolean;
   created: string;
   updated: string;
@@ -61,9 +62,18 @@ export const productsDataProvider: any = {
     const filterConditions: string[] = [];
 
     if (filter.q) {
-      filterConditions.push(
-        `(name ~ "${filter.q}" || description ~ "${filter.q}" || name_la ~ "${filter.q}" || description_la ~ "${filter.q}")`
-      );
+      const qConditions: string[] = [
+        `name ~ "${filter.q}"`,
+        `description ~ "${filter.q}"`,
+        `name_la ~ "${filter.q}"`,
+        `description_la ~ "${filter.q}"`,
+      ];
+
+      const priceAsNumber = parseFloat(filter.q);
+      if (!isNaN(priceAsNumber)) {
+        qConditions.push(`price = ${priceAsNumber}`);
+      }
+      filterConditions.push(`(${qConditions.join(' || ')})`);
     }
 
     if (filter.category_id) {
@@ -224,6 +234,7 @@ export const productsDataProvider: any = {
     try {
       const id = await createPocketbaseDocument('products', {
         ...params.data,
+        details_la: params.data.details_la || '',
         is_delete: false,
       });
       const record = await fetchPocketbaseDocument<ProductData>('products', id);
@@ -240,7 +251,10 @@ export const productsDataProvider: any = {
   ): Promise<{ data: ProductData }> => {
     const { id, data } = params;
     try {
-      await updatePocketbaseDocument('products', id, data);
+      await updatePocketbaseDocument('products', id, {
+        ...data,
+        details_la: data.details_la || '',
+      });
       const record = await fetchPocketbaseDocument<ProductData>('products', id);
       return { data: record };
     } catch (error) {

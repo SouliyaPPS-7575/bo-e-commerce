@@ -10,11 +10,9 @@ import {
   CardContent,
   CardMedia,
   Chip,
-  Divider,
   Grid,
   ImageList,
   ImageListItem,
-  Paper,
   Typography,
 } from '@mui/material';
 import {
@@ -28,6 +26,7 @@ import {
   useRecordContext,
   useShowContext,
 } from 'react-admin';
+import { useCurrencyContext } from '../components/CurrencySelector/CurrencyProvider';
 
 const ProductTitle = () => {
   const appTitle = useDefaultTitle();
@@ -114,87 +113,116 @@ const ProductImage = () => {
   );
 };
 
-const ProductShow = () => (
-  <Show title={<ProductTitle />}>
-    <Box sx={{ p: 2 }}>
-      <Grid container spacing={3}>
-        <Grid size={{ xs: 12, md: 5 }}>
-          <Card sx={{ height: 'fit-content' }}>
-            <CardContent>
-              <ProductImage />
-            </CardContent>
-          </Card>
-        </Grid>
+const ProductShow = () => {
+  const { displayCurrency } = useCurrencyContext();
 
-        <Grid size={{ xs: 12, md: 7 }}>
-          <Card>
-            <CardContent>
-              <Box sx={{ mb: 3 }}>
-                <TextField
-                  source='name'
-                  sx={{
-                    '& .RaTextField-text': {
-                      fontSize: '2rem',
+  return (
+    <Show title={<ProductTitle />}>
+      <Box sx={{ p: 2 }}>
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, md: 5 }}>
+            <Card sx={{ height: 'fit-content' }}>
+              <CardContent>
+                <ProductImage />
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid size={{ xs: 12, md: 7 }}>
+            <Card sx={{ mb: 3 }}>
+              <CardContent>
+                <Typography variant='h5' gutterBottom>
+                  Product Information
+                </Typography>
+                <Box sx={{ mb: 3 }}>
+                  <TextField
+                    source='name'
+                    sx={{
+                      fontSize: '1.5rem',
                       fontWeight: 600,
                       color: 'primary.main',
                       mb: 1,
-                    },
-                  }}
-                />
-                <TextField
-                  source='name_la'
-                  label=''
-                  sx={{
-                    '& .RaTextField-text': {
-                      fontSize: '1.2rem',
-                      color: 'text.secondary',
-                      fontStyle: 'italic',
-                    },
-                  }}
-                />
-              </Box>
-
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <AttachMoney color='success' sx={{ mr: 1 }} />
-                <NumberField
-                  source='price'
-                  sx={{
-                    '& .RaNumberField-text': {
+                    }}
+                  />
+                  &nbsp; &nbsp;
+                  <TextField
+                    source='name_la'
+                    label=''
+                    sx={{
                       fontSize: '1.5rem',
                       fontWeight: 600,
-                      color: 'success.main',
-                    },
-                  }}
-                />
-              </Box>
-
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Category color='primary' sx={{ mr: 1 }} />
-                <ReferenceField source='category_id' reference='categories'>
-                  <Chip
-                    label={<TextField source='name' />}
-                    color='primary'
-                    variant='outlined'
+                    }}
                   />
-                </ReferenceField>
-              </Box>
+                </Box>
 
-              <Divider sx={{ my: 2 }} />
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <Typography
+                    variant='h6'
+                    sx={{ fontSize: '1rem', fontWeight: 600, mr: 1 }}
+                  >
+                    Price:
+                  </Typography>
+                  <NumberField
+                    source='price'
+                    sx={{
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                    }}
+                  />
+                  <Typography
+                    variant='h6'
+                    sx={{
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                      ml: 0.5,
+                    }}
+                  >
+                    {displayCurrency}
+                  </Typography>
+                </Box>
 
-              <Box sx={{ mb: 2 }}>
-                <Typography variant='h6' sx={{ mb: 1, color: 'text.primary' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <Category color='primary' sx={{ mr: 1 }} />
+                  <ReferenceField source='category_id' reference='categories'>
+                    <Chip
+                      label={<TextField source='name' />}
+                      color='primary'
+                      variant='outlined'
+                    />
+                  </ReferenceField>
+                </Box>
+              </CardContent>
+            </Card>
+
+            <Card sx={{ mb: 3 }}>
+              <CardContent>
+                <Typography variant='h5' sx={{ mb: 1, color: 'text.primary' }}>
                   Description
                 </Typography>
-                <RichTextField
-                  source='description'
-                  sx={{
-                    '& .RaTextField-text': {
-                      lineHeight: 1.6,
-                      color: 'text.secondary',
-                    },
-                  }}
-                />
+                <Box sx={{ mb: 2 }}>
+                  <Typography
+                    variant='h6'
+                    sx={{ mb: 1, color: 'text.secondary' }}
+                  >
+                    English
+                  </Typography>
+                  <RichTextField
+                    source='description'
+                    sx={{
+                      '& .RaTextField-text': {
+                        lineHeight: 1.6,
+                        color: 'text.secondary',
+                      },
+                    }}
+                  />
+                </Box>
                 <Box sx={{ mt: 1 }}>
+                  <Typography
+                    variant='h6'
+                    sx={{ mb: 1, color: 'text.secondary' }}
+                  >
+                    Lao
+                  </Typography>
                   <RichTextField
                     source='description_la'
                     label=''
@@ -207,69 +235,100 @@ const ProductShow = () => (
                     }}
                   />
                 </Box>
-              </Box>
+              </CardContent>
+            </Card>
 
-              {/* Additional Details Section */}
-              <Paper sx={{ p: 2, backgroundColor: 'grey.50' }}>
-                <Typography variant='h6' sx={{ mb: 2, color: 'text.primary' }}>
+            <Card sx={{ mb: 3 }}>
+              <CardContent>
+                <Typography variant='h5' sx={{ mb: 2, color: 'text.primary' }}>
                   Product Details
                 </Typography>
-                <RichTextField
-                  source='details'
-                  sx={{
-                    '& .RaRichTextField-root': {
-                      lineHeight: 1.6,
-                    },
-                  }}
-                />
-              </Paper>
+                <Box sx={{ mb: 2 }}>
+                  <Typography
+                    variant='h6'
+                    sx={{ mb: 1, color: 'text.secondary' }}
+                  >
+                    English
+                  </Typography>
+                  <RichTextField
+                    source='details'
+                    sx={{
+                      '& .RaRichTextField-root': {
+                        lineHeight: 1.6,
+                      },
+                    }}
+                  />
+                </Box>
+                <Box sx={{ mt: 1 }}>
+                  <Typography
+                    variant='h6'
+                    sx={{ mb: 1, color: 'text.secondary' }}
+                  >
+                    Lao
+                  </Typography>
+                  <RichTextField
+                    source='details_la'
+                    label=''
+                    sx={{
+                      '& .RaRichTextField-root': {
+                        lineHeight: 1.6,
+                      },
+                    }}
+                  />
+                </Box>
+              </CardContent>
+            </Card>
 
-              <Divider sx={{ my: 2 }} />
-
-              <Grid container spacing={2}>
-                <Grid size={{ xs: 6 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <CalendarToday
-                      fontSize='small'
-                      sx={{ mr: 1, color: 'text.secondary' }}
-                    />
-                    <Box>
-                      <Typography
-                        variant='caption'
-                        display='block'
-                        color='text.secondary'
-                      >
-                        Created
-                      </Typography>
-                      <DateField source='created' />
+            <Card>
+              <CardContent>
+                <Typography variant='h5' gutterBottom>
+                  Timestamps
+                </Typography>
+                <Grid container spacing={2}>
+                  <Grid size={{ xs: 6 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <CalendarToday
+                        fontSize='small'
+                        sx={{ mr: 1, color: 'text.secondary' }}
+                      />
+                      <Box>
+                        <Typography
+                          variant='caption'
+                          display='block'
+                          color='text.secondary'
+                        >
+                          Created
+                        </Typography>
+                        <DateField source='created' />
+                      </Box>
                     </Box>
-                  </Box>
-                </Grid>
-                <Grid size={{ xs: 6 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Inventory
-                      fontSize='small'
-                      sx={{ mr: 1, color: 'text.secondary' }}
-                    />
-                    <Box>
-                      <Typography
-                        variant='caption'
-                        display='block'
-                        color='text.secondary'
-                      >
-                        Updated
-                      </Typography>
-                      <DateField source='updated' />
+                  </Grid>
+                  <Grid size={{ xs: 6 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Inventory
+                        fontSize='small'
+                        sx={{ mr: 1, color: 'text.secondary' }}
+                      />
+                      <Box>
+                        <Typography
+                          variant='caption'
+                          display='block'
+                          color='text.secondary'
+                        >
+                          Updated
+                        </Typography>
+                        <DateField source='updated' />
+                      </Box>
                     </Box>
-                  </Box>
+                  </Grid>
                 </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </Grid>
         </Grid>
-      </Grid>
-    </Box>
-  </Show>
-);
+      </Box>
+    </Show>
+  );
+};
 
 export default ProductShow;

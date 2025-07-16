@@ -1,4 +1,4 @@
-import { TranslationMessages } from 'react-admin';
+import { email, TranslationMessages } from 'react-admin';
 import englishMessages from 'ra-language-english';
 
 const customEnglishMessages: TranslationMessages = {
@@ -63,6 +63,7 @@ const customEnglishMessages: TranslationMessages = {
         password: 'Password',
         confirm_password: 'Confirm password',
         stateAbbr: 'State',
+        email: 'Email',
       },
       filters: {
         last_visited: 'Last visited',

@@ -149,6 +149,16 @@ const ProductEdit = () => (
       <React.Suspense fallback={<div>Loading...</div>}>
         <RichTextInput source='details' fullWidth />
       </React.Suspense>
+
+      <Divider sx={{ my: 0.2 }} />
+
+      <React.Suspense fallback={<div>Loading...</div>}>
+        <RichTextInput
+          source='details_la'
+          label='Details (Lao)'
+          fullWidth
+        />
+      </React.Suspense>
     </SimpleForm>
   </Edit>
 );

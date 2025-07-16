@@ -1,9 +1,8 @@
 import { Download } from '@mui/icons-material';
-import { Avatar, Button, FormControlLabel, Switch } from '@mui/material';
+import { Avatar, Button, MenuItem, Select as MuiSelect } from '@mui/material';
 import * as React from 'react';
 import {
-  ColumnsButton,
-  CreateButton,
+  Confirm,
   DataTable,
   EmailField,
   List,
@@ -30,7 +29,7 @@ const customerFilters = [
       { id: true, name: 'Verified' },
       { id: false, name: 'Unverified' },
     ]}
-    label='Status'
+    label='resources.customers.fields.verified'
     emptyText='All Status'
   />,
   <SelectInput
@@ -41,7 +40,7 @@ const customerFilters = [
       { id: true, name: 'Has Orders' },
       { id: false, name: 'No Orders' },
     ]}
-    label='Order Status'
+    label='resources.customers.filters.has_ordered'
     emptyText='All Customers'
   />,
   <SelectInput
@@ -52,13 +51,13 @@ const customerFilters = [
       { id: true, name: 'Email Visible' },
       { id: false, name: 'Email Hidden' },
     ]}
-    label='Email Visibility'
+    label='resources.customers.fields.emailVisibility'
     emptyText='All Email Visibility'
   />,
   <SearchInput
     key='email'
     source='email'
-    label='Search by Email'
+    label='resources.customers.fields.email'
     placeholder='Enter email address'
   />,
 ];
@@ -138,48 +137,88 @@ const AvatarField = (record: Customer) => {
   );
 };
 
-const AccountStatusField = ({ record }: { record?: Customer }) => {
+const AccountStatusField = (record: Customer) => {
   const [update] = useUpdate();
   const notify = useNotify();
   const refresh = useRefresh();
+  const [open, setOpen] = React.useState(false);
+  const [newStatusValue, setNewStatusValue] = React.useState<boolean | null>(
+    null
+  );
 
-  const handleStatusChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    if (!record) return;
+  const handleStatusChange = async (event: any) => {
+    const status = event.target.value === 'true';
+    setNewStatusValue(status);
+    setOpen(true);
+  };
 
-    const newStatus = event.target.checked;
+  const handleConfirm = async () => {
+    setOpen(false);
+    if (newStatusValue === null) return;
+
     try {
       await update('customers', {
         id: record.id,
-        data: { ...record, verified: newStatus },
+        data: { ...record, status: newStatusValue ? 'true' : 'false' }, // Convert boolean to string
         previousData: record,
       });
-      notify(`Account status updated to ${newStatus ? 'Active' : 'Inactive'}`, {
-        type: 'success',
-      });
+      notify(
+        `Account status updated to ${newStatusValue ? 'Active' : 'Inactive'}`,
+        {
+          type: 'success',
+        }
+      );
       refresh();
     } catch (error) {
       notify('Error updating account status', { type: 'error' });
     }
   };
 
+  const handleCancel = () => {
+    setOpen(false);
+    setNewStatusValue(null);
+  };
+
   return (
-    <FormControlLabel
-      control={
-        <Switch
-          checked={record?.verified || false}
-          onChange={handleStatusChange}
-          size='small'
-          color='primary'
-        />
-      }
-      label={record?.verified ? 'Active' : 'Inactive'}
-      labelPlacement='start'
-      sx={{ margin: 0 }}
-    />
+    <>
+      <MuiSelect
+        value={record.status ? 'true' : 'false'}
+        onChange={handleStatusChange}
+        onClick={(e) => e.stopPropagation()} // Stop propagation
+        variant='outlined'
+        size='small'
+        sx={{
+          width: 120,
+          color: record.status ? 'green' : 'red',
+          fontWeight: 'bold',
+          '& .MuiSelect-select': {
+            paddingRight: '24px !important',
+          },
+        }}
+      >
+        <MenuItem value='true' sx={{ color: 'green' }}>
+          Active
+        </MenuItem>
+        <MenuItem value='false' sx={{ color: 'red' }}>
+          Inactive
+        </MenuItem>
+      </MuiSelect>
+      <Confirm
+        isOpen={open}
+        title='Confirm Status Change'
+        content={`Are you sure you want to change the status to ${
+          newStatusValue ? 'Active' : 'Inactive'
+        }?`}
+        onConfirm={handleConfirm}
+        onClose={handleCancel}
+      />
+    </>
   );
 };
+
+const BlackEmailField = (props: any) => (
+  <EmailField sx={{ color: 'black' }} {...props} />
+);
 
 const CustomerList = () => {
   return (
@@ -205,8 +244,9 @@ const CustomerList = () => {
         <Column source='avatar' render={AvatarField} />
         <Column source='name' label='Name' />
         <Column source='username' label='Username' />
-        <Column source='email' field={EmailField} />
+        <Column source='email' field={BlackEmailField} />
         <Column source='phone_number' label='Phone' />
+        <Column source='verified' render={AccountStatusField} label='Status' />
       </DataTable>
     </List>
   );

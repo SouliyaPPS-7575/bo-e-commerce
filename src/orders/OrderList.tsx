@@ -43,6 +43,8 @@ import { DateField, Loading, useTranslate } from 'react-admin';
 import { Link } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 
+import dayjs from 'dayjs';
+
 import pb from '../api/pocketbase';
 import { useCurrencyContext } from '../components/CurrencySelector/CurrencyProvider'; // Import useCurrencyContext
 import {
@@ -61,20 +63,35 @@ const OrderListFilter = ({
   setDateRange: (range: { start: string; end: string }) => void;
 }) => {
   const [searchTerm, setSearchTermState] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  // const [startDate, setStartDate] = useState('');
+  // const [endDate, setEndDate] = useState('');
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTermState(event.target.value);
     setSearchTerm(event.target.value);
   };
 
-  const handleDateChange = () => {
-    setDateRange({ start: startDate, end: endDate });
-  };
+  // const handleDateChange = () => {
+  //   const formattedStartDate = startDate
+  //     ? dayjs(startDate).format('YYYY-MM-DD HH:mm:ss')
+  //     : '';
+  //   const formattedEndDate = endDate
+  //     ? dayjs(endDate).format('YYYY-MM-DD HH:mm:ss')
+  //     : '';
+  //   setDateRange({ start: formattedStartDate, end: formattedEndDate });
+  // };
 
   return (
-    <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 2, mb: -1, mt: -2 }}>
+    <Box
+      sx={{
+        p: 2,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 2,
+        mb: -1,
+        mt: -2,
+      }}
+    >
       <TextField
         label='Search'
         variant='outlined'
@@ -82,7 +99,7 @@ const OrderListFilter = ({
         value={searchTerm}
         fullWidth
       />
-      <TextField
+      {/* <TextField
         label="Start Date"
         type="datetime-local"
         variant="outlined"
@@ -103,7 +120,7 @@ const OrderListFilter = ({
         InputLabelProps={{
           shrink: true,
         }}
-      />
+      /> */}
     </Box>
   );
 };
@@ -266,7 +283,10 @@ const TabbedDatagrid = () => {
   return (
     <Fragment>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <OrderListFilter setSearchTerm={setSearchTerm} setDateRange={setDateRange} />
+        <OrderListFilter
+          setSearchTerm={setSearchTerm}
+          setDateRange={setDateRange}
+        />
         <Button
           variant='contained'
           onClick={downloadExcel}
@@ -296,7 +316,11 @@ const TabbedDatagrid = () => {
       </Tabs>
       <Divider />
       <br />
-      <OrdersTable status={activeTab} searchTerm={searchTerm} dateRange={dateRange} />
+      <OrdersTable
+        status={activeTab}
+        searchTerm={searchTerm}
+        dateRange={dateRange}
+      />
     </Fragment>
   );
 };
@@ -762,7 +786,15 @@ const OrderDetail: React.FC<{
 
 // Custom Orders Table with PocketBase integration
 const OrdersTable = React.memo(
-  ({ status, searchTerm, dateRange }: { status: string; searchTerm: string; dateRange: { start: string; end: string } }) => {
+  ({
+    status,
+    searchTerm,
+    dateRange,
+  }: {
+    status: string;
+    searchTerm: string;
+    dateRange: { start: string; end: string };
+  }) => {
     const [orders, setOrders] = useState<PBOrder[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);

@@ -25,6 +25,7 @@ export const BlogShow = () => (
       <TextField source='id' />
       <TextField source='title' />
       <RichTextField source='description' />
+      <RichTextField source='description_la' label='Description (Lao)' />
       <TextField source='title' />
       <TextField source='description' />
       <UrlField source='image_url' />

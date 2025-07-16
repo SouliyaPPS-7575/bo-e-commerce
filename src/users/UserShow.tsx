@@ -54,7 +54,7 @@ const UserShow = () => {
                                         <Typography variant="body2" color="text.secondary" gutterBottom>
                                             Email
                                         </Typography>
-                                        <EmailField source="email" />
+                                        <EmailField source="email" sx={{ color: 'black' }} />
                                     </Box>
                                     
                                     <Box>

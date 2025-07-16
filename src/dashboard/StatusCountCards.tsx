@@ -1,14 +1,10 @@
-import {
-  Cancel as CancelIcon,
-  AttachMoney as MoneyIcon,
-} from '@mui/icons-material';
+import { Cancel as CancelIcon } from '@mui/icons-material';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PersonAddRoundedIcon from '@mui/icons-material/PersonAddRounded';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { Box, Card, CardContent, Grid, Typography } from '@mui/material';
+import { Box, Card, Grid, Typography } from '@mui/material';
 import * as React from 'react';
-import { SellRevenue } from '../model/dashboard';
 import { useCurrencyContext } from '../components/CurrencySelector/CurrencyProvider';
 import { formatCurrency } from '../utils/format';
 
@@ -26,8 +22,14 @@ interface SellAmount {
   amountTHB: string;
 }
 
+export interface TotalSellAmount {
+  totalLAK: number;
+  totalTHB: number;
+  totalUSD: number;
+}
+
 interface Props {
-  sellRevenue: SellRevenue;
+  sellRevenue: TotalSellAmount;
   orderStatusCount: OrderStatusCount;
   customerCount: number;
   sellAmount: SellAmount;
@@ -135,13 +137,13 @@ const StatusCountCards: React.FC<Props> = ({
         <ModernStatusCard
           title='Monthly Revenue'
           value={
-            currency === 'USD' && sellRevenue?.amountUSD
-              ? `${formatCurrency(Number(sellRevenue?.amountUSD))} $`
-              : currency === 'THB' && sellRevenue?.amountTHB
-                ? `${formatCurrency(Number(sellRevenue?.amountTHB))} ฿`
-                : currency === 'LAK' && sellRevenue?.amountLAK
-                  ? `${formatCurrency(Number(sellRevenue?.amountLAK))} ₭`
-                  : ''
+            currency === 'USD' && sellRevenue?.totalUSD
+              ? `${formatCurrency(Number(sellRevenue?.totalUSD))} $`
+              : currency === 'THB' && sellRevenue?.totalTHB
+              ? `${formatCurrency(Number(sellRevenue?.totalTHB))} ฿`
+              : currency === 'LAK' && sellRevenue?.totalLAK
+              ? `${formatCurrency(Number(sellRevenue?.totalLAK))} ₭`
+              : ''
           }
           icon={
             <Box>

@@ -3,7 +3,6 @@ import {
   Delete as DeleteIcon,
   Edit as EditIcon,
   Search as SearchIcon,
-  Visibility as VisibilityIcon,
 } from '@mui/icons-material';
 import {
   Box,
@@ -150,7 +149,7 @@ const ProductCard = () => {
   if (!record) return null;
 
   return (
-    <Card
+    <Box
       sx={{
         height: '100%',
         display: 'flex',
@@ -164,10 +163,13 @@ const ProductCard = () => {
         },
         cursor: 'pointer',
         p: { xs: 1, sm: 1 },
+        backgroundColor: '#FFFFFF',
+        boxShadow:
+          '0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)',
       }}
       // go to edit product
       onClick={() => {
-        window.location.href = `#/products/${record.id}`;
+        window.location.href = `#/products/${record.id}/show`;
       }}
     >
       <CardMedia
@@ -222,7 +224,7 @@ const ProductCard = () => {
 
         <Typography
           variant='h6'
-          color='primary'
+          color='#000000'
           sx={{
             fontWeight: 600,
             fontSize: '1.1rem',
@@ -238,7 +240,7 @@ const ProductCard = () => {
       </CardContent>
       <CardActions sx={{ pt: 0, justifyContent: 'space-between' }}>
         <Box>
-          <IconButton
+          {/* <IconButton
             size='small'
             component='a'
             href={`#/products/${record.id}/show`}
@@ -246,7 +248,7 @@ const ProductCard = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <VisibilityIcon fontSize='small' />
-          </IconButton>
+          </IconButton> */}
           <IconButton
             size='small'
             component='a'
@@ -254,12 +256,17 @@ const ProductCard = () => {
             sx={{ color: 'primary.main' }}
             onClick={(e) => e.stopPropagation()}
           >
-            <EditIcon fontSize='small' />
+            <Box
+              sx={{ display: 'flex', alignItems: 'center', fontSize: '1.1rem' }}
+            >
+              <EditIcon fontSize='small' />
+              Edit
+            </Box>
           </IconButton>
         </Box>
         <DeleteProductButton record={record} />
       </CardActions>
-    </Card>
+    </Box>
   );
 };
 
@@ -292,7 +299,7 @@ const DeleteProductButton = ({ record }: any) => {
         onError: () => {
           notify('Error: Product not deleted', { type: 'warning' });
         },
-      },
+      }
     );
     setOpen(false);
   };
@@ -305,7 +312,10 @@ const DeleteProductButton = ({ record }: any) => {
         disabled={isLoading}
         sx={{ color: 'error.main' }}
       >
-        <DeleteIcon fontSize='small' />
+        <Box sx={{ display: 'flex', alignItems: 'center', fontSize: '1.1rem' }}>
+          <DeleteIcon fontSize='small' />
+          Delete
+        </Box>
       </IconButton>
       <Confirm
         isOpen={open}

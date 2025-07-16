@@ -105,7 +105,6 @@ export const usersDataProvider: Partial<DataProvider> = {
 
       const dataToCreate = {
         ...rest,
-        // verified: false,
         emailVisibility: true,
         password,
         passwordConfirm,

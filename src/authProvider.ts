@@ -17,6 +17,7 @@ const authProvider: AuthProvider = {
       localStorage.setItem('username', response?.record?.username);
       localStorage.setItem('avatar', response?.record?.avatar);
       localStorage.setItem('id', response?.record?.id);
+      localStorage.setItem('role', response?.record?.role);
 
       const token = response.token;
 

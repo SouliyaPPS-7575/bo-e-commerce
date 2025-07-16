@@ -38,12 +38,14 @@ interface Props {
   data: SellRevenueData[];
   onFilterChange?: (params: FilterParams) => void;
   loading?: boolean;
+  filterParams?: FilterParams;
 }
 
 const SellRevenueChart: React.FC<Props> = ({
   data,
   onFilterChange,
   loading,
+  filterParams,
 }) => {
   const { currency, displayCurrency } = useCurrencyContext();
 
@@ -52,10 +54,19 @@ const SellRevenueChart: React.FC<Props> = ({
       return [];
     }
 
+    console.log('=> data', data[0].period);
+
     return data.map((item) => {
       const date = new Date(item.period);
-      const day = date.toLocaleDateString('en-US', { day: '2-digit' });
-      const month = date.toLocaleDateString('en-US', { month: 'short' });
+      let formattedDate;
+
+      if (item.period.length === 4) { // Check if period is a 4-digit year
+        formattedDate = item.period;
+      } else {
+        const day = date.toLocaleDateString('en-US', { day: '2-digit' });
+        const month = date.toLocaleDateString('en-US', { month: '2-digit' });
+        formattedDate = `${day}/${month}`;
+      }
 
       let amount = 0;
       switch (currency) {
@@ -73,11 +84,11 @@ const SellRevenueChart: React.FC<Props> = ({
       }
 
       return {
-        date: `${day} ${month}`,
+        date: formattedDate,
         amount,
       };
     });
-  }, [data, currency]);
+  }, [data, currency, filterParams?.isYear]);
 
   const totalLAK = React.useMemo(
     () =>
@@ -176,8 +187,9 @@ const SellRevenueChart: React.FC<Props> = ({
           <Grid
             size={{
               xs: 12,
-              md: 4
-            }}>
+              md: 4,
+            }}
+          >
             <Box
               sx={{
                 textAlign: 'center',
@@ -197,8 +209,9 @@ const SellRevenueChart: React.FC<Props> = ({
           <Grid
             size={{
               xs: 12,
-              md: 4
-            }}>
+              md: 4,
+            }}
+          >
             <Box
               sx={{
                 textAlign: 'center',
@@ -218,8 +231,9 @@ const SellRevenueChart: React.FC<Props> = ({
           <Grid
             size={{
               xs: 12,
-              md: 4
-            }}>
+              md: 4,
+            }}
+          >
             <Box
               sx={{
                 textAlign: 'center',
