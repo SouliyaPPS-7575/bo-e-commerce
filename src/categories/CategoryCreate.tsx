@@ -1,49 +1,57 @@
-import * as React from 'react';
+import { Box, Typography } from '@mui/material';
 import {
   Create,
+  ImageField,
+  ImageInput,
+  required,
   SimpleForm,
   TextInput,
-  required,
   Title,
-  ImageInput,
-  ImageField,
+  useTranslate,
 } from 'react-admin';
-import { Box, Typography } from '@mui/material';
 
-const CategoryCreate = () => (
-  <Create title={<Title title='Create New Category' />}>
-    <SimpleForm>
-      <Box
-        display='flex'
-        flexDirection='column'
-        gap={2}
-        width='100%'
-        maxWidth={600}
-      >
-        <Typography variant='h6' gutterBottom>
-          New Category Information
-        </Typography>
+const CategoryCreate = () => {
+  const translate = useTranslate();
+  return (
+    <Create
+      title={<Title title={translate('resources.categories.create_title')} />}
+    >
+      <SimpleForm>
+        <Box
+          display='flex'
+          flexDirection='column'
+          gap={2}
+          width='100%'
+          maxWidth={600}
+        >
+          <Typography variant='h6' gutterBottom>
+            {translate('resources.categories.form_title')}
+          </Typography>
 
-        <TextInput
-          source='name'
-          label='Category Name'
-          validate={[required()]}
-          fullWidth
-        />
+          <TextInput
+            source='name'
+            label={translate('resources.categories.fields.name')}
+            validate={[required()]}
+            fullWidth
+          />
 
-        <TextInput
-          source='name_la'
-          label='Lao Name'
-          validate={[required()]}
-          fullWidth
-        />
+          <TextInput
+            source='name_la'
+            label={translate('resources.categories.fields.name_la')}
+            validate={[required()]}
+            fullWidth
+          />
 
-        <ImageInput source='image' label='Category Image'>
-          <ImageField source='src' title='title' />
-        </ImageInput>
-      </Box>
-    </SimpleForm>
-  </Create>
-);
+          <ImageInput
+            source='image'
+            label={translate('resources.categories.fields.image')}
+          >
+            <ImageField source='src' title='title' />
+          </ImageInput>
+        </Box>
+      </SimpleForm>
+    </Create>
+  );
+};
 
 export default CategoryCreate;

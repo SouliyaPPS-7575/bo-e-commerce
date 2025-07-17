@@ -34,6 +34,10 @@ const customLaoMessages: TranslationMessages = {
   type_label: 'ປະເພດ',
   rate_label: 'ອັດຕາພາສີ',
   rate_helper: 'ອັດຕາພາສີ',
+  all: 'ທັງໝົດ',
+  buy: 'ຊື້',
+  sell: 'ຂາຍ',
+
   fields: {
     basket: {
       date: 'ວັນທີ',
@@ -341,8 +345,13 @@ const customLaoMessages: TranslationMessages = {
     },
     categories: {
       name: 'ໝວດໝູ່ |||| ໝວດໝູ່',
+      create_title: 'ສ້າງໝວດໝູ່ໃໝ່',
+      form_title: 'ຂໍ້ມູນໝວດໝູ່ໃໝ່',
       fields: {
         products: 'ສິນຄ້າ',
+        name: 'ຊື່ໝວດໝູ່',
+        name_la: 'ຊື່ພາສາລາວ',
+        image: 'ຮູບພາບໝວດໝູ່',
       },
       notifications: {
         created: 'ໝວດໝູ່ຖືກສ້າງ |||| %{smart_count} ໝວດໝູ່ຖືກສ້າງ',

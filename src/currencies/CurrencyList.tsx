@@ -11,26 +11,6 @@ import {
   TopToolbar,
   useTranslate,
 } from 'react-admin';
-const CurrencyFilter = [
-  <SearchInput key='search' source='q' alwaysOn />,
-  <SelectInput
-    key='type'
-    source='type'
-    choices={[
-      { id: '', name: 'All' },
-      { id: 'BUY', name: 'BUY' },
-      { id: 'SELL', name: 'SELL' },
-    ]}
-    alwaysOn
-    emptyValue={''}
-    label='Type'
-    sx={{
-      '& .MuiInputBase-root': {
-        height: '40px', // Adjust this value as needed
-      },
-    }}
-  />,
-];
 
 const CurrencyListActions = () => (
   <TopToolbar>
@@ -41,6 +21,28 @@ const CurrencyListActions = () => (
 
 const CurrencyList = () => {
   const translate = useTranslate();
+
+  const CurrencyFilter = [
+    <SearchInput key='search' placeholder={translate('search')} source='q' alwaysOn />,
+    <SelectInput
+      key='type'
+      source='type'
+      choices={[
+        { id: '', name: translate('all') },
+        { id: 'BUY', name: translate('buy') },
+        { id: 'SELL', name: translate('sell') },
+      ]}
+      alwaysOn
+      emptyValue={''}
+      label={translate('type')}
+      sx={{
+        '& .MuiInputBase-root': {
+          height: '40px', // Adjust this value as needed
+        },
+      }}
+    />,
+  ];
+
   return (
     <List
       resource='currency'

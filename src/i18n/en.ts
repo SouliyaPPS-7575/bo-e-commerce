@@ -23,6 +23,9 @@ const customEnglishMessages: TranslationMessages = {
   date_range: 'Date Range',
   start_date: 'Start Date',
   end_date: 'End Date',
+  type: 'Type',
+  ccy: 'Currency Code',
+  rate: 'Rate',
   fields: {
     basket: {
       date: 'Date',
@@ -130,6 +133,9 @@ const customEnglishMessages: TranslationMessages = {
   type_required: 'Type is required',
   rate_label: 'Rate',
   rate_positive: 'Rate must be positive',
+  all: 'All',
+  buy: 'BUY',
+  sell: 'SELL',
   order: {
     items:
       'by %{customer_name}, one item |||| by %{customer_name}, %{nb_items} items',
@@ -336,8 +342,13 @@ const customEnglishMessages: TranslationMessages = {
     },
     categories: {
       name: 'Category |||| Categories',
+      create_title: 'Create New Category',
+      form_title: 'New Category Information',
       fields: {
         products: 'Products',
+        name: 'Category Name',
+        name_la: 'Lao Name',
+        image: 'Category Image',
       },
       notifications: {
         created: 'Category created |||| %{smart_count} categories created',
