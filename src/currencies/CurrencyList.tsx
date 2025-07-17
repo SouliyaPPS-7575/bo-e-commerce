@@ -56,7 +56,7 @@ const CurrencyList = () => {
         <NumberField source='rate' label={translate('rate')} />
         <DateField source='created' label={translate('created')} showTime />
         <DateField source='updated' label={translate('updated')} showTime />
-        <EditButton />
+        <EditButton label={translate('edit')} />
         {/* <DeleteButton
           confirmTitle={translate('currency.delete.confirm_title')}
           confirmContent={translate('currency.delete.confirm_content')}

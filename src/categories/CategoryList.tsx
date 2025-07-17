@@ -21,6 +21,7 @@ import {
   useListContext,
   useRedirect,
   useRefresh, // Import TopToolbar for common action bar layout
+  useTranslate,
 } from 'react-admin';
 
 import { useImageStore } from '../store/imageStore';
@@ -49,11 +50,13 @@ const CategoriesTitle = () => {
 };
 
 // Custom actions component for flexible alignment
-const CategoryListActions = () => (
-  <TopToolbar>
-    <CreateButton />
-  </TopToolbar>
-);
+const CategoryListActions = () => {
+  return (
+    <TopToolbar>
+      <CreateButton />
+    </TopToolbar>
+  );
+};
 
 const CategoryList = () => (
   <List
@@ -72,6 +75,7 @@ const CategoryGrid = () => {
   const { data, error, isPending } = useListContext<Category>();
   const redirect = useRedirect();
   const refresh = useRefresh();
+  const translate = useTranslate();
 
   if (isPending) {
     return null;
@@ -90,9 +94,8 @@ const CategoryGrid = () => {
               sm: 6,
               md: 4,
               lg: 3,
-              xl: 2,
-            }}
-          >
+              xl: 2
+            }}>
             <Card>
               <CardActionArea
                 onClick={() => {
@@ -121,7 +124,7 @@ const CategoryGrid = () => {
                 }}
               >
                 <LinkToRelatedProducts />
-                <EditButton />
+                <EditButton label={translate('edit')} />
               </CardActions>
             </Card>
           </Grid>

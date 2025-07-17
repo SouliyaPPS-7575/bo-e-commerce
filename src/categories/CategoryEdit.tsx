@@ -1,5 +1,6 @@
 import {
   DataTable,
+  DeleteButton,
   Edit,
   EditButton,
   ImageField,
@@ -8,9 +9,11 @@ import {
   ReferenceManyField,
   SimpleForm,
   TextInput,
+  TopToolbar,
   useDefaultTitle,
   useEditContext,
   useRefresh,
+  useTranslate,
 } from 'react-admin';
 
 import { Avatar, Box, Typography } from '@mui/material';
@@ -50,10 +53,17 @@ const ImageUrlField = (record: ProductCategory | any) => {
   );
 };
 
+const CategoryEditActions = () => (
+  <TopToolbar>
+    <DeleteButton />
+  </TopToolbar>
+);
+
 const CategoryEdit = () => {
   const { displayCurrency, convert } = useCurrencyContext();
   const { selectImage, setSelectImage } = useImageStore(); // Use the store
   const refresh = useRefresh();
+  const translate = useTranslate();
 
   // Clear selectImage when route changes
   const location = useLocation();
@@ -63,7 +73,7 @@ const CategoryEdit = () => {
   }, [location.pathname, setSelectImage]);
 
   return (
-    <Edit title={<CategoryTitle />}>
+    <Edit title={<CategoryTitle />} actions={<CategoryEditActions />}>
       <SimpleForm>
         <Box
           display='flex'
@@ -73,14 +83,20 @@ const CategoryEdit = () => {
           maxWidth={600}
         >
           <Typography variant='h6' gutterBottom>
-            Edit Category Information
+            {translate('resources.categories.form_title_edit')}
           </Typography>
 
-          <TextInput source='name' label='Category Name' />
-          <TextInput source='name_la' label='Lao Name' />
+          <TextInput
+            source='name'
+            label={translate('resources.categories.fields.name')}
+          />
+          <TextInput
+            source='name_la'
+            label={translate('resources.categories.fields.name_la')}
+          />
           <ImageInput
             source='image'
-            label='Category Image'
+            label={translate('resources.categories.fields.image')}
             onChange={(e) => {
               setSelectImage(e);
             }}
@@ -90,13 +106,16 @@ const CategoryEdit = () => {
 
           <ImageField
             source='image_url'
-            label='Current Image'
+            label={translate('resources.categories.fields.current_image')}
             sx={{
               display: selectImage !== null ? 'none' : 'block',
             }}
           />
 
-          <Labeled label='resources.categories.fields.products' fullWidth>
+          <Labeled
+            label={translate('resources.categories.fields.products')}
+            fullWidth
+          >
             <ReferenceManyField
               reference='products'
               target='category_id'
@@ -110,15 +129,20 @@ const CategoryEdit = () => {
                   field={ThumbnailField}
                   label={false}
                 />
-                <Column source='image_url' render={ImageUrlField} />
+                <Column
+                  source='image_url'
+                  render={ImageUrlField}
+                  label={translate('resources.products.fields.image_url')}
+                />
                 <ColumnNumber
                   source='name'
+                  label={translate('resources.products.fields.name')}
                   options={{ minimumFractionDigits: 2 }}
                 />
                 <Column
-                  label='Price'
+                  label={translate('resources.categories.fields.price')}
                   render={(record: Product) =>
-                    `$${formatCurrency(
+                    `${formatCurrency(
                       convert(record.price || 0)
                     )} ${displayCurrency}`
                   }
