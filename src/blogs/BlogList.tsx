@@ -14,6 +14,7 @@ import {
   TextInput,
   TopToolbar,
   useRecordContext,
+  useTranslate,
 } from 'react-admin';
 
 export interface Blogs {
@@ -59,36 +60,6 @@ const DescriptionField = () => {
   );
 };
 
-const blogFilters = [
-  <SearchInput source='q' alwaysOn />,
-  <TextInput
-    source='title'
-    sx={{
-      '& .MuiInputBase-root': {
-        height: '40px', // Adjust this value as needed
-      },
-    }}
-  />,
-  <TextInput
-    source='description'
-    alwaysOn
-    sx={{
-      '& .MuiInputBase-root': {
-        height: '40px', // Adjust this value as needed
-      },
-    }}
-  />,
-  <NumberInput
-    source='count'
-    alwaysOn
-    sx={{
-      '& .MuiInputBase-root': {
-        height: '40px', // Adjust this value as needed
-      },
-    }}
-  />,
-];
-
 const BlogListActions = () => (
   <TopToolbar>
     <FilterButton />
@@ -113,46 +84,90 @@ const ImageUrlField = (record: Blogs) => {
 
 const Column = DataTable.Col<Blogs>;
 
-export const BlogList = () => (
-  <List
-    filters={blogFilters}
-    actions={<BlogListActions />}
-    sort={{ field: 'created', order: 'DESC' }}
-    perPage={25}
-  >
-    <DataTable bulkActionButtons={<BlogBulkActions />} rowClick='edit'>
-      <Column source='image_url' label='Image' render={ImageUrlField} />
-      {/* <Column source='id' /> */}
-      <Column source='title' />
-      <Column source='description' render={DescriptionField} />
-      {/* <UrlField source='video_url' /> */}
-      <Column source='count' />
-      <Column
-        source='created'
-        label='Created'
-        render={(record) => (
-          <DateField source='created' record={record} showTime />
-        )}
-      />
-      <Column
-        source='updated'
-        label='Updated'
-        render={(record) => (
-          <DateField source='updated' record={record} showTime />
-        )}
-      />
-      <Column
-        source='edit'
-        field={DateField}
-        label='Edit'
-        render={EditButton}
-      />
-      <Column
-        source='delete'
-        field={DateField}
-        label='Delete'
-        render={DeleteButton}
-      />
-    </DataTable>
-  </List>
-);
+export const BlogList = () => {
+  const translate = useTranslate();
+
+  const blogFilters = [
+    <SearchInput source='q' alwaysOn />,
+    <TextInput
+      source='title'
+      label={translate('title')}
+      sx={{
+        '& .MuiInputBase-root': {
+          height: '40px', // Adjust this value as needed
+        },
+      }}
+    />,
+    <TextInput
+      source='description'
+      label={translate('description')}
+      alwaysOn
+      sx={{
+        '& .MuiInputBase-root': {
+          height: '40px', // Adjust this value as needed
+        },
+      }}
+    />,
+    <NumberInput
+      source='count'
+      label={translate('count')}
+      alwaysOn
+      sx={{
+        '& .MuiInputBase-root': {
+          height: '40px', // Adjust this value as needed
+        },
+      }}
+    />,
+  ];
+  return (
+    <List
+      filters={blogFilters}
+      actions={<BlogListActions />}
+      sort={{ field: 'created', order: 'DESC' }}
+      perPage={25}
+    >
+      <DataTable bulkActionButtons={<BlogBulkActions />} rowClick='edit'>
+        <Column
+          source='image_url'
+          label={translate('image')}
+          render={ImageUrlField}
+        />
+        {/* <Column source='id' /> */}
+        <Column source='title' label={translate('title')} />
+        <Column
+          source='description'
+          label={translate('description')}
+          render={DescriptionField}
+        />
+        {/* <UrlField source='video_url' /> */}
+        <Column source='count' label={translate('count')} />
+        <Column
+          source='created'
+          label={translate('created')}
+          render={(record) => (
+            <DateField source='created' record={record} showTime />
+          )}
+        />
+        <Column
+          source='updated'
+          label={translate('updated')}
+          render={(record) => (
+            <DateField source='updated' record={record} showTime />
+          )}
+        />
+        <Column
+          source='edit'
+          field={DateField}
+          label={translate('edit')}
+          render={EditButton}
+        />
+        <Column
+          source='delete'
+          field={DateField}
+          label={translate('delete')}
+          render={DeleteButton}
+        />
+      </DataTable>
+    </List>
+  );
+};

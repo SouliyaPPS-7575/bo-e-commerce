@@ -37,7 +37,7 @@ const customLaoMessages: TranslationMessages = {
   all: 'ທັງໝົດ',
   buy: 'ຊື້',
   sell: 'ຂາຍ',
-
+  count: 'ຈໍານວນ',
   fields: {
     basket: {
       date: 'ວັນທີ',

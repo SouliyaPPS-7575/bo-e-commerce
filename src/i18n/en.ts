@@ -26,6 +26,7 @@ const customEnglishMessages: TranslationMessages = {
   type: 'Type',
   ccy: 'Currency Code',
   rate: 'Rate',
+  count: 'Count',
   fields: {
     basket: {
       date: 'Date',
