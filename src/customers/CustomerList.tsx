@@ -15,56 +15,62 @@ import {
   useNotify,
   useRefresh,
   useUpdate,
+  useTranslate,
 } from 'react-admin';
 import * as XLSX from 'xlsx';
 import { Customer } from '../dataProvider/customersDataProvider';
 
-const customerFilters = [
-  <SearchInput key='q' source='q' alwaysOn />,
-  <SelectInput
-    key='verified'
-    source='verified'
-    choices={[
-      { id: '', name: 'All Status' },
-      { id: true, name: 'Verified' },
-      { id: false, name: 'Unverified' },
-    ]}
-    label='resources.customers.fields.verified'
-    emptyText='All Status'
-  />,
-  <SelectInput
-    key='has_ordered'
-    source='has_ordered'
-    choices={[
-      { id: '', name: 'All Customers' },
-      { id: true, name: 'Has Orders' },
-      { id: false, name: 'No Orders' },
-    ]}
-    label='resources.customers.filters.has_ordered'
-    emptyText='All Customers'
-  />,
-  <SelectInput
-    key='emailVisibility'
-    source='emailVisibility'
-    choices={[
-      { id: '', name: 'All Email Visibility' },
-      { id: true, name: 'Email Visible' },
-      { id: false, name: 'Email Hidden' },
-    ]}
-    label='resources.customers.fields.emailVisibility'
-    emptyText='All Email Visibility'
-  />,
-  <SearchInput
-    key='email'
-    source='email'
-    label='resources.customers.fields.email'
-    placeholder='Enter email address'
-  />,
-];
+const customerFilters = () => {
+  const translate = useTranslate();
+  return [
+    <SearchInput key='q' source='q' alwaysOn />,
+    <SelectInput
+      key='verified'
+      source='verified'
+      choices={[
+        { id: '', name: translate('all_status') },
+        { id: true, name: translate('verified') },
+        { id: false, name: translate('unverified') },
+      ]}
+      label='verified'
+      emptyText={translate('all_status')}
+    />,
+    <SelectInput
+      key='has_ordered'
+      source='has_ordered'
+      choices={[
+        { id: '', name: translate('all_customers') },
+        { id: true, name: translate('has_orders') },
+        { id: false, name: translate('no_orders') },
+      ]}
+      label='has_ordered'
+      emptyText={translate('all_customers')}
+    />,
+    <SelectInput
+      key='emailVisibility'
+      source='emailVisibility'
+      choices={[
+        { id: '', name: translate('all_email_visibility') },
+        { id: true, name: translate('email_visible') },
+        { id: false, name: translate('email_hidden') },
+      ]}
+      label='emailVisibility'
+      emptyText={translate('all_email_visibility')}
+    />,
+    <SearchInput
+      key='email'
+      source='email'
+      label='email'
+      placeholder={translate('enter_email_address')}
+    />,
+  ];
+};
+
 
 const CustomerListActions = () => {
   const dataProvider = useDataProvider();
   const notify = useNotify();
+  const translate = useTranslate();
 
   const handleExportExcel = async () => {
     try {
@@ -75,26 +81,26 @@ const CustomerListActions = () => {
       });
 
       const exportData = data.map((customer: Customer) => ({
-        Name: customer.name,
-        Username: customer.username,
-        Email: customer.email,
-        Phone: customer.phone_number,
-        Verified: customer.verified ? 'Yes' : 'No',
-        Created: new Date(customer.created).toLocaleDateString(),
-        Updated: new Date(customer.updated).toLocaleDateString(),
+        [translate('name')]: customer.name,
+        [translate('username')]: customer.username,
+        [translate('email')]: customer.email,
+        [translate('phone')]: customer.phone_number,
+        [translate('verified')]: customer.verified ? translate('yes') : translate('no'),
+        [translate('created')]: new Date(customer.created).toLocaleDateString(),
+        [translate('updated')]: new Date(customer.updated).toLocaleDateString(),
       }));
 
       const worksheet = XLSX.utils.json_to_sheet(exportData);
       const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'Customers');
+      XLSX.utils.book_append_sheet(workbook, worksheet, translate('customers'));
 
       XLSX.writeFile(
         workbook,
         `customers_export_${new Date().toISOString().split('T')[0]}.xlsx`
       );
-      notify('Excel file exported successfully', { type: 'success' });
+      notify(translate('excel_export_success'), { type: 'success' });
     } catch (error) {
-      notify('Failed to export Excel file', { type: 'error' });
+      notify(translate('excel_export_failure'), { type: 'error' });
     }
   };
 
@@ -106,7 +112,7 @@ const CustomerListActions = () => {
         variant='outlined'
         size='small'
       >
-        Export Excel
+        {translate('export_excel')}
       </Button>
     </TopToolbar>
   );
@@ -141,6 +147,7 @@ const AccountStatusField = (record: Customer) => {
   const [update] = useUpdate();
   const notify = useNotify();
   const refresh = useRefresh();
+  const translate = useTranslate();
   const [open, setOpen] = React.useState(false);
   const [newStatusValue, setNewStatusValue] = React.useState<boolean | null>(
     null
@@ -163,14 +170,16 @@ const AccountStatusField = (record: Customer) => {
         previousData: record,
       });
       notify(
-        `Account status updated to ${newStatusValue ? 'Active' : 'Inactive'}`,
+        translate('account_status_updated', {
+          status: newStatusValue ? translate('active') : translate('inactive'),
+        }),
         {
           type: 'success',
         }
       );
       refresh();
     } catch (error) {
-      notify('Error updating account status', { type: 'error' });
+      notify(translate('error_updating_account_status'), { type: 'error' });
     }
   };
 
@@ -197,18 +206,18 @@ const AccountStatusField = (record: Customer) => {
         }}
       >
         <MenuItem value='true' sx={{ color: 'green' }}>
-          Active
+          {translate('active')}
         </MenuItem>
         <MenuItem value='false' sx={{ color: 'red' }}>
-          Inactive
+          {translate('inactive')}
         </MenuItem>
       </MuiSelect>
       <Confirm
         isOpen={open}
-        title='Confirm Status Change'
-        content={`Are you sure you want to change the status to ${
-          newStatusValue ? 'Active' : 'Inactive'
-        }?`}
+        title={translate('confirm_status_change')}
+        content={translate('confirm_status_change_message', {
+          status: newStatusValue ? translate('active') : translate('inactive'),
+        })}
         onConfirm={handleConfirm}
         onClose={handleCancel}
       />
@@ -221,9 +230,10 @@ const BlackEmailField = (props: any) => (
 );
 
 const CustomerList = () => {
+  const translate = useTranslate();
   return (
     <List
-      filters={customerFilters}
+      filters={customerFilters()}
       sort={{ field: 'created', order: 'DESC' }}
       perPage={25}
       actions={<CustomerListActions />}
@@ -241,12 +251,12 @@ const CustomerList = () => {
           },
         }}
       >
-        <Column source='avatar' render={AvatarField} />
-        <Column source='name' label='Name' />
-        <Column source='username' label='Username' />
-        <Column source='email' field={BlackEmailField} />
-        <Column source='phone_number' label='Phone' />
-        <Column source='verified' render={AccountStatusField} label='Status' />
+        <Column source='avatar' render={AvatarField} label={translate('image')} />
+        <Column source='name' label={translate('name')} />
+        <Column source='username' label={translate('username')} />
+        <Column source='email' field={BlackEmailField} label={translate('email')} />
+        <Column source='phone_number' label={translate('phone_number')} />
+        <Column source='verified' render={AccountStatusField} label={translate('verified')} />
       </DataTable>
     </List>
   );

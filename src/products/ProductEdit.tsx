@@ -208,9 +208,9 @@ const ProductEdit = () => {
         <React.Suspense fallback={<div>Loading...</div>}>
           <RichTextInput
             source='details_la'
-            label={translate('details_la')}
-            fullWidth
-          />
+          label={translate('resources.products.fields.details_la')}
+          fullWidth
+        />
         </React.Suspense>
       </SimpleForm>
     </Edit>
