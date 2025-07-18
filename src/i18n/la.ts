@@ -91,6 +91,7 @@ const customLaoMessages: TranslationMessages = {
   old_password: 'ລະຫັດຜ່ານເກົ່າ',
   old_password_helper: 'ກະລຸນາປ່ຽນລະຫັດຜ່ານ',
   password_length_helper_edit: 'ປ່ອຍຫວ່າງໄວ້ເພື່ອຮັກສາລະຫັດຜ່ານປັດຈຸບັນ. ຕ້ອງມີຢ່າງໜ້ອຍ 6 ຕົວອັກສອນ.',
+  details: 'ລາຍລະອຽດ',
   fields: {
     basket: {
       date: 'ວັນທີ',

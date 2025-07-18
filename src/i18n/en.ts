@@ -83,6 +83,7 @@ const customEnglishMessages: TranslationMessages = {
   user_id: 'User ID',
   user_avatar: 'User Avatar',
   avatar: 'Avatar',
+  details: 'Details',
   fields: {
     basket: {
       date: 'Date',
