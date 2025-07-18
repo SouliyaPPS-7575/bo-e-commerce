@@ -5,6 +5,7 @@ import {
   TextInput,
   useInput,
   useRecordContext,
+  useTranslate,
 } from 'react-admin';
 import { Box } from '@mui/material';
 import { uploadImageToCloudinary } from '../utils/cloudinaryUpload';
@@ -15,6 +16,7 @@ interface ImageUploadFieldProps {
 }
 
 const ImageUploadField = (props: ImageUploadFieldProps) => {
+  const translate = useTranslate();
   const { source, label } = props;
   const record = useRecordContext(props);
   const { field } = useInput({
@@ -58,6 +60,7 @@ const ImageUploadField = (props: ImageUploadFieldProps) => {
               handleImageUpload(file);
             }
           }}
+          placeholder={translate('image_input_placeholder')}
         >
           <ImageField source='src' title='title' />
         </ImageInput>
@@ -78,7 +81,11 @@ const ImageUploadField = (props: ImageUploadFieldProps) => {
           <img
             src={field.value}
             alt='Preview'
-            style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+            style={{
+              maxWidth: '100%',
+              maxHeight: '100%',
+              objectFit: 'contain',
+            }}
           />
         )}
       </Box>
