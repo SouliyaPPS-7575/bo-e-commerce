@@ -48,7 +48,7 @@ const ImageUrlField = (record: ProductCategory | any) => {
     <Avatar
       src={record.image_url}
       alt={record.name}
-      sx={{ width: 32, height: 32 }}
+      sx={{ width: 42, height: 42 }}
     />
   );
 };

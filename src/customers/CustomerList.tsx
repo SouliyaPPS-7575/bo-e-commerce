@@ -138,7 +138,7 @@ const AvatarField = (record: Customer) => {
     <Avatar
       src={record.avatar}
       alt={record.name}
-      sx={{ width: 32, height: 32 }}
+      sx={{ width: 42, height: 42 }}
     />
   );
 };

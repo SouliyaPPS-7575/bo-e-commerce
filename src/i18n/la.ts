@@ -75,6 +75,7 @@ const customLaoMessages: TranslationMessages = {
   postal_code: 'ລະຫັດໄປສະນີ',
   country: 'ປະເທດ',
   address: 'ທີ່ຢູ່',
+  reset_password: 'ຕັ້ງລະຫັດຜ່ານໃໝ່',
   fields: {
     basket: {
       date: 'ວັນທີ',
@@ -326,8 +327,18 @@ const customLaoMessages: TranslationMessages = {
         emailVisibility: 'ການເບິ່ງເຫັນອີເມວ',
         password: 'ລະຫັດຜ່ານ',
         passwordConfirm: 'ຢືນຢັນລະຫັດຜ່ານ',
+        avatar: 'ຮູບໂປຣໄຟລ໌',
+        role: 'ບົດບາດ',
       },
     },
+    user_verified_status_updated: 'ຜູ້ໃຊ້ %{status} ສຳເລັດແລ້ວ',
+    error_updating_verification_status: 'ເກີດຂໍ້ຜິດພາດໃນການອັບເດດສະຖານະການຢືນຢັນ',
+    reset_password: 'ຕັ້ງລະຫັດຜ່ານໃໝ່',
+    user_email_not_found: 'ບໍ່ພົບອີເມວຜູ້ໃຊ້',
+    password_reset_email_sent: 'ອີເມວຕັ້ງລະຫັດຜ່ານໃໝ່ຖືກສົ່ງໄປທີ່ %{email}',
+    failed_to_send_password_reset_email: 'ລົ້ມເຫຼວໃນການສົ່ງອີເມວຕັ້ງລະຫັດຜ່ານໃໝ່ໄປທີ່ %{email}',
+    reset: 'ຕັ້ງຄ່າໃໝ່',
+    confirm_password_reset: 'ທ່ານແນ່ໃຈບໍວ່າຕ້ອງການສົ່ງອີເມວຕັ້ງລະຫັດຜ່ານໃໝ່ໄປທີ່ %{email}?',
     currencies: {
       name: 'ສະກຸນເງິນ |||| ສະກຸນເງິນ',
       fields: {

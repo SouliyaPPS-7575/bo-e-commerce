@@ -64,6 +64,7 @@ const customEnglishMessages: TranslationMessages = {
   postal_code: 'Postal Code',
   country: 'Country',
   address: 'Address',
+  reset_password: 'Reset Password',
   fields: {
     basket: {
       date: 'Date',
@@ -324,8 +325,18 @@ const customEnglishMessages: TranslationMessages = {
         emailVisibility: 'Email Visibility',
         password: 'Password',
         passwordConfirm: 'Confirm Password',
+        avatar: 'Avatar',
+        role: 'Role',
       },
     },
+    user_verified_status_updated: 'User %{status} successfully',
+    error_updating_verification_status: 'Error updating verification status',
+    reset_password: 'Reset Password',
+    user_email_not_found: 'User email not found',
+    password_reset_email_sent: 'Password reset email sent to %{email}',
+    failed_to_send_password_reset_email: 'Failed to send password reset email to %{email}',
+    reset: 'Reset',
+    confirm_password_reset: 'Are you sure you want to send a password reset email to %{email}?',
     currencies: {
       name: 'Currency |||| Currencies',
       fields: {

@@ -77,7 +77,7 @@ const ImageUrlField = (record: Blogs) => {
     <Avatar
       src={record.image_url}
       alt={record.collectionName}
-      sx={{ width: 32, height: 32 }}
+      sx={{ width: 42, height: 42 }}
     />
   );
 };
