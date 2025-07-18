@@ -40,7 +40,7 @@ import {
 import * as React from 'react';
 import { Fragment, useCallback, useEffect, useState } from 'react';
 import { DateField, Loading, useTranslate } from 'react-admin';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 
 import pb from '../api/pocketbase';
@@ -165,7 +165,15 @@ interface OrderDetailsCache {
 }
 
 const TabbedDatagrid = () => {
-  const [activeTab, setActiveTab] = useState<string>('pending');
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const getTabFromQuery = useCallback(() => {
+    const searchParams = new URLSearchParams(location.search);
+    return searchParams.get('status') || 'pending';
+  }, [location.search]);
+
+  const [activeTab, setActiveTab] = useState<string>(getTabFromQuery());
   const [orderCounts, setOrderCounts] = useState<{ [key: string]: number }>({});
   const [searchTerm, setSearchTerm] = useState('');
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
@@ -197,9 +205,16 @@ const TabbedDatagrid = () => {
     fetchOrderCounts();
   }, [fetchOrderCounts]);
 
+  useEffect(() => {
+    setActiveTab(getTabFromQuery());
+  }, [getTabFromQuery]);
+
   const handleChange = useCallback(
     (event: React.SyntheticEvent, value: string) => {
       setActiveTab(value);
+      const searchParams = new URLSearchParams(location.search);
+      searchParams.set('status', value);
+      navigate({ search: searchParams.toString() });
 
       if (isXSmall) {
         const tabsContainer = document.querySelector('[role="tablist"]');
@@ -208,7 +223,7 @@ const TabbedDatagrid = () => {
         }
       }
     },
-    [isXSmall]
+    [isXSmall, location.search, navigate]
   );
 
   const downloadExcel = async () => {
