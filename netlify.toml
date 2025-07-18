@@ -3,5 +3,5 @@
   publish = "dist"
 
 [build.environment]
-  NODE_VERSION = "20.19.3"
+  NODE_VERSION = "20.15.1"
   BASE_URL = "https://sensornode.shop"
