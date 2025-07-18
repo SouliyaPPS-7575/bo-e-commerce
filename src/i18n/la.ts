@@ -38,6 +38,7 @@ const customLaoMessages: TranslationMessages = {
   buy: 'ຊື້',
   sell: 'ຂາຍ',
   count: 'ຈໍານວນ',
+  title: 'ຫົວຂໍ້',
   fields: {
     basket: {
       date: 'ວັນທີ',
@@ -141,6 +142,7 @@ const customLaoMessages: TranslationMessages = {
   sell_count: 'ຈໍານວນຂາຍແລ້ວ',
   product_information: 'ຂໍ້ມູນສິນຄ້າ',
   description: 'ລາຍລະອຽດ',
+        description_la: 'ລາຍລະອຽດ (ລາວ)',
   english: 'ພາສາອັງກິດ',
   lao: 'ພາສາລາວ',
   product_details: 'ລາຍລະອຽດສິນຄ້າ',

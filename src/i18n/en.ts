@@ -27,6 +27,7 @@ const customEnglishMessages: TranslationMessages = {
   ccy: 'Currency Code',
   rate: 'Rate',
   count: 'Count',
+  title: 'Title',
   fields: {
     basket: {
       date: 'Date',
@@ -331,6 +332,7 @@ const customEnglishMessages: TranslationMessages = {
         image: 'Image',
         details: 'Details',
         description: 'Description',
+        description_la: 'Description (Lao)',
         reviews: 'Reviews',
       },
       filters: {

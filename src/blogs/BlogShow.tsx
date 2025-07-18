@@ -1,3 +1,4 @@
+import { Avatar } from '@mui/material';
 import {
   DateField,
   DeleteButton,
@@ -7,10 +8,23 @@ import {
   SimpleShowLayout,
   TextField,
   TopToolbar,
-  UrlField,
+  useRecordContext,
+  useTranslate,
 } from 'react-admin';
+import { Blogs } from './BlogList';
 
-// Removed RichTextField import because 'ra-input-rich-text' does not export RichTextField.
+export const ImageUrlField = ({
+  source,
+  label,
+}: {
+  source: string;
+  label: string;
+}) => {
+  const record = useRecordContext<Blogs>();
+  if (!record?.image_url) return null;
+
+  return <img src={record.image_url} alt={record.collectionName} />;
+};
 
 const BlogShowActions = () => (
   <TopToolbar>
@@ -19,18 +33,23 @@ const BlogShowActions = () => (
   </TopToolbar>
 );
 
-export const BlogShow = () => (
-  <Show actions={<BlogShowActions />}>
-    <SimpleShowLayout>
-      <TextField source='id' />
-      <TextField source='title' />
-      <RichTextField source='description' />
-      <RichTextField source='description_la' label='Description (Lao)' />
-      <TextField source='title' />
-      <TextField source='description' />
-      <UrlField source='image_url' />
-      <DateField source='created' />
-      <DateField source='updated' />
-    </SimpleShowLayout>
-  </Show>
-);
+export const BlogShow = () => {
+  const translate = useTranslate();
+
+  return (
+    <Show actions={<BlogShowActions />}>
+      <SimpleShowLayout>
+        {/* <TextField source='id' label={translate('id')} /> */}
+        <TextField source='title' label={translate('title')} />
+        <ImageUrlField source='image_url' label={translate('image')} />
+        <RichTextField source='description' label={translate('description')} />
+        <RichTextField
+          source='description_la'
+          label={translate('description_la')}
+        />
+        <DateField source='created' label={translate('created')} showTime />
+        <DateField source='updated' label={translate('updated')} showTime />
+      </SimpleShowLayout>
+    </Show>
+  );
+};
