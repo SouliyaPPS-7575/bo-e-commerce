@@ -108,7 +108,7 @@ const Dashboard = () => {
       { totalLAK: 0, totalTHB: 0, totalUSD: 0 }
     );
   };
-  
+
   return isXSmall ? (
     <Box sx={{ p: 2 }}>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>

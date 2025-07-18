@@ -6,6 +6,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Box, Card, Grid, Typography } from '@mui/material';
 import * as React from 'react';
 import { useTranslate } from 'react-admin';
+import { Link } from 'react-router-dom';
 import { useCurrencyContext } from '../components/CurrencySelector/CurrencyProvider';
 import { formatCurrency } from '../utils/format';
 
@@ -42,9 +43,10 @@ const ModernStatusCard: React.FC<{
   icon: React.ReactNode;
   color: string;
   bgColor: string;
-}> = ({ title, value, icon }) => {
+  to?: string;
+}> = ({ title, value, icon, to }) => {
   const translate = useTranslate();
-  return (
+  const cardContent = (
     <Card
       sx={{
         height: '100%',
@@ -58,6 +60,7 @@ const ModernStatusCard: React.FC<{
         overflow: 'hidden',
         display: 'flex',
         alignItems: 'center',
+        textDecoration: 'none',
       }}
     >
       {/* Background shape */}
@@ -120,6 +123,16 @@ const ModernStatusCard: React.FC<{
       </Box>
     </Card>
   );
+
+  if (to) {
+    return (
+      <Link to={to} style={{ textDecoration: 'none' }}>
+        {cardContent}
+      </Link>
+    );
+  }
+
+  return cardContent;
 };
 
 const StatusCountCards: React.FC<Props> = ({
@@ -176,6 +189,7 @@ const StatusCountCards: React.FC<Props> = ({
           }
           color='#607d8b'
           bgColor='#607d8b'
+          to='/customers'
         />
       </Grid>
       <Grid
@@ -195,6 +209,7 @@ const StatusCountCards: React.FC<Props> = ({
           }
           color='#090909'
           bgColor='#ff9800'
+          to='/orders?status=pending'
         />
       </Grid>
       <Grid
@@ -229,6 +244,7 @@ const StatusCountCards: React.FC<Props> = ({
           }
           color='#2196f3'
           bgColor='#2196f3'
+          to='/orders?status=purchased'
         />
       </Grid>
       <Grid
@@ -262,6 +278,7 @@ const StatusCountCards: React.FC<Props> = ({
           }
           color='#9c27b0'
           bgColor='#9c27b0'
+          to='/orders?status=delivering'
         />
       </Grid>
       <Grid
@@ -281,6 +298,7 @@ const StatusCountCards: React.FC<Props> = ({
           }
           color='#4caf50'
           bgColor='#4caf50'
+          to='/orders?status=completed'
         />
       </Grid>
       <Grid
@@ -300,6 +318,7 @@ const StatusCountCards: React.FC<Props> = ({
           }
           color='#f44336'
           bgColor='#f44336'
+          to='/orders?status=cancel'
         />
       </Grid>
     </Grid>
