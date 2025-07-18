@@ -12,6 +12,7 @@ import {
   TextInput,
   TopToolbar,
   useRefresh,
+  useTranslate,
 } from 'react-admin';
 import { useImageStore } from '../store/imageStore';
 import { useLocation } from 'react-router';
@@ -32,6 +33,7 @@ const BlogEditActions = () => (
 export const BlogEdit = () => {
   const { selectImage, setSelectImage } = useImageStore(); // Use the store
   const refresh = useRefresh();
+  const translate = useTranslate();
 
   // Clear selectImage when route changes
   const location = useLocation();
@@ -44,22 +46,23 @@ export const BlogEdit = () => {
     <Edit actions={<BlogEditActions />}>
       <SimpleForm>
         {/* <TextField source='id' /> */}
-        <TextInput source='title' validate={[required()]} fullWidth />
+        <TextInput source='title' validate={[required()]} fullWidth label={translate('resources.blogs.fields.title')} />
 
         <Divider sx={{ my: 0.2 }} />
 
         <ImageInput
           source='image'
-          label='Blog Image'
+          label={translate('resources.blogs.fields.image')}
           onChange={(e) => {
             setSelectImage(e);
           }}
+          placeholder={translate('image_input_placeholder')}
         >
           <ImageField source='src' title='title' />
         </ImageInput>
         <ImageField
           source='image_url'
-          label='Current Image'
+          label={translate('resources.blogs.fields.current_image')}
           sx={{
             display: selectImage !== null ? 'none' : 'block',
           }}
@@ -90,7 +93,7 @@ export const BlogEdit = () => {
                       // Copy image URL to clipboard
                       await navigator.clipboard.writeText(url);
                       // Show alert notification
-                      alert('Image link copied to clipboard!');
+                      alert(translate('upload_image_success'));
                       // Find the contenteditable div of RichTextInput
                       const rte = document.querySelector(
                         '[contenteditable="true"][role="textbox"]'
@@ -120,7 +123,7 @@ export const BlogEdit = () => {
                         );
                       }
                     } catch (err) {
-                      alert('Failed to upload image');
+                      alert(translate('upload_image_failure'));
                     }
                   }
                 };
@@ -136,7 +139,7 @@ export const BlogEdit = () => {
                 borderRadius: '4px',
               }}
             >
-              Upload Image
+              {translate('upload_image')}
             </button>
           </div>
           <RichTextInput
@@ -150,16 +153,16 @@ export const BlogEdit = () => {
 
         <RichTextInput
           source='description_la'
-          label='Description (Lao)'
+          label={translate('resources.blogs.fields.description_la')}
           fullWidth
         />
 
-        <NumberInput source='count' />
+        <NumberInput source='count' label={translate('resources.blogs.fields.count')} />
         {/* <TextInput source='video_url' fullWidth /> */}
         {/* <DateField source='created' /> */}
         {/* <DateField source='updated' /> */}
 
-        <h3>Preview</h3>
+        <h3>{translate('preview')}</h3>
         <FormDataConsumer>
           {({ formData }) => (
             <div

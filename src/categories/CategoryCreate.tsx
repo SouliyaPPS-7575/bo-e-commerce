@@ -44,7 +44,7 @@ const CategoryCreate = () => {
 
           <ImageInput
             source='image'
-            label={translate('resources.categories.fields.image')}
+            label={translate('image_input_placeholder')}
           >
             <ImageField source='src' title='title' />
           </ImageInput>

@@ -28,6 +28,15 @@ const customEnglishMessages: TranslationMessages = {
   rate: 'Rate',
   count: 'Count',
   title: 'Title',
+  upload_image: 'Upload Image',
+  upload_image_success: 'Image uploaded successfully!',
+  upload_image_failure: 'Failed to upload image',
+  preview: 'Preview',
+  image_input_placeholder: 'Drop a picture to upload, or click to select it.',
+  details_la: 'Details (Lao)',
+  image_urls: 'Image URLs',
+  image_url: 'Image URL',
+  name_la: 'Name (Lao)',
   fields: {
     basket: {
       date: 'Date',
@@ -262,7 +271,21 @@ const customEnglishMessages: TranslationMessages = {
     },
     blogs: {
       name: 'Blog |||| Blogs',
+      fields: {
+        image: 'Image',
+        title: 'Title',
+        description: 'Description',
+        description_la: 'Description (Lao)',
+        count: 'Count',
+        created: 'Created',
+        updated: 'Updated',
+        current_image: 'Current Image',
+      },
     },
+    upload_image: 'Upload Image',
+    upload_image_success: 'Image link copied to clipboard!',
+    upload_image_failure: 'Failed to upload image',
+    preview: 'Preview',
     users: {
       name: 'User admin |||| User admin',
       fields: {
@@ -327,6 +350,11 @@ const customEnglishMessages: TranslationMessages = {
         width: 'Width',
         name: 'Name',
         image_url: 'Image URL',
+        name_la: 'Name (Lao)',
+        total_count: 'Total Count',
+        image_urls: 'Image URLs',
+        details: 'Details',
+        details_la: 'Details (Lao)',
       },
       tabs: {
         image: 'Image',
@@ -353,6 +381,10 @@ const customEnglishMessages: TranslationMessages = {
         updated: 'Poster updated |||| %{smart_count} posters updated',
         deleted: 'Poster deleted |||| %{smart_count} posters deleted',
       },
+      errors: {
+        total_count_less_than_sell_count: 'Total count cannot be less than sell count',
+      },
+
     },
     categories: {
       name: 'Category |||| Categories',

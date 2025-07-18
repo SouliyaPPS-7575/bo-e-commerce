@@ -39,6 +39,15 @@ const customLaoMessages: TranslationMessages = {
   sell: 'ຂາຍ',
   count: 'ຈໍານວນ',
   title: 'ຫົວຂໍ້',
+  upload_image: 'ອັບໂຫລດຮູບພາບ',
+  upload_image_success: 'ສຳເນົາລິ້ງຮູບພາບສຳເລັດແລ້ວ!',
+  upload_image_failure: 'ອັບໂຫລດຮູບພາບບໍ່ສຳເລັດ',
+  preview: 'ເບິ່ງຕົວຢ່າງ',
+  image_input_placeholder: 'ລາກຮູບພາບເພື່ອອັບໂຫລດ, ຫຼືຄລິກເພື່ອເລືອກ.',
+  details_la: 'ລາຍລະອຽດ (ລາວ)',
+  image_urls: 'ລິ້ງຮູບພາບ',
+  image_url: 'ລິ້ງຮູບພາບ',
+  name_la: 'ຊື່ (ລາວ)',
   fields: {
     basket: {
       date: 'ວັນທີ',
@@ -118,7 +127,6 @@ const customLaoMessages: TranslationMessages = {
   total: 'ລວມ',
   image: 'ຮູບພາບ',
   currency: 'ສະກຸນເງິນ',
-
   no_items_found: 'ບໍ່ພົບລາຍການ',
   lak: 'ກີບ',
   usd: 'ໂດລາສະຫະລັດ',
@@ -142,7 +150,7 @@ const customLaoMessages: TranslationMessages = {
   sell_count: 'ຈໍານວນຂາຍແລ້ວ',
   product_information: 'ຂໍ້ມູນສິນຄ້າ',
   description: 'ລາຍລະອຽດ',
-        description_la: 'ລາຍລະອຽດ (ລາວ)',
+  description_la: 'ລາຍລະອຽດ (ລາວ)',
   english: 'ພາສາອັງກິດ',
   lao: 'ພາສາລາວ',
   product_details: 'ລາຍລະອຽດສິນຄ້າ',
@@ -265,7 +273,21 @@ const customLaoMessages: TranslationMessages = {
     },
     blogs: {
       name: 'ບລັອກ |||| ບລັອກ',
+      fields: {
+        image: 'ຮູບພາບ',
+        title: 'ຫົວຂໍ້',
+        description: 'ລາຍລະອຽດ',
+        description_la: 'ລາຍລະອຽດ (ລາວ)',
+        count: 'ຈຳນວນ',
+        created: 'ສ້າງเมื่อ',
+        updated: 'อัปเดตเมื่อ',
+        current_image: 'ຮູບພາບປັດຈຸບັນ',
+      },
     },
+    upload_image: 'ອັບໂຫລດຮູບພາບ',
+    upload_image_success: 'ສຳເນົາລິ້ງຮູບພາບສຳເລັດແລ້ວ!',
+    upload_image_failure: 'ອັບໂຫລດຮູບພາບບໍ່ສຳເລັດ',
+    preview: 'ເບິ່ງຕົວຢ່າງ',
     users: {
       name: 'ຜູ້ໃຊ້ແອັດມິນ |||| ຜູ້ໃຊ້ແອັດມິນ',
       fields: {
@@ -330,6 +352,11 @@ const customLaoMessages: TranslationMessages = {
         width: 'ຄວາມກວ້າງ',
         name: 'ຊື່',
         image_url: 'ຮູບພາບ',
+        name_la: 'ຊື່ (ລາວ)',
+        total_count: 'ຈຳນວນທັງໝົດ',
+        image_urls: 'ລິ້ງຮູບພາບ',
+        details: 'ລາຍລະອຽດ',
+        details_la: 'ລາຍລະອຽດ (ລາວ)',
       },
       tabs: {
         image: 'ຮູບພາບ',
@@ -354,6 +381,9 @@ const customLaoMessages: TranslationMessages = {
         created: 'ໂປສເຕີຖືກສ້າງ |||| %{smart_count} ໂປສເຕີຖືກສ້າງ',
         updated: 'ໂປສເຕີຖືກອັບເດດ |||| %{smart_count} ໂປສເຕີຖືກອັບເດດ',
         deleted: 'ໂປສເຕີຖືກລຶບ |||| %{smart_count} ໂປສເຕີຖືກລຶບ',
+      },
+      errors: {
+        total_count_less_than_sell_count: 'ຈຳນວນທັງໝົດບໍ່ສາມາດໜ້ອຍກວ່າຈຳນວນທີ່ຂາຍໄດ້',
       },
     },
     categories: {
