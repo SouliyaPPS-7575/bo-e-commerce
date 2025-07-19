@@ -504,7 +504,7 @@ const OrderDetail: React.FC<{
         <TableCell>{getCurrentTotal()}</TableCell>
       </TableRow>
       <TableRow>
-        <TableCell colSpan={7} sx={{ paddingBottom: 0, paddingTop: 0 }}>
+        <TableCell colSpan={9} sx={{ paddingBottom: 0, paddingTop: 0 }}>
           <Collapse in={open} timeout='auto' unmountOnExit>
             <Box sx={{ margin: 2 }}>
               {!details || !details.customer ? (
@@ -661,6 +661,12 @@ const OrderDetail: React.FC<{
                                     <TableCell align='right'>
                                       {translate('total')}
                                     </TableCell>
+                                    <TableCell align='right'>
+                                      {translate('stock')}
+                                    </TableCell>
+                                    <TableCell align='right'>
+                                      {translate('sold')}
+                                    </TableCell>
                                   </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -716,6 +722,12 @@ const OrderDetail: React.FC<{
                                         </TableCell>
                                         <TableCell align='right'>
                                           {formatCurrency(total, currency)}
+                                        </TableCell>
+                                        <TableCell align='right'>
+                                          {product?.total_count}
+                                        </TableCell>
+                                        <TableCell align='right'>
+                                          {product?.sell_count}
                                         </TableCell>
                                       </TableRow>
                                     );
@@ -1022,6 +1034,24 @@ const OrdersTable = React.memo(
     const handleStatusChange = async (orderId: string, newStatus: string) => {
       try {
         await pb.collection('orders').update(orderId, { status: newStatus });
+
+        if (newStatus === 'completed') {
+          const orderDetails = detailsCache[orderId];
+          if (orderDetails && orderDetails.orderItems) {
+            for (const item of orderDetails.orderItems) {
+              const product = orderDetails.products[item.product_id];
+              if (product) {
+                const newSellCount = (product.sell_count || 0) + item.quantity;
+                const newTotalCount = (product.total_count || 0) - item.quantity;
+
+                await pb.collection('products').update(product.id, {
+                  sell_count: newSellCount,
+                  total_count: newTotalCount,
+                });
+              }
+            }
+          }
+        }
         // Optimistically update the UI
         setOrders((prevOrders) =>
           prevOrders.map((order) =>

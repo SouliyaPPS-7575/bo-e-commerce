@@ -55,14 +55,21 @@ export interface PBAddress {
 }
 
 export interface PBProduct {
-  id: string;
-  name: string;
-  description: string;
-  price_lak: number;
-  price_usd: number;
-  price_thb: number;
-  category_id: string;
-  images: Array<string>;
-  created: string;
-  updated: string;
+  collectionId: string
+  collectionName: string
+  id: string
+  name: string
+  description: string
+  price: number
+  category_id: string
+  image_url: string[]
+  name_la: string
+  details: string
+  is_delete: boolean
+  details_la: string
+  description_la: string
+  total_count: number
+  sell_count: number
+  created: string
+  updated: string
 }
