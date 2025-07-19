@@ -97,7 +97,10 @@ const Dashboard = () => {
     totalUSD: number;
   }
 
-  const sumSellRevenue = (data: SellRevenue[]): RevenueSum => {
+  const sumSellRevenue = (data: SellRevenue[] | undefined): RevenueSum => {
+    if (!data) {
+      return { totalLAK: 0, totalTHB: 0, totalUSD: 0 };
+    }
     return data.reduce(
       (acc, item) => {
         acc.totalLAK += parseFloat(item.amountLAK);

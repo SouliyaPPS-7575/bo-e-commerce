@@ -36,23 +36,27 @@ interface FilterParams {
 }
 
 interface Props {
-  data: SellRevenueData[];
+  data?: SellRevenueData[];
   onFilterChange?: (params: FilterParams) => void;
   loading?: boolean;
   filterParams?: FilterParams;
 }
 
 const SellRevenueChart: React.FC<Props> = ({
-  data,
+  data: initialData, // Rename the prop to avoid confusion
   onFilterChange,
   loading,
   filterParams,
 }) => {
+  const data = initialData || []; // Ensure data is always an array here
+
   const translate = useTranslate();
   const { currency, displayCurrency } = useCurrencyContext();
 
   const chartData = React.useMemo(() => {
-    if (!data || data.length === 0) {
+    // Now 'data' is guaranteed to be an array
+    console.log('SellRevenueChart: data value at line 40:', data);
+    if (data.length === 0) {
       return [];
     }
 
@@ -60,7 +64,7 @@ const SellRevenueChart: React.FC<Props> = ({
       const date = new Date(item.period);
       let formattedDate;
 
-      if (item.period.length === 4) {
+      if (item.period && item.period.length === 4) {
         // Check if period is a 4-digit year
         formattedDate = item.period;
       } else {
@@ -93,17 +97,20 @@ const SellRevenueChart: React.FC<Props> = ({
 
   const totalLAK = React.useMemo(
     () =>
-      data.reduce((sum, item) => sum + Number.parseFloat(item.amountLAK), 0),
+      data?.reduce((sum, item) => sum + Number.parseFloat(item.amountLAK), 0) ||
+      0,
     [data]
   );
   const totalUSD = React.useMemo(
     () =>
-      data.reduce((sum, item) => sum + Number.parseFloat(item.amountUSD), 0),
+      data?.reduce((sum, item) => sum + Number.parseFloat(item.amountUSD), 0) ||
+      0,
     [data]
   );
   const totalTHB = React.useMemo(
     () =>
-      data.reduce((sum, item) => sum + Number.parseFloat(item.amountTHB), 0),
+      data?.reduce((sum, item) => sum + Number.parseFloat(item.amountTHB), 0) ||
+      0,
     [data]
   );
 

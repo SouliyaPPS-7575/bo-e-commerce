@@ -349,8 +349,8 @@ const OrderDetail: React.FC<{ details: any }> = ({ details }) => {
                     {product?.image_url && (
                       <Link to={`/products/${product?.id}/show`}>
                         <img
-                          src={product.image_url}
-                          alt={product.name}
+                          src={product?.image_url?.[0]}
+                          alt={product?.name}
                           style={{
                             width: 50,
                             height: 50,

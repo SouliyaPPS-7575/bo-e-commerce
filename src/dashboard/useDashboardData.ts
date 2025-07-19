@@ -163,7 +163,7 @@ export const useRevenueData = (filterParams?: FilterParams) => {
         });
 
         setData({
-          sellRevenue: sellRevenueResponse.sell.reverse(),
+          sellRevenue: (sellRevenueResponse.sell || []).slice().reverse(),
           loading: false,
           error: null,
         });
