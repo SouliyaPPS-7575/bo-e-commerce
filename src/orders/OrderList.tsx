@@ -690,7 +690,7 @@ const OrderDetail: React.FC<{
                                               to={`/products/${product?.id}/show`}
                                             >
                                               <img
-                                                src={product.image_url}
+                                                src={product.image_url[0]}
                                                 alt={product.name}
                                                 style={{
                                                   width: 50,
